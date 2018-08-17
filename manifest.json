@@ -1,0 +1,55 @@
+{
+    "name": "Ewestian",
+    "short_name": "__MSG_short_name__",
+    "description": "__MSG_description__",
+    "author": "Ewelina Suska, Sebastian Tokarski",
+    "version": "0.0.1",
+    "default_locale": "en",
+    "offline_enabled": true,
+    "manifest_version": 2,
+    /*
+    The icon can be taken in a spare moment
+    "icons": { 
+        "16": "assets/icon16.png",
+        "32": "assets/icon32.png",
+        "48": "assets/icon48.png",
+        "128": "assets/icon128.png" 
+    },*/
+    /*
+    Currently unnecessary, but in the future it may be useful
+     "content_scripts": [
+         {
+             "run_at": "document_start",
+             "js": [
+                 "content_scripts/content-script.js"
+             ],
+             "matches": [
+                 "<all_urls>"
+             ]
+         }
+     ],*/
+    "background": {
+        "scripts": [
+             "background/background.js"
+         ]
+    },
+    "permissions": [
+       "tabs",
+       "*://*/*",
+       "activeTab",
+       "storage"
+     ],
+    "browser_action": {
+        /*
+        The same here, needed icon
+        "default_icon": {
+            "16": "assets/icon16.png",
+            "32": "assets/icon32.png",
+            "48": "assets/icon48.png",
+            "128": "assets/icon128.png" 
+        },*/
+        "default_title": "Ewestian",
+        "default_popup": "popup/popup.html"
+    },
+    "debug": true
+}

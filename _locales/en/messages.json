@@ -1,0 +1,10 @@
+{
+    "short_name": {
+        "message": "Extension",
+        "description": "The short name of the application, displayed in the web store."
+    },
+    "description": {
+        "message": "Extension",
+        "description": "The description of the application, displayed in the web store."
+    }
+}
