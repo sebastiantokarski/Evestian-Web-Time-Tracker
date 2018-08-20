@@ -17,28 +17,28 @@
     },*/
     /*
     Currently unnecessary, but in the future it may be useful
-     "content_scripts": [
-         {
-             "run_at": "document_start",
-             "js": [
-                 "content_scripts/content-script.js"
-             ],
-             "matches": [
-                 "<all_urls>"
-             ]
-         }
-     ],*/
+    "content_scripts": [
+        {
+            "run_at": "document_start",
+            "js": [
+                "content_scripts/content-script.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ],*/
     "background": {
         "scripts": [
-             "background/background.js"
-         ]
+            "background/config.js",
+            "background/background.js"
+        ]
     },
     "permissions": [
-       "tabs",
-       "*://*/*",
-       "activeTab",
-       "storage"
-     ],
+        "tabs",
+        "storage",
+        "unlimitedStorage"
+    ],
     "browser_action": {
         /*
         The same here, needed icon
