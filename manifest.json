@@ -28,7 +28,7 @@
     ],*/
     "background": {
         "scripts": [
-            "background/config.js",
+            "config.js",
             "background/background.js"
         ]
     },
