@@ -1,13 +1,10 @@
 /* jshint esversion: 6 */
 /* global chrome */
 
-(function () {
+// @todo only in dev mode it can be global
+let data = {};
 
-    if (DEVELOPMENT_MODE) {
-        window.data = {};
-    } else {
-        var data = {};
-    }
+(function () {
 
     loadStorage();
 
@@ -86,8 +83,8 @@
                 days: {
                     [getDateString()]: 0
                 },
-                dayOfTheWeek: {
-                    [getDayOfTheWeek()]: 0
+                time: {
+                    [getTimeString()]: 0
                 },
                 // Tab may not have favicon
                 favicon: null
@@ -95,13 +92,14 @@
         }
 
         data[hostname].alltime++;
-        data[hostname].days[getDateString()]++;
-        if (!data[hostname].dayOfTheWeek) {
-            data[hostname].dayOfTheWeek = {
-                [getDayOfTheWeek()]: 0
-            };
+        if (!data[hostname].days[getDateString()]) {
+            data[hostname].days[getDateString()] = 0;
         }
-        data[hostname].dayOfTheWeek[getDayOfTheWeek()]++;
+        if (!data[hostname].time[getTimeString()]) {
+            data[hostname].time[getTimeString()] = 0;
+        }
+        data[hostname].days[getDateString()]++;
+        data[hostname].time[getTimeString()]++;
         data[hostname].favicon = tab.favIconUrl;
     }
 
@@ -178,23 +176,28 @@
     }
 
     /**
-     * Get date with format year-month-day
+     * Get date with format year-month-day quarter dayOfTheWeek
      * @returns {string}
      */
     function getDateString() {
         const date = new Date(),
             year = date.getFullYear(),
-            month = ('0' + (new Date().getMonth() + 1)).slice(-2),
-            day = new Date().getUTCDate();
-        return `${year}-${month}-${day}`;
+            month = ('0' + (date.getMonth() + 1)).slice(-2),
+            day = date.getUTCDate(),
+            quarter = Math.floor((date.getMonth() + 3) / 3),
+            dayOfTheWeek = date.getDay();
+        return `${year}-${month}-${day} ${quarter}q ${dayOfTheWeek}d`;
     }
 
     /**
-     * Returns current day of the week
+     * Get current time with format hh:mm
      * @returns {string}
      */
-    function getDayOfTheWeek() {
-        return new Date().getDay().toString();
+    function getTimeString() {
+        const date = new Date(),
+            hour = ('0' + date.getHours()).slice(-2),
+            minute = ('0' + date.getMinutes()).slice(-2);
+        return `${hour}:${minute}`;
     }
 
     /**
