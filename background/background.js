@@ -3,11 +3,10 @@
 
 (function () {
 
-
-    let data = {};
-
     if (DEVELOPMENT_MODE) {
-        window.data = data;
+        window.data = {};
+    } else {
+        var data = {};
     }
 
     loadStorage();
@@ -53,17 +52,22 @@
                 populate: true
             }, (window) => {
                 const tab = getActiveTab(window.tabs);
+                const hostname = getFromUrl('hostname', tab.url);
 
                 if (tab && isWindowActive(window) && !isProtocolOnBlacklist(tab.url)) {
-                    debugLog('Active tab:', getFromUrl('hostname', tab.url), window, tab);
+                    debugLog('Active tab:', hostname, window, tab);
 
-                    updateStorage(tab);
+                    updateStorage(tab, hostname);
+
+                    if (DISPLAY_BADGE) {
+                        updateBadge(tab, hostname);
+                    }
                 }
             });
         }, INTERVAL_UPDATE_S);
 
         let updateStorageInterval = setInterval(() => {
-            chrome.storage.local.set({data: JSON.stringify(data)}, function () {
+            chrome.storage.local.set({data: JSON.stringify(data)}, () => {
                 debugLog('Data saved in storage', data);
             });
         }, INTERVAL_UPDATE_MIN);
@@ -72,10 +76,10 @@
     /**
      * Update extension storage with data
      * @param {Object} tab
+     * @param {string} hostname
      * @returns {undefined}
      */
-    function updateStorage(tab) {
-        let hostname = getFromUrl('hostname', tab.url);
+    function updateStorage(tab, hostname) {
         if (!data[hostname]) {
             data[hostname] = {
                 alltime: 0,
@@ -99,6 +103,33 @@
         }
         data[hostname].dayOfTheWeek[getDayOfTheWeek()]++;
         data[hostname].favicon = tab.favIconUrl;
+    }
+
+    /**
+     * Update badge on the extension icon
+     * @param {Object} tab
+     * @param {string} hostname
+     */
+    function updateBadge(tab, hostname) {
+        let tabTime = 0;
+
+        let timeInSeconds = data[hostname].days[getDateString()];
+        if (timeInSeconds < 60) {
+            tabTime = timeInSeconds + 's';
+        } else if (timeInSeconds < 60 * 60) {
+            tabTime = Math.floor(timeInSeconds / 60) + 'm';
+        } else {
+            tabTime = Math.floor(timeInSeconds / 60 / 60) + 'h';
+        }
+
+        chrome.browserAction.setBadgeText({
+            tabId: tab.id,
+            text: tabTime
+        });
+
+        chrome.browserAction.setBadgeBackgroundColor({
+            color: 'purple'
+        });
     }
 
     /**
