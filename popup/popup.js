@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data = JSON.parse(storage['data']);
             let arr = [];
             for (let key in data) {
-                arr.push([key, data[key].alltime]);
+                arr.push([key, data[key].alltime, data[key].favicon]);
             }
             arr.sort(function(a, b) {
                 return b[1] - a[1];
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let table = document.createElement('table');
         for (let i = 0; i < data.length; i++) {
             let tr = document.createElement('tr');
-            tr.innerHTML = `<td>${i + 1}</td><td>${data[i][0]}</td><td>${prepareTimeToShow(data[i][1])}</td>`;
+            tr.innerHTML = `<td>${i + 1}</td><td><img src="${data[i][2]}" height="16" width="16"></td></td><td>${data[i][0]}</td><td>${prepareTimeToShow(data[i][1])}</td>`;
             table.appendChild(tr);
         }
         document.body.appendChild(table);
