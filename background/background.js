@@ -6,6 +6,9 @@ let data = {};
 
 (function () {
 
+    // It can be active, idle or locked
+    let currentState = chrome.idle.IdleState.ACTIVE;
+
     loadStorage();
 
     executeListeners();
@@ -38,6 +41,14 @@ let data = {};
                 debugLog('Data saved in storage', data);
             });
         });
+
+        /**
+         * Listens whether the current state of the user has changed
+         */
+        chrome.idle.onStateChanged.addListener(function (state) {
+            currentState = state;
+            debugLog('onStateChanged:', currentState);
+        });
     }
 
     /**
@@ -51,7 +62,7 @@ let data = {};
                 const tab = getActiveTab(window.tabs);
                 const hostname = getFromUrl('hostname', tab.url);
 
-                if (tab && isWindowActive(window) && !isProtocolOnBlacklist(tab.url)) {
+                if (tab && isWindowActive(window) && isStateActive() && !isProtocolOnBlacklist(tab.url)) {
                     debugLog('Active tab:', hostname, window, tab);
 
                     updateStorage(tab, hostname);
@@ -206,6 +217,18 @@ let data = {};
      */
     function isWindowActive(window) {
         return window && window.focused;
+    }
+
+    /**
+     * Is current state active
+     * @param {string} state active, idle or locked
+     * @returns {boolean}
+     */
+    function isStateActive(state = currentState) {
+        if (COUNT_ONLY_ACTIVE_STATE) {
+            return chrome.idle.IdleState.ACTIVE === state;
+        }
+        return true;
     }
 
     /**

@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tr.innerHTML = `<td>${i + 1}</td><td><img src="${data[i][2]}" height="16" width="16"></td></td><td>${data[i][0]}</td><td>${prepareTimeToShow(data[i][1])}</td>`;
             table.appendChild(tr);
         }
-        document.body.appendChild(table);
+        document.body.insertBefore(table, document.querySelector('.flaticon-desc'));
     }
 
     /**

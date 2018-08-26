@@ -35,7 +35,8 @@
     "permissions": [
         "tabs",
         "storage",
-        "unlimitedStorage"
+        "unlimitedStorage",
+        "idle"
     ],
     "browser_action": {
         "default_icon": {
