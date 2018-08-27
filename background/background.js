@@ -62,7 +62,7 @@ let data = {};
                 const tab = getActiveTab(window.tabs);
                 const hostname = getFromUrl('hostname', tab.url);
 
-                if (tab && isWindowActive(window) && isStateActive() && !isProtocolOnBlacklist(tab.url)) {
+                if (tab && isWindowActive(window) && !isProtocolOnBlacklist(tab.url) && (isStateActive() || isSoundFromTab(tab))) {
                     debugLog('Active tab:', hostname, window, tab);
 
                     updateStorage(tab, hostname);
@@ -217,6 +217,15 @@ let data = {};
      */
     function isWindowActive(window) {
         return window && window.focused;
+    }
+
+    /**
+     * Is there any sound from the tab (video, player, music)
+     * @param {Object} tab
+     * @returns {boolean}
+     */
+    function isSoundFromTab(tab) {
+        return tab && tab.audible;
     }
 
     /**
