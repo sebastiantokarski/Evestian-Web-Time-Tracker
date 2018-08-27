@@ -1,19 +1,7 @@
-document.addEventListener('DOMContentLoaded', () => {
-    chrome.storage.local.get(EXTENSION_DATA, (storage) => {
-        let data = null;
-        if (storage[EXTENSION_DATA]) {
-            data = JSON.parse(storage['data']);
-            let arr = [];
-            for (let key in data) {
-                arr.push([key, data[key].alltime, data[key].favicon]);
-            }
-            arr.sort(function(a, b) {
-                return b[1] - a[1];
-            });
-            showResults(arr);
-        }
-    });
+/* jshint esversion: 6 */
+/* global chrome */
 
+document.addEventListener('DOMContentLoaded', () => {
     function showResults(data) {
         let table = document.createElement('table');
         for (let i = 0; i < data.length; i++) {
@@ -63,5 +51,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return `${time.days}d${time.hours}h${time.minutes}m${time.seconds}s`;
     }
+
+
+    chrome.storage.local.get(EXTENSION_DATA, (storage) => {
+        let data = null;
+        if (storage[EXTENSION_DATA]) {
+            data = JSON.parse(storage['data']);
+            let arr = [];
+            for (let key in data) {
+                if ({}.hasOwnProperty.call(data, key)) {
+                    arr.push([key, data[key].alltime, data[key].favicon]);
+                }
+            }
+            arr.sort(function(a, b) {
+                return b[1] - a[1];
+            });
+            showResults(arr);
+        }
+    });
 });
 

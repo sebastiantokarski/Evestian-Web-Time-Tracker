@@ -1,3 +1,6 @@
+/* jshint esversion: 6 */
+/* global chrome */
+
 const
     DEVELOPMENT_MODE = !!chrome.runtime.getManifest().debug,
     EXTENSION_DATA = 'data',

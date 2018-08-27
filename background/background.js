@@ -6,15 +6,6 @@ let data = {};
 
 (function () {
 
-    // It can be active, idle or locked
-    let currentState = chrome.idle.IdleState.ACTIVE;
-
-    loadStorage();
-
-    executeListeners();
-
-    executeIntervals();
-
     /**
      * Load extension data from local storage chrome API
      */
@@ -36,7 +27,7 @@ let data = {};
         /**
          * Save data to storage if someone close browser window
          */
-        chrome.windows.onRemoved.addListener(()=> {
+        chrome.windows.onRemoved.addListener(() => {
             chrome.storage.local.set({data: JSON.stringify(data)}, function () {
                 debugLog('Data saved in storage', data);
             });
@@ -248,6 +239,15 @@ let data = {};
     function isProtocolOnBlacklist(url) {
         return BLACKLIST_PROTOCOL.indexOf(getFromUrl('protocol', url)) !== -1;
     }
+
+    // It can be active, idle or locked
+    let currentState = chrome.idle.IdleState.ACTIVE;
+
+    loadStorage();
+
+    executeListeners();
+
+    executeIntervals();
 
 }());
 
