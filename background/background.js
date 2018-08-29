@@ -167,9 +167,9 @@ let data = {};
      */
     function getActiveTab(tabs) {
         let i = 0;
-        do {
+        while (i < tabs.length && !tabs[i].active) {
             i++;
-        } while (i < tabs.length && !tabs[i].active);
+        }
 
         if (tabs[i]) {
             return tabs[i];
