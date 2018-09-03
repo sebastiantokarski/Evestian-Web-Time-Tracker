@@ -76,9 +76,30 @@
      * @returns {undefined}
      */
     function updateStorage(tab, hostname) {
+
+        /**
+         * Add 1 to current number
+         * @param {Object} obj
+         * @param {string} property
+         * @returns {Object} obj
+         */
+        function increment(obj, property) {
+            if (!obj[property]) {
+                obj[property] = 0;
+            }
+            obj[property] += 1;
+            return obj[property];
+        }
+
         if (!data[hostname]) {
             data[hostname] = {
                 alltime: 0,
+                dayOfTheWeek: {
+                    [getDayOfTheWeekString()]: 0
+                },
+                quarter: {
+                    [getQuarterString()]: 0
+                },
                 days: {
                     [getDateString()]: 0
                 },
@@ -90,19 +111,15 @@
             };
         }
 
-        if (!data.alltime) {
-            data.alltime = 0;
-        }
-        data.alltime++;
         data[hostname].alltime++;
-        if (!data[hostname].days[getDateString()]) {
-            data[hostname].days[getDateString()] = 0;
-        }
-        if (!data[hostname].time[getTimeString()]) {
-            data[hostname].time[getTimeString()] = 0;
-        }
-        data[hostname].days[getDateString()]++;
-        data[hostname].time[getTimeString()]++;
+
+        increment(data, 'alltime');
+
+        increment(data[hostname].quarter, getQuarterString());
+        increment(data[hostname].dayOfTheWeek, getDayOfTheWeekString());
+        increment(data[hostname].days, getDateString());
+        increment(data[hostname].time, getTimeString());
+
         data[hostname].favicon = tab.favIconUrl;
     }
 
@@ -179,17 +196,35 @@
     }
 
     /**
-     * Get date with format year-month-day quarter dayOfTheWeek
+     * Get date with format yyyy-mm-dd
      * @returns {string}
      */
     function getDateString() {
         const date = new Date(),
             year = date.getFullYear(),
             month = ('0' + (date.getMonth() + 1)).slice(-2),
-            day = date.getUTCDate(),
-            quarter = Math.floor((date.getMonth() + 3) / 3),
-            dayOfTheWeek = date.getDay();
-        return `${year}-${month}-${day} ${quarter}q ${dayOfTheWeek}d`;
+            day = ('0' + date.getUTCDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    }
+
+    /**
+     * Get current quarter
+     * @returns {string}
+     */
+    function getQuarterString() {
+        return Math.floor((new Date().getMonth() + 3) / 3);
+    }
+
+    /**
+     * Get current day of the week
+     */
+    function getDayOfTheWeekString() {
+        let dayOfTheWeek = new Date().getDay();
+        // Sunday should be 7th day of the week
+        if (dayOfTheWeek === 0) {
+            dayOfTheWeek = 7;
+        }
+        return dayOfTheWeek;
     }
 
     /**

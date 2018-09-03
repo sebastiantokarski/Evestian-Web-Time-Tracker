@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data = JSON.parse(storage['data']);
             let arr = [];
             for (let key in data) {
-                if ({}.hasOwnProperty.call(data, key) && data[key]) {
+                if ({}.hasOwnProperty.call(data, key) && data[key] && data[key].alltime) {
                     arr.push([key, data[key].alltime, data[key].favicon]);
                 }
             }
@@ -74,3 +74,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+class Data {
+    constructor(dataName) {
+        let self = this;
+        chrome.storage.local.get(dataName, (storage) => {
+            if (storage[dataName]) {
+                self.originalData = JSON.parse(storage[dataName]);
+                self.proceedDataProcessing(self);
+            } else {
+                throw(`${dataName} not found in storage`);
+            }
+        });
+    }
+
+    sortArray(array, index) {
+        return array.sort(function(a, b) {
+            return b[index] - a[index];
+        });
+    }
+
+    getDateString() {
+        const date = new Date(),
+            year = date.getFullYear(),
+            month = ('0' + (date.getMonth() + 1)).slice(-2),
+            day = ('0' + date.getUTCDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    }
+
+    getPagesVisitedToday(self) {
+        let pagesArray = [];
+        let data = self.originalData;
+        for (let key in data) {
+            if (data.hasOwnProperty(key) && data[key].days && data[key].days[self.getDateString()]) {
+                pagesArray.push([
+                    key,
+                    data[key].days[self.getDateString()],
+                    data[key].favicon
+                ]);
+            }
+        }
+        return pagesArray;
+    }
+
+    proceedDataProcessing(self) {
+        self.alltime = self.originalData.alltime;
+        self.pagesVisitedToday = self.getPagesVisitedToday(self);
+        self.pagesVisitedToday = self.sortArray(self.pagesVisitedToday, 1);
+        console.log(self);
+    }
+}
