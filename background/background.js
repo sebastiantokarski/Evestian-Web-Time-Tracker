@@ -1,15 +1,12 @@
 /* jshint esversion: 6 */
 /* global chrome */
 
-// @todo only in dev mode it can be global
-let data = {};
-
 (function () {
 
     /**
      * Load extension data from local storage chrome API
      */
-    function loadStorage() {
+    function loadDataFromStorage() {
         chrome.storage.local.get(null, storage => {
             if (storage[EXTENSION_DATA]) {
                 data = JSON.parse(storage[EXTENSION_DATA]);
@@ -225,7 +222,7 @@ let data = {};
 
     /**
      * Is current state active
-     * @param {string} state active, idle or locked
+     * @param {string} [state=currentState] active, idle or locked
      * @returns {boolean}
      */
     function isStateActive(state = currentState) {
@@ -244,14 +241,23 @@ let data = {};
         return BLACKLIST_PROTOCOL.indexOf(getFromUrl('protocol', url)) !== -1;
     }
 
+    /**
+     * Initialize all tasks, listeners, intervals etc.
+     */
+    function init() {
+        loadDataFromStorage();
+
+        executeListeners();
+
+        executeIntervals();
+    }
+
     // It can be active, idle or locked
     let currentState = chrome.idle.IdleState.ACTIVE;
 
-    loadStorage();
+    let data = {};
 
-    executeListeners();
-
-    executeIntervals();
+    init();
 
 }());
 
@@ -266,4 +272,10 @@ function g() {
 
 function c() {
     chrome.storage.local.clear();
+}
+
+function size() {
+    chrome.storage.local.getBytesInUse(null, function (e) {
+        console.log(e)
+    });
 }
