@@ -93,6 +93,10 @@ let data = {};
             };
         }
 
+        if (!data.alltime) {
+            data.alltime = 0;
+        }
+        data.alltime++;
         data[hostname].alltime++;
         if (!data[hostname].days[getDateString()]) {
             data[hostname].days[getDateString()] = 0;

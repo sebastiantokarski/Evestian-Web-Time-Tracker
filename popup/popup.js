@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let table = document.createElement('table');
         for (let i = 0; i < data.length; i++) {
             let tr = document.createElement('tr');
+            if (!data[i][2]) {
+                data[i][2] = chrome.runtime.getURL('assets/defaultFavicon16.png');
+            }
             tr.innerHTML = `<td>${i + 1}</td><td><img src="${data[i][2]}" height="16" width="16"></td></td><td>${data[i][0]}</td><td>${prepareTimeToShow(data[i][1])}</td>`;
             table.appendChild(tr);
         }
@@ -59,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data = JSON.parse(storage['data']);
             let arr = [];
             for (let key in data) {
-                if ({}.hasOwnProperty.call(data, key)) {
+                if ({}.hasOwnProperty.call(data, key) && data[key]) {
                     arr.push([key, data[key].alltime, data[key].favicon]);
                 }
             }
