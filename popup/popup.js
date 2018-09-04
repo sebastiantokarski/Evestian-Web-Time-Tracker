@@ -1,6 +1,10 @@
 /* jshint esversion: 6 */
 /* global chrome */
 
+chrome.runtime.sendMessage({event: 'openPopup'}, (response) => {
+    console.log(response);
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     function showResults(data) {
         let table = document.createElement('table');

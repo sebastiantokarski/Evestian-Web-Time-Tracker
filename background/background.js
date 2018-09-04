@@ -4,69 +4,42 @@
 (function () {
 
     /**
-     * Load extension data from local storage chrome API
+     * Receives and processes messages sent by chrome extension API e.g. other files
+     * @param {Object} request
+     * @param {Object} sender
+     * @param {function} sendResponse
+     * @returns {boolean}
      */
-    function loadDataFromStorage() {
-        chrome.storage.local.get(null, storage => {
-            if (storage[EXTENSION_DATA]) {
-                data = JSON.parse(storage[EXTENSION_DATA]);
-            } else {
-                data = {};
-            }
-            debugLog('Data loaded:', data);
-        });
+    function onMessageCallback (request, sender, sendResponse) {
+        try {
+            request.value = JSON.parse(request.value);
+        } catch (ex) {}
+        debugLog('New message:',
+            '\nDetails:', request,
+            '\nFrom:', sender);
+        switch (request.event) {
+            case 'openPopup':
+                updateAllStorageData();
+                return true;
+
+            default:
+                throw(`Message: ${request.event} not found`);
+
+        }
     }
 
     /**
-     * Execute all extension listeners
+     * Add 1 to current number in a given property
+     * @param {Object} obj
+     * @param {string} property
+     * @returns {Object} obj
      */
-    function executeListeners() {
-        /**
-         * Save data to storage if someone close browser window
-         */
-        chrome.windows.onRemoved.addListener(() => {
-            chrome.storage.local.set({data: JSON.stringify(data)}, function () {
-                debugLog('Data saved in storage', data);
-            });
-        });
-
-        /**
-         * Listens whether the current state of the user has changed
-         */
-        chrome.idle.onStateChanged.addListener(function (state) {
-            currentState = state;
-            debugLog('onStateChanged:', currentState);
-        });
-    }
-
-    /**
-     * Execute all extension intervals
-     */
-    function executeIntervals() {
-        let updateDataInterval = setInterval(() => {
-            chrome.windows.getLastFocused({
-                populate: true
-            }, (window) => {
-                const tab = getActiveTab(window.tabs);
-                const hostname = getFromUrl('hostname', tab.url);
-
-                if (tab && isWindowActive(window) && !isProtocolOnBlacklist(tab.url) && (isStateActive() || isSoundFromTab(tab))) {
-                    debugLog('Active tab:', hostname, window, tab);
-
-                    updateStorage(tab, hostname);
-
-                    if (DISPLAY_BADGE) {
-                        updateBadge(tab, hostname);
-                    }
-                }
-            });
-        }, INTERVAL_UPDATE_S);
-
-        let updateStorageInterval = setInterval(() => {
-            chrome.storage.local.set({data: JSON.stringify(data)}, () => {
-                debugLog('Data saved in storage', data);
-            });
-        }, INTERVAL_UPDATE_MIN);
+    function increment(obj, property) {
+        if (!obj[property]) {
+            obj[property] = 0;
+        }
+        obj[property] += 1;
+        return obj[property];
     }
 
     /**
@@ -76,20 +49,6 @@
      * @returns {undefined}
      */
     function updateStorage(tab, hostname) {
-
-        /**
-         * Add 1 to current number
-         * @param {Object} obj
-         * @param {string} property
-         * @returns {Object} obj
-         */
-        function increment(obj, property) {
-            if (!obj[property]) {
-                obj[property] = 0;
-            }
-            obj[property] += 1;
-            return obj[property];
-        }
 
         if (!data[hostname]) {
             data[hostname] = {
@@ -274,6 +233,83 @@
      */
     function isProtocolOnBlacklist(url) {
         return BLACKLIST_PROTOCOL.indexOf(getFromUrl('protocol', url)) !== -1;
+    }
+
+    /**
+     * Updates all data in chrome storage local API by overwriting
+     */
+    function updateAllStorageData() {
+        chrome.storage.local.set({data: JSON.stringify(data)}, () => {
+            debugLog('Data saved in storage', data);
+        });
+    }
+
+    /**
+     * Load extension data from local storage chrome API
+     */
+    function loadDataFromStorage() {
+        chrome.storage.local.get(null, storage => {
+            if (storage[EXTENSION_DATA]) {
+                data = JSON.parse(storage[EXTENSION_DATA]);
+            } else {
+                data = {};
+            }
+            debugLog('Data loaded:', data);
+        });
+    }
+
+    /**
+     * Execute all extension listeners
+     */
+    function executeListeners() {
+        /**
+         * Save data to storage if someone close browser window
+         */
+        chrome.windows.onRemoved.addListener(() => {
+            chrome.storage.local.set({data: JSON.stringify(data)}, function () {
+                debugLog('Data saved in storage', data);
+            });
+        });
+
+        /**
+         * Listens whether the current state of the user has changed
+         */
+        chrome.idle.onStateChanged.addListener(function (state) {
+            currentState = state;
+            debugLog('onStateChanged:', currentState);
+        });
+
+
+        /**
+         * Listens to all messages sent from chrome extension API e.g. from ../popup/popup.html
+         */
+        chrome.runtime.onMessage.addListener(onMessageCallback);
+    }
+
+    /**
+     * Execute all extension intervals
+     */
+    function executeIntervals() {
+        let updateDataInterval = setInterval(() => {
+            chrome.windows.getLastFocused({
+                populate: true
+            }, (window) => {
+                const tab = getActiveTab(window.tabs);
+                const hostname = getFromUrl('hostname', tab.url);
+
+                if (tab && isWindowActive(window) && !isProtocolOnBlacklist(tab.url) && (isStateActive() || isSoundFromTab(tab))) {
+                    debugLog('Active tab:', hostname, window, tab);
+
+                    updateStorage(tab, hostname);
+
+                    if (DISPLAY_BADGE) {
+                        updateBadge(tab, hostname);
+                    }
+                }
+            });
+        }, INTERVAL_UPDATE_S);
+
+        let updateStorageInterval = setInterval(updateAllStorageData, INTERVAL_UPDATE_MIN);
     }
 
     /**
