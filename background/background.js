@@ -3,115 +3,10 @@
 
 (function () {
 
-    /**
-     * Receives and processes messages sent by chrome extension API e.g. other files
-     * @param {Object} request
-     * @param {Object} sender
-     * @param {function} sendResponse
-     * @returns {boolean}
-     */
-    function onMessageCallback (request, sender, sendResponse) {
-        try {
-            request.value = JSON.parse(request.value);
-        } catch (ex) {}
-        debugLog('New message:',
-            '\nDetails:', request,
-            '\nFrom:', sender);
-        switch (request.event) {
-            case 'openPopup':
-                updateAllStorageData();
-                return true;
+    // It can be active, idle or locked
+    let currentState = chrome.idle.IdleState.ACTIVE;
 
-            default:
-                throw(`Message: ${request.event} not found`);
-
-        }
-    }
-
-    /**
-     * Add 1 to current number in a given property
-     * @param {Object} obj
-     * @param {string} property
-     * @returns {Object} obj
-     */
-    function increment(obj, property) {
-        if (!obj[property]) {
-            obj[property] = 0;
-        }
-        obj[property] += 1;
-        return obj[property];
-    }
-
-    /**
-     * Update extension storage with data
-     * @param {Object} tab
-     * @param {string} hostname
-     * @returns {undefined}
-     */
-    function updateStorage(tab, hostname) {
-
-        if (!data[hostname]) {
-            data[hostname] = {
-                alltime: 0,
-                quarters: {
-                    [getQuarterString()]: 0
-                },
-                months: {
-                    [getMonthString()]: 0
-                },
-                daysOfTheWeek: {
-                    [getDayOfTheWeekString()]: 0
-                },
-                days: {
-                    [getDateString()]: 0
-                },
-                times: {
-                    [getTimeString()]: 0
-                },
-                // Tab may not have favicon
-                favicon: null
-            };
-        }
-
-        data[hostname].alltime++;
-
-        increment(data, 'alltime');
-
-        increment(data[hostname].quarters, getQuarterString());
-        increment(data[hostname].months, getMonthString());
-        increment(data[hostname].daysOfTheWeek, getDayOfTheWeekString());
-        increment(data[hostname].days, getDateString());
-        increment(data[hostname].times, getTimeString());
-
-        data[hostname].favicon = tab.favIconUrl;
-    }
-
-    /**
-     * Update badge on the extension icon
-     * @param {Object} tab
-     * @param {string} hostname
-     */
-    function updateBadge(tab, hostname) {
-        let tabTime = 0;
-
-        let timeInSeconds = data[hostname].days[getDateString()];
-        if (timeInSeconds < 60) {
-            tabTime = timeInSeconds + 's';
-        } else if (timeInSeconds < 60 * 60) {
-            tabTime = Math.floor(timeInSeconds / 60) + 'm';
-        } else {
-            tabTime = Math.floor(timeInSeconds / 60 / 60) + 'h';
-        }
-
-        chrome.browserAction.setBadgeText({
-            tabId: tab.id,
-            text: tabTime
-        });
-
-        chrome.browserAction.setBadgeBackgroundColor({
-            color: 'purple'
-        });
-    }
+    let data = {};
 
     /**
      * Get some properties from url such as protocol, pathname etc.
@@ -123,22 +18,6 @@
         let a = document.createElement('a');
         a.href = url;
         return a[property];
-    }
-
-    /**
-     * Log to console if it is development mode
-     * @param {*}
-     * @return {undefined}
-     */
-    function debugLog() {
-        if (DEVELOPMENT_MODE) {
-            let fnArguments = [].slice.call(arguments);
-            if (typeof fnArguments[0] === 'string') {
-                fnArguments[0] = '%c' + fnArguments[0];
-                fnArguments.splice(1, 0, 'color: #1E90FF');
-            }
-            console.log.apply(console, [].slice.call(fnArguments));
-        }
     }
 
     /**
@@ -248,6 +127,107 @@
     }
 
     /**
+     * Log to console if it is development mode
+     * @param {*}
+     * @return {undefined}
+     */
+    function debugLog() {
+        if (DEVELOPMENT_MODE) {
+            let fnArguments = [].slice.call(arguments);
+            if (typeof fnArguments[0] === 'string') {
+                fnArguments[0] = '%c' + fnArguments[0];
+                fnArguments.splice(1, 0, 'color: #1E90FF');
+            }
+            console.log.apply(console, [].slice.call(fnArguments));
+        }
+    }
+
+    /**
+     * Add 1 to current number in a given property
+     * @param {Object} obj
+     * @param {string} property
+     * @returns {Object} obj
+     */
+    function increment(obj, property) {
+        if (!obj[property]) {
+            obj[property] = 0;
+        }
+        obj[property] += 1;
+        return obj[property];
+    }
+
+    /**
+     * Update extension storage with data
+     * @param {Object} tab
+     * @param {string} hostname
+     * @returns {undefined}
+     */
+    function updateStorage(tab, hostname) {
+
+        if (!data[hostname]) {
+            data[hostname] = {
+                alltime: 0,
+                quarters: {
+                    [getQuarterString()]: 0
+                },
+                months: {
+                    [getMonthString()]: 0
+                },
+                daysOfTheWeek: {
+                    [getDayOfTheWeekString()]: 0
+                },
+                days: {
+                    [getDateString()]: 0
+                },
+                times: {
+                    [getTimeString()]: 0
+                },
+                // Tab may not have favicon
+                favicon: null
+            };
+        }
+
+        data[hostname].alltime++;
+
+        increment(data, 'alltime');
+
+        increment(data[hostname].quarters, getQuarterString());
+        increment(data[hostname].months, getMonthString());
+        increment(data[hostname].daysOfTheWeek, getDayOfTheWeekString());
+        increment(data[hostname].days, getDateString());
+        increment(data[hostname].times, getTimeString());
+
+        data[hostname].favicon = tab.favIconUrl;
+    }
+
+    /**
+     * Update badge on the extension icon
+     * @param {Object} tab
+     * @param {string} hostname
+     */
+    function updateBadge(tab, hostname) {
+        let tabTime = 0;
+
+        let timeInSeconds = data[hostname].days[getDateString()];
+        if (timeInSeconds < 60) {
+            tabTime = timeInSeconds + 's';
+        } else if (timeInSeconds < 60 * 60) {
+            tabTime = Math.floor(timeInSeconds / 60) + 'm';
+        } else {
+            tabTime = Math.floor(timeInSeconds / 60 / 60) + 'h';
+        }
+
+        chrome.browserAction.setBadgeText({
+            tabId: tab.id,
+            text: tabTime
+        });
+
+        chrome.browserAction.setBadgeBackgroundColor({
+            color: 'purple'
+        });
+    }
+
+    /**
      * Updates all data in chrome storage local API by overwriting
      */
     function updateAllStorageData() {
@@ -268,6 +248,30 @@
             }
             debugLog('Data loaded:', data);
         });
+    }
+
+    /**
+     * Receives and processes messages sent by chrome extension API e.g. other files
+     * @param {Object} request
+     * @param {Object} sender
+     * @param {function} sendResponse
+     * @returns {boolean}
+     */
+    function onMessageCallback (request, sender, sendResponse) {
+
+        debugLog('New message:',
+            '\nDetails:', request,
+            '\nFrom:', sender);
+
+        switch (request.event) {
+            case 'openPopup':
+                updateAllStorageData();
+                return true;
+
+            default:
+                throw(`Message: ${request.event} not found`);
+
+        }
     }
 
     /**
@@ -334,11 +338,6 @@
 
         executeIntervals();
     }
-
-    // It can be active, idle or locked
-    let currentState = chrome.idle.IdleState.ACTIVE;
-
-    let data = {};
 
     init();
 
