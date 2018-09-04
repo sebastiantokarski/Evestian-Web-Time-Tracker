@@ -140,7 +140,7 @@ BLACKLIST_PROTOCOL*/
                 fnArguments[0] = '%c' + fnArguments[0];
                 fnArguments.splice(1, 0, 'color: #1E90FF');
             }
-            console.log.apply(console, [].slice.call(fnArguments));
+            console.log.apply(console, fnArguments);
         }
     }
 
@@ -268,6 +268,7 @@ BLACKLIST_PROTOCOL*/
         switch (request.event) {
             case 'openPopup':
                 updateAllStorageData();
+                sendResponse(true);
                 return true;
 
             default:

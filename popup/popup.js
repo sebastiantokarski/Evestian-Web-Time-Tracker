@@ -4,11 +4,17 @@ COUNT_ONLY_ACTIVE_STATE, INTERVAL_UPDATE_S, INTERVAL_UPDATE_MIN,
 BLACKLIST_PROTOCOL*/
 
 chrome.runtime.sendMessage({event: 'openPopup'}, (response) => {
-    console.log(response);
+    if (response) {
+        if (document.readyState !== 'loading') {
+            show();
+        } else {
+            document.addEventListener('DOMContentLoaded', show);
+        }
+    }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    
+function show() {
+
     /**
      * @todo! This function is so bad! :D
      */
@@ -73,13 +79,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     arr.push([key, data[key].alltime, data[key].favicon]);
                 }
             }
-            arr.sort(function(a, b) {
+            arr.sort(function (a, b) {
                 return b[1] - a[1];
             });
             showResults(arr);
         }
     });
-});
+}
 
 class Data {
     constructor(dataName) {
