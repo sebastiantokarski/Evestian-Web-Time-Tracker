@@ -1,24 +1,14 @@
 /* jshint esversion: 6 */
-/* global chrome */
+/* global chrome, DEVELOPMENT_MODE, EXTENSION_DATA, DISPLAY_BADGE,
+COUNT_ONLY_ACTIVE_STATE, INTERVAL_UPDATE_S, INTERVAL_UPDATE_MIN,
+BLACKLIST_PROTOCOL*/
 
 chrome.runtime.sendMessage({event: 'openPopup'}, (response) => {
     console.log(response);
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    function showResults(data) {
-        let table = document.createElement('table');
-        for (let i = 0; i < data.length; i++) {
-            let tr = document.createElement('tr');
-            if (!data[i][2]) {
-                data[i][2] = chrome.runtime.getURL('assets/defaultFavicon16.png');
-            }
-            tr.innerHTML = `<td>${i + 1}</td><td><img src="${data[i][2]}" height="16" width="16"></td></td><td>${data[i][0]}</td><td>${prepareTimeToShow(data[i][1])}</td>`;
-            table.appendChild(tr);
-        }
-        document.body.insertBefore(table, document.querySelector('.flaticon-desc'));
-    }
-
+    
     /**
      * @todo! This function is so bad! :D
      */
@@ -57,6 +47,19 @@ document.addEventListener('DOMContentLoaded', () => {
         time.seconds = `<strong>${('0' + time.seconds).slice(-2)}</strong>`;
 
         return `${time.days}d${time.hours}h${time.minutes}m${time.seconds}s`;
+    }
+
+    function showResults(data) {
+        let table = document.createElement('table');
+        for (let i = 0; i < data.length; i++) {
+            let tr = document.createElement('tr');
+            if (!data[i][2]) {
+                data[i][2] = chrome.runtime.getURL('assets/defaultFavicon16.png');
+            }
+            tr.innerHTML = `<td>${i + 1}</td><td><img src="${data[i][2]}" height="16" width="16"></td></td><td>${data[i][0]}</td><td>${prepareTimeToShow(data[i][1])}</td>`;
+            table.appendChild(tr);
+        }
+        document.body.insertBefore(table, document.querySelector('.flaticon-desc'));
     }
 
 

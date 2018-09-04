@@ -1,5 +1,7 @@
 /* jshint esversion: 6 */
-/* global chrome */
+/* global chrome, DEVELOPMENT_MODE, EXTENSION_DATA, DISPLAY_BADGE,
+COUNT_ONLY_ACTIVE_STATE, INTERVAL_UPDATE_S, INTERVAL_UPDATE_MIN,
+BLACKLIST_PROTOCOL*/
 
 (function () {
 
@@ -240,7 +242,7 @@
      * Load extension data from local storage chrome API
      */
     function loadDataFromStorage() {
-        chrome.storage.local.get(null, storage => {
+        chrome.storage.local.get(null, (storage) => {
             if (storage[EXTENSION_DATA]) {
                 data = JSON.parse(storage[EXTENSION_DATA]);
             } else {
@@ -358,6 +360,6 @@ function c() {
 
 function size() {
     chrome.storage.local.getBytesInUse(null, function (e) {
-        console.log(e)
+        console.log(e);
     });
 }
