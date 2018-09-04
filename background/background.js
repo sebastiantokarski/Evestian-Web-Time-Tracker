@@ -53,16 +53,19 @@
         if (!data[hostname]) {
             data[hostname] = {
                 alltime: 0,
-                dayOfTheWeek: {
-                    [getDayOfTheWeekString()]: 0
-                },
-                quarter: {
+                quarters: {
                     [getQuarterString()]: 0
+                },
+                months: {
+                    [getMonthString()]: 0
+                },
+                daysOfTheWeek: {
+                    [getDayOfTheWeekString()]: 0
                 },
                 days: {
                     [getDateString()]: 0
                 },
-                time: {
+                times: {
                     [getTimeString()]: 0
                 },
                 // Tab may not have favicon
@@ -74,10 +77,11 @@
 
         increment(data, 'alltime');
 
-        increment(data[hostname].quarter, getQuarterString());
-        increment(data[hostname].dayOfTheWeek, getDayOfTheWeekString());
+        increment(data[hostname].quarters, getQuarterString());
+        increment(data[hostname].months, getMonthString());
+        increment(data[hostname].daysOfTheWeek, getDayOfTheWeekString());
         increment(data[hostname].days, getDateString());
-        increment(data[hostname].time, getTimeString());
+        increment(data[hostname].times, getTimeString());
 
         data[hostname].favicon = tab.favIconUrl;
     }
@@ -171,7 +175,15 @@
      * @returns {string}
      */
     function getQuarterString() {
-        return Math.floor((new Date().getMonth() + 3) / 3);
+        return Math.floor((new Date().getMonth() + 3) / 3).toString();
+    }
+
+    /**
+     * Get current month
+     * @returns {string}
+     */
+    function getMonthString() {
+        return (new Date().getMonth() + 1).toString();
     }
 
     /**
