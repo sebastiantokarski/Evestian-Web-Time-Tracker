@@ -1,5 +1,5 @@
 {
-    "name": "Ewestian",
+    "name": "Evestian Web Time Tracker",
     "short_name": "__MSG_short_name__",
     "description": "__MSG_description__",
     "author": "Ewelina Suska, Sebastian Tokarski",
@@ -45,7 +45,7 @@
             "48": "assets/icon48.png",
             "128": "assets/icon128.png" 
         },
-        "default_title": "Ewestian",
+        "default_title": "Evestian Web Time Tracker",
         "default_popup": "popup/popup.html"
     },
     "options_ui": {
