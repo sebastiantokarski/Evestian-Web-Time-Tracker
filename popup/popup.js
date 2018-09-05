@@ -3,6 +3,7 @@
 COUNT_ONLY_ACTIVE_STATE, INTERVAL_UPDATE_S, INTERVAL_UPDATE_MIN,
 BLACKLIST_PROTOCOL*/
 
+
 chrome.runtime.sendMessage({event: 'openPopup'}, (response) => {
     if (response) {
         if (document.readyState !== 'loading') {
@@ -134,5 +135,33 @@ class Data {
         self.pagesVisitedToday = self.getPagesVisitedToday(self);
         self.pagesVisitedToday = self.sortArray(self.pagesVisitedToday, 1);
         console.log(self);
+        new Chart(document.getElementById("myChart"), {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: (() => {
+                        let pagesVisitedToday = self.pagesVisitedToday;
+                        let arr = [];
+                        for (let i = 0; i < pagesVisitedToday.length; i++) {
+                            arr.push(pagesVisitedToday[i][1]);
+                        }
+                        return arr;
+                    })(),
+                    backgroundColor: ['pink','blue','silver','black']
+                }],
+
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+                labels: (() => {
+                        let pagesVisitedToday = self.pagesVisitedToday;
+                        let arr = [];
+                        for (let i = 0; i < pagesVisitedToday.length; i++) {
+                            arr.push(pagesVisitedToday[i][0]);
+                        }
+                        return arr;
+                    })(),
+            }
+        });
     }
 }
+
+let a = new Data('data');

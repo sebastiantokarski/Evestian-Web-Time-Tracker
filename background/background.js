@@ -213,7 +213,7 @@ BLACKLIST_PROTOCOL*/
         let timeInSeconds = data[hostname].days[getDateString()];
         if (timeInSeconds < 60) {
             tabTime = timeInSeconds + 's';
-        } else if (timeInSeconds < 60 * 60) {
+        } else if (timeInSeconds < 60 * 100) {
             tabTime = Math.floor(timeInSeconds / 60) + 'm';
         } else {
             tabTime = Math.floor(timeInSeconds / 60 / 60) + 'h';
@@ -225,7 +225,7 @@ BLACKLIST_PROTOCOL*/
         });
 
         chrome.browserAction.setBadgeBackgroundColor({
-            color: 'purple'
+            color: 'dark blue'
         });
     }
 
