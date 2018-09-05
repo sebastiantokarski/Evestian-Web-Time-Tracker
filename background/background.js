@@ -47,7 +47,7 @@ BLACKLIST_PROTOCOL*/
         const date = new Date(),
             year = date.getFullYear(),
             month = ('0' + (date.getMonth() + 1)).slice(-2),
-            day = ('0' + date.getUTCDate()).slice(-2);
+            day = ('0' + date.getDate()).slice(-2);
         return `${year}-${month}-${day}`;
     }
 
