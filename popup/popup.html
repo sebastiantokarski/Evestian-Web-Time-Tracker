@@ -5,6 +5,7 @@
     <title>Title</title>
 </head>
 <body>
+    <canvas id="myChart" width="200" height="200"></canvas>
     <!-- In the future this element should be in a different place (extension page or options page) -->
     <div class="flaticon-desc">
         Icons made by
@@ -20,10 +21,7 @@
             CC 3.0 BY
         </a>
     </div>
-    
-    <script src="../config.js"></script>
-    <script src="../Chart.js"></script>
-    <canvas id="myChart" width="200" height="200"></canvas>
-    <script src="./popup.js"></script>
+
+    <script data-main="popup" src="../node_modules/requirejs/require.js"></script>
 </body>
 </html>

@@ -3,160 +3,12 @@
 COUNT_ONLY_ACTIVE_STATE, INTERVAL_UPDATE_S, INTERVAL_UPDATE_MIN,
 BLACKLIST_PROTOCOL*/
 
-(function () {
+requirejs(['../js/config.js', '../js/utils.js'], function(config, utils) {
 
     // It can be active, idle or locked
     let currentState = chrome.idle.IdleState.ACTIVE;
 
     let data = {};
-
-    /**
-     * Get some properties from url such as protocol, pathname etc.
-     * @param {string} property
-     * @param {string} url
-     * @returns {string}
-     */
-    function getFromUrl(property, url) {
-        let a = document.createElement('a');
-        a.href = url;
-        return a[property];
-    }
-
-    /**
-     * Get active and focused tab
-     * @param {Object[]} tabs
-     * @returns {Object|boolean} tab object or false
-     */
-    function getActiveTab(tabs) {
-        let i = 0;
-        while (i < tabs.length && !tabs[i].active) {
-            i++;
-        }
-
-        if (tabs[i]) {
-            return tabs[i];
-        }
-        return false;
-    }
-
-    /**
-     * Get date with format yyyy-mm-dd
-     * @returns {string}
-     */
-    function getDateString() {
-        const date = new Date(),
-            year = date.getFullYear(),
-            month = ('0' + (date.getMonth() + 1)).slice(-2),
-            day = ('0' + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    }
-
-    /**
-     * Get current quarter
-     * @returns {string}
-     */
-    function getQuarterString() {
-        return Math.floor((new Date().getMonth() + 3) / 3).toString();
-    }
-
-    /**
-     * Get current month
-     * @returns {string}
-     */
-    function getMonthString() {
-        return (new Date().getMonth() + 1).toString();
-    }
-
-    /**
-     * Get current day of the week
-     */
-    function getDayOfTheWeekString() {
-        let dayOfTheWeek = new Date().getDay();
-        // Sunday should be 7th day of the week
-        if (dayOfTheWeek === 0) {
-            dayOfTheWeek = 7;
-        }
-        return dayOfTheWeek;
-    }
-
-    /**
-     * Get current time with format hh:mm
-     * @returns {string}
-     */
-    function getTimeString() {
-        const date = new Date(),
-            hour = ('0' + date.getHours()).slice(-2),
-            minute = ('0' + date.getMinutes()).slice(-2);
-        return `${hour}:${minute}`;
-    }
-
-    /**
-     * Check if chrome window is active and focused
-     * @returns {boolean}
-     */
-    function isWindowActive(window) {
-        return window && window.focused;
-    }
-
-    /**
-     * Is there any sound from the tab (video, player, music)
-     * @param {Object} tab
-     * @returns {boolean}
-     */
-    function isSoundFromTab(tab) {
-        return tab && tab.audible;
-    }
-
-    /**
-     * Is current state active
-     * @param {string} [state=currentState] active, idle or locked
-     * @returns {boolean}
-     */
-    function isStateActive(state = currentState) {
-        if (COUNT_ONLY_ACTIVE_STATE) {
-            return chrome.idle.IdleState.ACTIVE === state;
-        }
-        return true;
-    }
-
-    /**
-     * Check if protocol from url is blacklisted
-     * @param {string} url
-     * @returns {boolean}
-     */
-    function isProtocolOnBlacklist(url) {
-        return BLACKLIST_PROTOCOL.indexOf(getFromUrl('protocol', url)) !== -1;
-    }
-
-    /**
-     * Log to console if it is development mode
-     * @param {*}
-     * @return {undefined}
-     */
-    function debugLog() {
-        if (DEVELOPMENT_MODE) {
-            let fnArguments = [].slice.call(arguments);
-            if (typeof fnArguments[0] === 'string') {
-                fnArguments[0] = '%c' + fnArguments[0];
-                fnArguments.splice(1, 0, 'color: #1E90FF');
-            }
-            console.log.apply(console, fnArguments);
-        }
-    }
-
-    /**
-     * Add 1 to current number in a given property
-     * @param {Object} obj
-     * @param {string} property
-     * @returns {Object} obj
-     */
-    function increment(obj, property) {
-        if (!obj[property]) {
-            obj[property] = 0;
-        }
-        obj[property] += 1;
-        return obj[property];
-    }
 
     /**
      * Update extension storage with data
@@ -170,19 +22,19 @@ BLACKLIST_PROTOCOL*/
             data[hostname] = {
                 alltime: 0,
                 quarters: {
-                    [getQuarterString()]: 0
+                    [utils.getQuarterString()]: 0
                 },
                 months: {
-                    [getMonthString()]: 0
+                    [utils.getMonthString()]: 0
                 },
                 daysOfTheWeek: {
-                    [getDayOfTheWeekString()]: 0
+                    [utils.getDayOfTheWeekString()]: 0
                 },
                 days: {
-                    [getDateString()]: 0
+                    [utils.getDateString()]: 0
                 },
                 times: {
-                    [getTimeString()]: 0
+                    [utils.getTimeString()]: 0
                 },
                 // Tab may not have favicon
                 favicon: null
@@ -191,13 +43,13 @@ BLACKLIST_PROTOCOL*/
 
         data[hostname].alltime++;
 
-        increment(data, 'alltime');
+        utils.increment(data, 'alltime');
 
-        increment(data[hostname].quarters, getQuarterString());
-        increment(data[hostname].months, getMonthString());
-        increment(data[hostname].daysOfTheWeek, getDayOfTheWeekString());
-        increment(data[hostname].days, getDateString());
-        increment(data[hostname].times, getTimeString());
+        utils.increment(data[hostname].quarters, utils.getQuarterString());
+        utils.increment(data[hostname].months, utils.getMonthString());
+        utils.increment(data[hostname].daysOfTheWeek, utils.getDayOfTheWeekString());
+        utils.increment(data[hostname].days, utils.getDateString());
+        utils.increment(data[hostname].times, utils.getTimeString());
 
         data[hostname].favicon = tab.favIconUrl;
     }
@@ -210,7 +62,7 @@ BLACKLIST_PROTOCOL*/
     function updateBadge(tab, hostname) {
         let tabTime = 0;
 
-        let timeInSeconds = data[hostname].days[getDateString()];
+        let timeInSeconds = data[hostname].days[utils.getDateString()];
         if (timeInSeconds < 60) {
             tabTime = timeInSeconds + 's';
         } else if (timeInSeconds < 60 * 100) {
@@ -225,7 +77,7 @@ BLACKLIST_PROTOCOL*/
         });
 
         chrome.browserAction.setBadgeBackgroundColor({
-            color: 'dark blue'
+            color: 'purple'
         });
     }
 
@@ -234,7 +86,7 @@ BLACKLIST_PROTOCOL*/
      */
     function updateAllStorageData() {
         chrome.storage.local.set({data: JSON.stringify(data)}, () => {
-            debugLog('Data saved in storage', data);
+            utils.debugLog('Data saved in storage', data);
         });
     }
 
@@ -243,12 +95,12 @@ BLACKLIST_PROTOCOL*/
      */
     function loadDataFromStorage() {
         chrome.storage.local.get(null, (storage) => {
-            if (storage[EXTENSION_DATA]) {
-                data = JSON.parse(storage[EXTENSION_DATA]);
+            if (storage[config.EXTENSION_DATA]) {
+                data = JSON.parse(storage[config.EXTENSION_DATA]);
             } else {
                 data = {};
             }
-            debugLog('Data loaded:', data);
+            utils.debugLog('Data loaded:', data);
         });
     }
 
@@ -261,7 +113,7 @@ BLACKLIST_PROTOCOL*/
      */
     function onMessageCallback (request, sender, sendResponse) {
 
-        debugLog('New message:',
+        utils.debugLog('New message:',
             '\nDetails:', request,
             '\nFrom:', sender);
 
@@ -285,17 +137,17 @@ BLACKLIST_PROTOCOL*/
          * Save data to storage if someone close browser window
          */
         chrome.windows.onRemoved.addListener(() => {
-            chrome.storage.local.set({data: JSON.stringify(data)}, function () {
-                debugLog('Data saved in storage', data);
+            chrome.storage.local.set({data: JSON.stringify(data)}, () => {
+                utils.debugLog('Data saved in storage', data);
             });
         });
 
         /**
          * Listens whether the current state of the user has changed
          */
-        chrome.idle.onStateChanged.addListener(function (state) {
+        chrome.idle.onStateChanged.addListener((state) => {
             currentState = state;
-            debugLog('onStateChanged:', currentState);
+            utils.debugLog('onStateChanged:', currentState);
         });
 
 
@@ -313,22 +165,23 @@ BLACKLIST_PROTOCOL*/
             chrome.windows.getLastFocused({
                 populate: true
             }, (window) => {
-                const tab = getActiveTab(window.tabs);
-                const hostname = getFromUrl('hostname', tab.url);
+                const tab = utils.getActiveTab(window.tabs);
+                const hostname = utils.getFromUrl('hostname', tab.url);
 
-                if (tab && isWindowActive(window) && !isProtocolOnBlacklist(tab.url) && (isStateActive() || isSoundFromTab(tab))) {
-                    debugLog('Active tab:', hostname, window, tab);
+                if (tab && utils.isWindowActive(window) && !utils.isProtocolOnBlacklist(tab.url)
+                    && (utils.isStateActive(currentState) || utils.isSoundFromTab(tab))) {
+                    utils.debugLog('Active tab:', hostname, window, tab);
 
                     updateStorage(tab, hostname);
 
-                    if (DISPLAY_BADGE) {
+                    if (config.DISPLAY_BADGE) {
                         updateBadge(tab, hostname);
                     }
                 }
             });
-        }, INTERVAL_UPDATE_S);
+        }, config.INTERVAL_UPDATE_S);
 
-        let updateStorageInterval = setInterval(updateAllStorageData, INTERVAL_UPDATE_MIN);
+        let updateStorageInterval = setInterval(updateAllStorageData, config.INTERVAL_UPDATE_MIN);
     }
 
     /**
@@ -344,7 +197,7 @@ BLACKLIST_PROTOCOL*/
 
     init();
 
-}());
+});
 
 
 /* Auxilliary functions */

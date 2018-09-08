@@ -27,10 +27,7 @@
         }
     ],*/
     "background": {
-        "scripts": [
-            "config.js",
-            "background/background.js"
-        ]
+        "page": "background/background.html"
     },
     "permissions": [
         "tabs",
