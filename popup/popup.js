@@ -71,9 +71,9 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
         }
 
 
-        chrome.storage.local.get(EXTENSION_DATA, (storage) => {
+        chrome.storage.local.get(config.EXTENSION_DATA, (storage) => {
             let data = null;
-            if (storage[EXTENSION_DATA]) {
+            if (storage[config.EXTENSION_DATA]) {
                 data = JSON.parse(storage['data']);
                 let arr = [];
                 for (let key in data) {
