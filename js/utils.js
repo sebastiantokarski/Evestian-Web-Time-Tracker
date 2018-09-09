@@ -58,6 +58,32 @@ define(['./config.js'], (config) => {
         },
 
         /**
+         * Get yesterday date
+         * @returns {number}
+         */
+        getLastMonth() {
+            let currentMonth = parseInt(this.getMonthString(), 10);
+            let lastMonth = currentMonth - 1;
+            if (lastMonth === 0) {
+                return 12;
+            }
+            return lastMonth;
+        },
+
+        /**
+         * Get last quarter
+         * @returns {number}
+         */
+        getLastQuarter: function () {
+            let currentQuarter = parseInt(this.getQuarterString(), 10);
+            let lastQuarter = currentQuarter - 1;
+            if (lastQuarter === 0) {
+                return 4;
+            }
+            return lastQuarter;
+        },
+
+        /**
          * Get current quarter
          * @returns {string}
          */

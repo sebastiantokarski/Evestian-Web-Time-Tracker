@@ -58,17 +58,6 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
             document.body.insertBefore(table, document.querySelector('.flaticon-desc'));
         }
 
-        chrome.runtime.sendMessage({event: 'openPopup'}, (response) => {
-            if (response) {
-                if (document.readyState !== 'loading') {
-                    show();
-                } else {
-                    document.addEventListener('DOMContentLoaded', show);
-                }
-            }
-        });
-
-
         chrome.storage.local.get(config.EXTENSION_DATA, (storage) => {
             let data = null;
             if (storage[config.EXTENSION_DATA]) {
@@ -86,6 +75,17 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
             }
         });
     }
+
+    chrome.runtime.sendMessage({event: 'openPopup'}, (response) => {
+        if (response) {
+            if (document.readyState !== 'loading') {
+                show();
+            } else {
+                document.addEventListener('DOMContentLoaded', show);
+            }
+        }
+    });
+
 
     class Data {
         constructor(dataName) {
@@ -125,7 +125,7 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
                 }
             }
             return pagesArray;
-        };
+        }
 
         proceedDataProcessing() {
             this.alltime = this.originalData.alltime;
@@ -139,8 +139,14 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
             this.pagesVisitedThisMonth = this.getPagesVisitedInGivenPeriod('months', utils.getMonthString());
             this.pagesVisitedThisMonth = this.sortDescending(this.pagesVisitedThisMonth, 1);
 
+            this.pagesVisitedLastMonth = this.getPagesVisitedInGivenPeriod('days', utils.getLastMonth());
+            this.pagesVisitedLastMonth = this.sortDescending(this.pagesVisitedLastMonth, 1);
+
             this.pagesVisitedThisQuarter = this.getPagesVisitedInGivenPeriod('quarters', utils.getQuarterString());
             this.pagesVisitedThisQuarter = this.sortDescending(this.pagesVisitedThisQuarter, 1);
+
+            this.pagesVisitedLastQuarter = this.getPagesVisitedInGivenPeriod('quarters', utils.getLastQuarter());
+            this.pagesVisitedLastQuarter = this.sortDescending(this.pagesVisitedLastQuarter, 1);
 
             console.log(this);
 
