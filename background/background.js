@@ -1,7 +1,5 @@
 /* jshint esversion: 6 */
-/* global chrome, DEVELOPMENT_MODE, EXTENSION_DATA, DISPLAY_BADGE,
-COUNT_ONLY_ACTIVE_STATE, INTERVAL_UPDATE_S, INTERVAL_UPDATE_MIN,
-BLACKLIST_PROTOCOL*/
+/* global chrome, requirejs */
 
 requirejs(['../js/config.js', '../js/utils.js'], function(config, utils) {
 

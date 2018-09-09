@@ -1,5 +1,5 @@
 /* jshint esversion: 6 */
-/* global chrome */
+/* global chrome, define */
 
 define(['./config.js'], (config) => {
 
@@ -11,7 +11,7 @@ define(['./config.js'], (config) => {
          * @param {string} url
          * @returns {string}
          */
-        getFromUrl: (property, url) => {
+        getFromUrl(property, url) {
             let a = document.createElement('a');
             a.href = url;
             return a[property];
@@ -22,7 +22,7 @@ define(['./config.js'], (config) => {
          * @param {Object[]} tabs
          * @returns {Object|boolean} tab object or false
          */
-        getActiveTab: (tabs) => {
+        getActiveTab(tabs) {
             let i = 0;
             while (i < tabs.length && !tabs[i].active) {
                 i++;
@@ -38,7 +38,7 @@ define(['./config.js'], (config) => {
          * Get date with format yyyy-mm-dd
          * @returns {string}
          */
-        getDateString: () => {
+        getDateString() {
             const date = new Date(),
                 year = date.getFullYear(),
                 month = ('0' + (date.getMonth() + 1)).slice(-2),
@@ -50,7 +50,7 @@ define(['./config.js'], (config) => {
          * Get current quarter
          * @returns {string}
          */
-        getQuarterString: () => {
+        getQuarterString() {
             return Math.floor((new Date().getMonth() + 3) / 3).toString();
         },
 
@@ -58,14 +58,14 @@ define(['./config.js'], (config) => {
          * Get current month
          * @returns {string}
          */
-        getMonthString: () => {
+        getMonthString() {
             return (new Date().getMonth() + 1).toString();
         },
 
         /**
          * Get current day of the week
          */
-        getDayOfTheWeekString: () => {
+        getDayOfTheWeekString() {
             let dayOfTheWeek = new Date().getDay();
             // Sunday should be 7th day of the week
             if (dayOfTheWeek === 0) {
@@ -78,7 +78,7 @@ define(['./config.js'], (config) => {
          * Get current time with format hh:mm
          * @returns {string}
          */
-        getTimeString: () => {
+        getTimeString() {
             const date = new Date(),
                 hour = ('0' + date.getHours()).slice(-2),
                 minute = ('0' + date.getMinutes()).slice(-2);
@@ -89,7 +89,7 @@ define(['./config.js'], (config) => {
          * Check if chrome window is active and focused
          * @returns {boolean}
          */
-        isWindowActive: (window) => {
+        isWindowActive(window) {
             return window && window.focused;
         },
 
@@ -98,7 +98,7 @@ define(['./config.js'], (config) => {
          * @param {Object} tab
          * @returns {boolean}
          */
-        isSoundFromTab: (tab) => {
+        isSoundFromTab(tab) {
             return tab && tab.audible;
         },
 
@@ -107,7 +107,7 @@ define(['./config.js'], (config) => {
          * @param {string} state active, idle or locked
          * @returns {boolean}
          */
-        isStateActive: (state) => {
+        isStateActive(state) {
             if (config.COUNT_ONLY_ACTIVE_STATE) {
                 return chrome.idle.IdleState.ACTIVE === state;
             }
@@ -128,14 +128,16 @@ define(['./config.js'], (config) => {
          * @param {*} args
          * @return {undefined}
          */
-        debugLog: (...args) => {
+        debugLog(...args) {
             if (config.DEVELOPMENT_MODE) {
                 let fnArguments = [].slice.call(args);
                 if (typeof fnArguments[0] === 'string') {
                     fnArguments[0] = '%c' + fnArguments[0];
                     fnArguments.splice(1, 0, 'color: #1E90FF');
                 }
+                /* eslint-disable no-console */
                 console.log.apply(console, fnArguments);
+                /* eslint-enable no-console */
             }
         },
 
@@ -145,7 +147,7 @@ define(['./config.js'], (config) => {
          * @param {string} property
          * @returns {Object} obj
          */
-        increment: (obj, property) => {
+        increment(obj, property) {
             if (!obj[property]) {
                 obj[property] = 0;
             }

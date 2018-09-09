@@ -1,5 +1,5 @@
 /* jshint esversion: 6 */
-/* global chrome */
+/* global chrome, define */
 
 define([], () => {
 
@@ -11,6 +11,6 @@ define([], () => {
         INTERVAL_UPDATE_S: 1000,
         INTERVAL_UPDATE_MIN: 1000 * 60,
         BLACKLIST_PROTOCOL: ['chrome:', 'chrome-extension:', 'vivaldi:', 'file:']
-    }
+    };
 
 });

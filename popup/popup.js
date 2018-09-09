@@ -1,19 +1,7 @@
 /* jshint esversion: 6 */
-/* global chrome, DEVELOPMENT_MODE, EXTENSION_DATA, DISPLAY_BADGE,
-COUNT_ONLY_ACTIVE_STATE, INTERVAL_UPDATE_S, INTERVAL_UPDATE_MIN,
-BLACKLIST_PROTOCOL*/
+/* global chrome, requirejs */
 
 requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/Chart.js'], function(config, utils, Chart) {
-
-    chrome.runtime.sendMessage({event: 'openPopup'}, (response) => {
-        if (response) {
-            if (document.readyState !== 'loading') {
-                show();
-            } else {
-                document.addEventListener('DOMContentLoaded', show);
-            }
-        }
-    });
 
     function show() {
 
@@ -69,6 +57,16 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
             }
             document.body.insertBefore(table, document.querySelector('.flaticon-desc'));
         }
+
+        chrome.runtime.sendMessage({event: 'openPopup'}, (response) => {
+            if (response) {
+                if (document.readyState !== 'loading') {
+                    show();
+                } else {
+                    document.addEventListener('DOMContentLoaded', show);
+                }
+            }
+        });
 
 
         chrome.storage.local.get(config.EXTENSION_DATA, (storage) => {
