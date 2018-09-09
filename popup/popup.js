@@ -93,65 +93,74 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
             chrome.storage.local.get(dataName, (storage) => {
                 if (storage[dataName]) {
                     self.originalData = JSON.parse(storage[dataName]);
-                    self.proceedDataProcessing(self);
+                    self.proceedDataProcessing();
                 } else {
                     throw(`${dataName} not found in storage`);
                 }
             });
         }
 
-        sortArray(array, index) {
+        sortDescending(array, indexToCompare) {
             return array.sort(function(a, b) {
-                return b[index] - a[index];
+                return b[indexToCompare] - a[indexToCompare];
             });
         }
 
-        getDateString() {
-            const date = new Date(),
-                year = date.getFullYear(),
-                month = ('0' + (date.getMonth() + 1)).slice(-2),
-                day = ('0' + date.getDate()).slice(-2);
-            return `${year}-${month}-${day}`;
-        }
-
-        getPagesVisitedToday(self) {
+        /**
+         * Returns an array with pages visited in given period
+         * @param {string} periodType (quarters|months|daysOfTheWeek|days)
+         * @param {string} period
+         * @returns {Array}
+         */
+        getPagesVisitedInGivenPeriod(periodType, period) {
             let pagesArray = [];
-            let data = self.originalData;
+            let data = this.originalData;
             for (let key in data) {
-                if (data.hasOwnProperty(key) && data[key].days && data[key].days[self.getDateString()]) {
+                if (data.hasOwnProperty(key) && data[key][periodType] && data[key][periodType][period]) {
                     pagesArray.push([
                         key,
-                        data[key].days[self.getDateString()],
+                        data[key][periodType][period],
                         data[key].favicon
                     ]);
                 }
             }
             return pagesArray;
-        }
+        };
 
-        proceedDataProcessing(self) {
-            self.alltime = self.originalData.alltime;
-            self.pagesVisitedToday = self.getPagesVisitedToday(self);
-            self.pagesVisitedToday = self.sortArray(self.pagesVisitedToday, 1);
-            console.log(self);
+        proceedDataProcessing() {
+            this.alltime = this.originalData.alltime;
+
+            this.pagesVisitedToday = this.getPagesVisitedInGivenPeriod('days', utils.getDateString());
+            this.pagesVisitedToday = this.sortDescending(this.pagesVisitedToday, 1);
+
+            this.pagesVisitedYesterday = this.getPagesVisitedInGivenPeriod('days', utils.getDateString(utils.getYesterdayDate()));
+            this.pagesVisitedYesterday = this.sortDescending(this.pagesVisitedYesterday, 1);
+
+            this.pagesVisitedThisMonth = this.getPagesVisitedInGivenPeriod('months', utils.getMonthString());
+            this.pagesVisitedThisMonth = this.sortDescending(this.pagesVisitedThisMonth, 1);
+
+            this.pagesVisitedThisQuarter = this.getPagesVisitedInGivenPeriod('quarters', utils.getQuarterString());
+            this.pagesVisitedThisQuarter = this.sortDescending(this.pagesVisitedThisQuarter, 1);
+
+            console.log(this);
+
             new Chart(document.getElementById("myChart"), {
                 type: 'doughnut',
                 data: {
                     datasets: [{
                         data: (() => {
-                            let pagesVisitedToday = self.pagesVisitedToday;
+                            let pagesVisitedToday = this.pagesVisitedToday;
                             let arr = [];
                             for (let i = 0; i < pagesVisitedToday.length; i++) {
                                 arr.push(pagesVisitedToday[i][1]);
                             }
                             return arr;
-                        })(),
-                        backgroundColor: ['pink','blue','silver','black']
+                        })()
                     }],
 
                     // These labels appear in the legend and in the tooltips when hovering different arcs
                     labels: (() => {
-                        let pagesVisitedToday = self.pagesVisitedToday;
+                        let pagesVisitedToday = this.pagesVisitedToday;
                         let arr = [];
                         for (let i = 0; i < pagesVisitedToday.length; i++) {
                             arr.push(pagesVisitedToday[i][0]);

@@ -36,14 +36,25 @@ define(['./config.js'], (config) => {
 
         /**
          * Get date with format yyyy-mm-dd
+         * @param {Date} [date=new Date()]
          * @returns {string}
          */
-        getDateString() {
-            const date = new Date(),
+        getDateString(date = new Date()) {
+            const
                 year = date.getFullYear(),
                 month = ('0' + (date.getMonth() + 1)).slice(-2),
                 day = ('0' + date.getDate()).slice(-2);
             return `${year}-${month}-${day}`;
+        },
+
+        /**
+         * Get yesterday date
+         * @returns {Date}
+         */
+        getYesterdayDate() {
+            const date = new Date();
+            date.setDate(date.getDate() - 1);
+            return date;
         },
 
         /**
