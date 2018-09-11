@@ -129,7 +129,7 @@ define(['./config.js'], (config) => {
          * @returns {string}
          */
         getCurrentDayOfTheWeek() {
-            let dayOfTheWeek = new Date().getDay() + 1;
+            let dayOfTheWeek = new Date().getDay();
             // Sunday should be 7th day of the week
             if (dayOfTheWeek === 0) {
                 dayOfTheWeek = 7;
