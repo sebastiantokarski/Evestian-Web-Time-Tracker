@@ -16,38 +16,63 @@ requirejs(['../js/config.js', '../js/utils.js'], function(config, utils) {
      */
     function updateStorage(tab, hostname) {
 
+        const
+            currentYear = utils.getCurrentYear(),
+            currentQuarter = utils.getCurrentQuarter(),
+            currentMonth = utils.getCurrentMonth(),
+            currentDayOfTheWeek = utils.getCurrentDayOfTheWeek(),
+            currentDayOfTheMonth = utils.getCurrentDayOfTheMonth(),
+            currentTime = utils.getCurrentTime();
+
+        const
+            dayOfTheMonthObj = {
+                [config.ALL_TIME]: 0,
+                [currentTime]: 0
+            },
+            dayOfTheWeekObj = {
+                [currentDayOfTheWeek]: 0
+            },
+            monthObj = {
+                [config.ALL_TIME]: 0,
+                [config.DAY_OF_THE_WEEK]: dayOfTheWeekObj,
+                [currentDayOfTheMonth]: dayOfTheMonthObj
+            },
+            quarterObj = {
+                [config.ALL_TIME]: 0,
+                [currentMonth]: monthObj
+            },
+            yearObj = {
+                [config.ALL_TIME]: 0,
+                [currentQuarter]: quarterObj
+        };
+
         if (!data[hostname]) {
             data[hostname] = {
-                alltime: 0,
-                quarters: {
-                    [utils.getQuarterString()]: 0
-                },
-                months: {
-                    [utils.getMonthString()]: 0
-                },
-                daysOfTheWeek: {
-                    [utils.getDayOfTheWeekString()]: 0
-                },
-                days: {
-                    [utils.getDateString()]: 0
-                },
-                times: {
-                    [utils.getTimeString()]: 0
-                },
-                // Tab may not have favicon
-                favicon: null
+                [currentYear]: yearObj
             };
+            data[hostname].favicon = null;
         }
 
-        data[hostname].alltime++;
+        utils.increment(data, config.ALL_TIME);
 
-        utils.increment(data, 'alltime');
+        if (!data.getYear(hostname, currentYear)) {
+            data[hostname][currentYear] = yearObj;
+        } else if (!data.getQuarter(hostname, currentQuarter)) {
+            data[hostname][currentYear] = quarterObj;
+        } else if (!data.getMonth(hostname, currentMonth)) {
+            data[hostname][currentYear][currentQuarter][currentMonth] = monthObj;
+        } else if (!data.getDayOfTheMonth(hostname, currentDayOfTheMonth)) {
+            data[hostname][currentYear][currentQuarter][currentMonth][currentDayOfTheMonth] = dayOfTheMonthObj;
+        } else if (!data.getDayOfTheWeek(hostname, currentDayOfTheWeek)) {
+            data[hostname][currentYear][currentQuarter][currentMonth][config.DAY_OF_THE_WEEK] = dayOfTheWeekObj;
+        }
 
-        utils.increment(data[hostname].quarters, utils.getQuarterString());
-        utils.increment(data[hostname].months, utils.getMonthString());
-        utils.increment(data[hostname].daysOfTheWeek, utils.getDayOfTheWeekString());
-        utils.increment(data[hostname].days, utils.getDateString());
-        utils.increment(data[hostname].times, utils.getTimeString());
+        utils.increment(data.getYear(hostname, currentYear), config.ALL_TIME);
+        utils.increment(data.getQuarter(hostname, currentQuarter), config.ALL_TIME);
+        utils.increment(data.getMonth(hostname, currentMonth), config.ALL_TIME);
+        utils.increment(data.getDayOfTheMonth(hostname, currentDayOfTheMonth), config.ALL_TIME);
+        utils.increment(data.getDayOfTheWeek(hostname, currentDayOfTheWeek), currentDayOfTheWeek);
+        utils.increment(data.getDayOfTheMonth(hostname, currentDayOfTheMonth), currentTime);
 
         data[hostname].favicon = tab.favIconUrl;
     }
@@ -60,7 +85,7 @@ requirejs(['../js/config.js', '../js/utils.js'], function(config, utils) {
     function updateBadge(tab, hostname) {
         let tabTime = 0;
 
-        let timeInSeconds = data[hostname].days[utils.getDateString()];
+        let timeInSeconds = data.getDayOfTheMonth(hostname)[config.ALL_TIME];
         if (timeInSeconds < 60) {
             tabTime = timeInSeconds + 's';
         } else if (timeInSeconds < 60 * 100) {
@@ -98,6 +123,7 @@ requirejs(['../js/config.js', '../js/utils.js'], function(config, utils) {
             } else {
                 data = {};
             }
+            utils.prepareDataObjectMethods(data);
             utils.debugLog('Data loaded:', data);
         });
     }

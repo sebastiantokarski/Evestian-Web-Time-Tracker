@@ -93,6 +93,7 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
             chrome.storage.local.get(dataName, (storage) => {
                 if (storage[dataName]) {
                     self.originalData = JSON.parse(storage[dataName]);
+                    utils.prepareDataObjectMethods(self.originalData);
                     self.proceedDataProcessing();
                 } else {
                     throw(`${dataName} not found in storage`);
@@ -100,6 +101,12 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
             });
         }
 
+        /**
+         * Sorts descending tables
+         * @param {Array} array
+         * @param {number} indexToCompare
+         * @returns {*|void}
+         */
         sortDescending(array, indexToCompare) {
             return array.sort(function(a, b) {
                 return b[indexToCompare] - a[indexToCompare];
@@ -108,18 +115,19 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
 
         /**
          * Returns an array with pages visited in given period
-         * @param {string} periodType (quarters|months|daysOfTheWeek|days)
-         * @param {string} period
+         * @param {string} methodName (getToday|getYesterday)
+         * @param {string} [period]
          * @returns {Array}
          */
-        getPagesVisitedInGivenPeriod(periodType, period) {
+        getPagesVisitedInGivenPeriod(methodName, period) {
+
             let pagesArray = [];
             let data = this.originalData;
             for (let key in data) {
-                if (data.hasOwnProperty(key) && data[key][periodType] && data[key][periodType][period]) {
+                if (data.hasOwnProperty(key) && key !== config.ALL_TIME && data[methodName](key, period)) {
                     pagesArray.push([
                         key,
-                        data[key][periodType][period],
+                        data.getDayOfTheMonth(key)[config.ALL_TIME],
                         data[key].favicon
                     ]);
                 }
@@ -128,29 +136,29 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
         }
 
         proceedDataProcessing() {
-            this.alltime = this.originalData.alltime;
+            this.alltime = this.originalData[config.ALL_TIME];
 
-            this.pagesVisitedToday = this.getPagesVisitedInGivenPeriod('days', utils.getDateString());
+            this.pagesVisitedToday = this.getPagesVisitedInGivenPeriod('getToday');
             this.pagesVisitedToday = this.sortDescending(this.pagesVisitedToday, 1);
 
-            this.pagesVisitedYesterday = this.getPagesVisitedInGivenPeriod('days', utils.getDateString(utils.getYesterdayDate()));
+            this.pagesVisitedYesterday = this.getPagesVisitedInGivenPeriod('getYesterday');
             this.pagesVisitedYesterday = this.sortDescending(this.pagesVisitedYesterday, 1);
 
-            this.pagesVisitedThisMonth = this.getPagesVisitedInGivenPeriod('months', utils.getMonthString());
+            this.pagesVisitedThisMonth = this.getPagesVisitedInGivenPeriod('getMonth');
             this.pagesVisitedThisMonth = this.sortDescending(this.pagesVisitedThisMonth, 1);
 
-            this.pagesVisitedLastMonth = this.getPagesVisitedInGivenPeriod('days', utils.getLastMonth());
+            this.pagesVisitedLastMonth = this.getPagesVisitedInGivenPeriod('getMonth', utils.getLastMonth());
             this.pagesVisitedLastMonth = this.sortDescending(this.pagesVisitedLastMonth, 1);
 
-            this.pagesVisitedThisQuarter = this.getPagesVisitedInGivenPeriod('quarters', utils.getQuarterString());
+            this.pagesVisitedThisQuarter = this.getPagesVisitedInGivenPeriod('getQuarter', utils.getCurrentQuarter());
             this.pagesVisitedThisQuarter = this.sortDescending(this.pagesVisitedThisQuarter, 1);
 
-            this.pagesVisitedLastQuarter = this.getPagesVisitedInGivenPeriod('quarters', utils.getLastQuarter());
+            this.pagesVisitedLastQuarter = this.getPagesVisitedInGivenPeriod('getQuarter', utils.getLastQuarter());
             this.pagesVisitedLastQuarter = this.sortDescending(this.pagesVisitedLastQuarter, 1);
 
             console.log(this);
 
-            new Chart(document.getElementById("myChart"), {
+            new Chart(document.getElementById('myChart'), {
                 type: 'doughnut',
                 data: {
                     datasets: [{
