@@ -225,69 +225,6 @@
             return obj[property];
         },
 
-        /**
-         * Prepares the data storage object by adding methods directly to it.
-         * These methods are used for easier navigation around the facility
-         * @param {Object} data
-         */
-        prepareDataObjectMethods(data) {
-
-            let utils = this,
-                descObj = {
-                    writable: false,
-                    enumerable: false,
-                    configurable: false
-                };
-
-            function getYear(hostname, year = utils.getCurrentYear()) {
-                return this[hostname][year];
-            }
-
-            function getQuarter(hostname, quarter = utils.getCurrentQuarter()) {
-                try {
-                    return this.getYear(hostname)[quarter];
-                } catch (ex) {
-                    utils.debugLog(`Error in getQuarter: ${hostname}, ${quarter}`);
-                    return false;
-                }
-            }
-
-            function getMonth(hostname, month = utils.getCurrentMonth()) {
-                return this.getQuarter(hostname)[month];
-            }
-
-            function getDayOfTheMonth(hostname, dayOfTheMonth = utils.getCurrentDayOfTheMonth()) {
-                return this.getMonth(hostname)[dayOfTheMonth];
-            }
-
-            function getDayOfTheWeek(hostname, dayOfTheWeek = utils.getCurrentDayOfTheWeek()) {
-                return this.getMonth(hostname)[config.DAY_OF_THE_WEEK][dayOfTheWeek];
-            }
-
-            function getToday(hostname) {
-                return this.getDayOfTheMonth(hostname);
-            }
-
-            function getYesterday(hostname) {
-                return this.getDayOfTheMonth(hostname, utils.getYesterdayDay());
-            }
-
-            function defineValue(obj, fn) {
-                let object = Object.assign({}, obj);
-                object.value = fn;
-                return object;
-            }
-
-            Object.defineProperties(data, {
-                'getYear': defineValue(descObj, getYear),
-                'getQuarter': defineValue(descObj, getQuarter),
-                'getMonth': defineValue(descObj, getMonth),
-                'getDayOfTheWeek': defineValue(descObj, getDayOfTheWeek),
-                'getDayOfTheMonth': defineValue(descObj, getDayOfTheMonth),
-                'getToday': defineValue(descObj, getToday),
-                'getYesterday': defineValue(descObj, getYesterday)
-            });
-        }
     };
 
 }));

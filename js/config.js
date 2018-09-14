@@ -17,7 +17,7 @@
         DAY_OF_THE_WEEK: 'dw',
         DEVELOPMENT_MODE: !!chrome.runtime.getManifest().debug,
         DISPLAY_BADGE: true,
-        EXTENSION_DATA: 'data',
+        EXTENSION_DATA_NAME: 'dataOfAllVisitedPages',
         INTERVAL_UPDATE_S: 1000,
         INTERVAL_UPDATE_MIN: 1000 * 60
     };
