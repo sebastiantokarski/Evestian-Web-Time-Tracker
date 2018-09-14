@@ -1,7 +1,14 @@
-/* jshint esversion: 6 */
-/* global chrome, define */
+/* global chrome, define, module */
 
-define(['./config.js'], (config) => {
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['./config.js'], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.utils = factory();
+    }
+}(this, (config) => {
 
     return {
 
@@ -68,7 +75,7 @@ define(['./config.js'], (config) => {
 
         /**
          * Get yesterday date
-         * @returns {number}
+         * @returns {string}
          */
         getLastMonth() {
             let currentMonth = parseInt(this.getCurrentMonth(), 10);
@@ -76,12 +83,12 @@ define(['./config.js'], (config) => {
             if (lastMonth === 0) {
                 return 12;
             }
-            return lastMonth;
+            return lastMonth.toString();
         },
 
         /**
          * Get last quarter
-         * @returns {number}
+         * @returns {string}
          */
         getLastQuarter: function () {
             let currentQuarter = parseInt(this.getCurrentQuarter(), 10);
@@ -89,7 +96,7 @@ define(['./config.js'], (config) => {
             if (lastQuarter === 0) {
                 return 4;
             }
-            return lastQuarter;
+            return lastQuarter.toString();
         },
 
         /**
@@ -227,10 +234,10 @@ define(['./config.js'], (config) => {
 
             let utils = this,
                 descObj = {
-                writable: false,
-                enumerable: false,
-                configurable: false
-            };
+                    writable: false,
+                    enumerable: false,
+                    configurable: false
+                };
 
             function getYear(hostname, year = utils.getCurrentYear()) {
                 return this[hostname][year];
@@ -283,4 +290,4 @@ define(['./config.js'], (config) => {
         }
     };
 
-});
+}));

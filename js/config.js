@@ -1,7 +1,14 @@
-/* jshint esversion: 6 */
-/* global chrome, define */
+/* global chrome, define, module */
 
-define([], () => {
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.config = factory();
+    }
+}(this, () => {
 
     return {
         ALL_TIME: '_',
@@ -15,4 +22,4 @@ define([], () => {
         INTERVAL_UPDATE_MIN: 1000 * 60
     };
 
-});
+}));
