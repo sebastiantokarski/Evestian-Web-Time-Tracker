@@ -71,8 +71,7 @@ requirejs(['../js/config.js', '../js/utils.js'], function(config, utils) {
         utils.increment(data.getQuarter(hostname, currentQuarter), config.ALL_TIME);
         utils.increment(data.getMonth(hostname, currentMonth), config.ALL_TIME);
         utils.increment(data.getDayOfTheMonth(hostname, currentDayOfTheMonth), config.ALL_TIME);
-        // @todo TypeError: Cannot read property '4' of undefined if the new day started
-        utils.increment(data.getDayOfTheWeek(hostname, currentDayOfTheWeek), currentDayOfTheWeek);
+        utils.increment(data.getMonth(hostname, currentMonth)[config.DAY_OF_THE_WEEK], currentDayOfTheWeek);
         utils.increment(data.getDayOfTheMonth(hostname, currentDayOfTheMonth), currentTime);
 
         data[hostname].favicon = tab.favIconUrl;
