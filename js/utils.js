@@ -247,7 +247,7 @@
                 try {
                     return this.getYear(hostname)[quarter];
                 } catch (ex) {
-                    utils.debugLog(`Error in getQuarter: ${hostname}, ${quarter}`)
+                    utils.debugLog(`Error in getQuarter: ${hostname}, ${quarter}`);
                     return false;
                 }
             }

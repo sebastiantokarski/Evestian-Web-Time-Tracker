@@ -1,4 +1,3 @@
-/* jshint esversion: 6 */
 /* global chrome, requirejs */
 
 requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/Chart.js'], function(config, utils, Chart) {
@@ -141,7 +140,7 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
                 days: '',
                 hours: '',
                 minutes: '',
-                seconds: seconds
+                seconds
             };
 
             let oneDay = 60 * 60 * 24,
@@ -174,22 +173,22 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
         // @todo generate empty chart if data is not available
         generateChart() {
             let self = this;
-            new Chart(document.getElementById('myChartToday'), {
+            let todayChart = new Chart(document.getElementById('myChartToday'), {
                 type: 'doughnut',
                 data: {
                     datasets: [{
-                        data: this.pagesVisitedToday.map(page => page[1]).slice(0, 10),
+                        data: this.pagesVisitedToday.map((page) => page[1]).slice(0, 10),
                         // @todo colors from favicos: https://stackoverflow.com/questions/2541481/get-average-color-of-image-via-javascript
                         backgroundColor: ['red', 'orange', 'purple', 'green', 'yellow', 'blue', 'brown', 'lime', 'pink']
                     }],
 
                     // These labels appear in the legend and in the tooltips when hovering different arcs
-                    labels: this.pagesVisitedToday.map(page => page[0]).slice(0, 10),
+                    labels: this.pagesVisitedToday.map((page) => page[0]).slice(0, 10),
                 },
                 options: {
                     tooltips: {
                         callbacks: {
-                            label: function (tooltipItem, chart) {
+                            label(tooltipItem, chart) {
                                 let seconds = chart.datasets[0].data[tooltipItem.index];
                                 let labelText = chart.labels[tooltipItem.index];
                                 return `${labelText}: ${self.parseSecondsIntoTime(seconds)}`;
@@ -202,14 +201,14 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
                 }
             });
 
-            new Chart(document.getElementById('myChartYesterday'), {
+            let yesterdayChart = new Chart(document.getElementById('myChartYesterday'), {
                 type: 'doughnut',
                 data: {
                     datasets: [{
-                        data: this.pagesVisitedYesterday.map(page => page[1]).slice(0, 10),
+                        data: this.pagesVisitedYesterday.map((page) => page[1]).slice(0, 10),
                         backgroundColor: ['red', 'orange', 'purple', 'green', 'yellow', 'blue', 'brown', 'lime', 'pink']
                     }],
-                    labels: this.pagesVisitedYesterday.map(page => page[0]).slice(0, 10),
+                    labels: this.pagesVisitedYesterday.map((page) => page[0]).slice(0, 10),
                 },
                 options: {
                     tooltips: {
@@ -251,7 +250,9 @@ requirejs(['../js/config.js', '../js/utils.js', '../node_modules/chart.js/dist/C
 
             this.generateChart();
 
+            /* eslint-disable no-console */
             console.log(this);
+            /* eslint-enable no-console */
         }
     }
 

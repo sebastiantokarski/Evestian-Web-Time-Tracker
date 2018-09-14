@@ -1,4 +1,3 @@
-/* jshint esversion: 6 */
 /* global chrome, requirejs */
 
 requirejs(['../js/config.js', '../js/utils.js'], function(config, utils) {
