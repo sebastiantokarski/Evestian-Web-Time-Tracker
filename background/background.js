@@ -1,6 +1,6 @@
 /* global chrome, requirejs */
 
-requirejs(['../js/config.js', '../js/utils.js', '../js/class/Data.js'], function(config, utils, Data) {
+requirejs(['../js/config.js', '../js/utils.js', '../js/class/Data.js'], (config, utils, Data) => {
 
     // It can be active, idle or locked
     let currentState = chrome.idle.IdleState.ACTIVE;

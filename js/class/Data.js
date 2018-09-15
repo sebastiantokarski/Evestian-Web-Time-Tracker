@@ -1,5 +1,5 @@
 /* global chrome, define, module */
-
+// @todo LACK OF GLOBAL TIME COUNTING (max is year)
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define(['../config.js', '../../node_modules/then-chrome/dist/then-chrome.js', '../utils.js'], factory);
@@ -21,7 +21,7 @@
          */
         constructor(dataName) {
             this.dataName = dataName;
-            this.data = this.loadFromStorage();
+            this.loadFromStorage();
         }
 
         /**
@@ -46,7 +46,6 @@
                         this.data = {};
                         utils.debugLog(`Item not found in storage - ${this.dataName}`, this.data);
                     }
-
                 })
         }
 
@@ -111,7 +110,7 @@
          * @returns {Object}
          */
         getTodayFor(hostname) {
-            return this.getDayOfTheMonth(hostname);
+            return this.getDayOfTheMonthFor(hostname);
         }
 
         /**
@@ -120,7 +119,7 @@
          * @returns {Object}
          */
         getYesterdayFor(hostname) {
-            return this.getDayOfTheMonth(hostname, utils.getYesterdayDay());
+            return this.getDayOfTheMonthFor(hostname, utils.getYesterdayDay());
         }
 
         /**
