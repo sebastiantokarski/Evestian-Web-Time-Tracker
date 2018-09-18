@@ -31,7 +31,7 @@
          * Updates data in chrome storage local API by overwriting
          */
         saveInStorage(data = this.data) {
-            chrome.storage.local.set({ [this.dataName]: data }, () => {
+            chrome.storage.local.set({[this.dataName]: data}, () => {
                 utils.debugLog(`Successfully saved in storage - ${this.dataName}:`, data);
             })
         }
@@ -48,7 +48,7 @@
                             self.data = data[self.dataName];
                             utils.debugLog(`Loaded from storage - ${self.dataName}:`, self.data);
                         } else {
-                            self.data = {};
+                            self.createEmptyDataObject();
                             utils.debugLog(`Item not found in storage - ${self.dataName}`, self.data);
                         }
                         resolve(self.data);
@@ -130,17 +130,27 @@
         }
 
         /**
+         * Creates initial data object
+         */
+        createEmptyDataObject() {
+            this.data = {};
+            this.data[config.ALL_TIME] = 0;
+            this.data[config.FIRST_VISIT] = utils.getDateString();
+        }
+
+        /**
          * Creates initial data object for given domain
          * @param {string} hostname
          * @param {Object} dataObj
          */
-        createEmptyDataObject(hostname, dataObj) {
+        createEmptyHostnameDataObject(hostname, dataObj) {
 
             this.data[hostname] = {
-                [dataObj.currentYear]: dataObj.yearObj
+                [dataObj.currentYear]: dataObj.yearObj,
+                [config.ALL_TIME]: 0
             };
             this.data[hostname].favicon = null;
-            this.data[hostname].firstVisit = utils.getDateString();
+            this.data[hostname][config.FIRST_VISIT] = utils.getDateString();
         }
 
         /**
@@ -180,7 +190,7 @@
             };
             dataObj.dayOfTheMonthObj = {
                 [config.ALL_TIME]: 0,
-                    [dataObj.currentTime]: 0
+                [dataObj.currentTime]: 0
             };
             dataObj.dayOfTheWeekObj = {
                 [dataObj.currentDayOfTheWeek]: 0
@@ -213,20 +223,24 @@
             const dataObj = this.getDataObjectTemplate();
 
             if (!this.isPageAlreadyInData(hostname)) {
-                this.createEmptyDataObject(hostname, dataObj);
+                this.createEmptyHostnameDataObject(hostname, dataObj);
             }
 
             if (!this.getYearFor(hostname, dataObj.currentYear)) {
-                this.data[hostname][dataObj.currentYear] =  dataObj.yearObj;
-            } else if (!this.getQuarterFor(hostname,  dataObj.currentQuarter)) {
-                this.data[hostname][dataObj.currentYear] =  dataObj.quarterObj;
-            } else if (!this.getMonthFor(hostname,  dataObj.currentMonth)) {
-                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth] =  dataObj.monthObj;
-            } else if (!this.getDayOfTheMonthFor(hostname,  dataObj.currentDayOfTheMonth)) {
-                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][dataObj.currentDayOfTheMonth] =  dataObj.dayOfTheMonthObj;
-            } else if (!this.getDayOfTheWeekFor(hostname,  dataObj.currentDayOfTheWeek)) {
-                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][config.DAY_OF_THE_WEEK] =  dataObj.dayOfTheWeekObj;
+                this.data[hostname][dataObj.currentYear] = dataObj.yearObj;
+            } else if (!this.getQuarterFor(hostname, dataObj.currentQuarter)) {
+                this.data[hostname][dataObj.currentYear] = dataObj.quarterObj;
+            } else if (!this.getMonthFor(hostname, dataObj.currentMonth)) {
+                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth] = dataObj.monthObj;
+            } else if (!this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth)) {
+                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][dataObj.currentDayOfTheMonth] = dataObj.dayOfTheMonthObj;
+            } else if (!this.getDayOfTheWeekFor(hostname, dataObj.currentDayOfTheWeek)) {
+                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][config.DAY_OF_THE_WEEK] = dataObj.dayOfTheWeekObj;
             }
+
+            utils.increment(this.data, config.ALL_TIME)
+
+            utils.increment(this.data[hostname], config.ALL_TIME);
 
             utils.increment(this.getYearFor(hostname, dataObj.currentYear), config.ALL_TIME);
             utils.increment(this.getQuarterFor(hostname, dataObj.currentQuarter), config.ALL_TIME);
@@ -236,7 +250,7 @@
             utils.increment(this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth), dataObj.currentTime);
 
             this.data[hostname].favicon = tab.favIconUrl;
-            this.data[hostname].lastVisit = utils.getDateString();
+            this.data[hostname][config.LAST_VISIT] = utils.getDateString();
         }
     }
 

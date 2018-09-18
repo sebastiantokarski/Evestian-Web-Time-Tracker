@@ -34,11 +34,10 @@ requirejs([
                 data = storage[config.EXTENSION_DATA_NAME];
                 let arr = [];
                 for (let key in data) {
-                    if ({}.hasOwnProperty.call(data, key) && data[key] && data[key]['firstVisit']) {
+                    if ({}.hasOwnProperty.call(data, key) && data[key] && data[key][config.FIRST_VISIT]) {
                         arr.push([
                             key,
-                            // @todo temp
-                            data[key]['2018'][config.ALL_TIME],
+                            data[key][config.ALL_TIME],
                             data[key].favicon]);
                     }
                 }
