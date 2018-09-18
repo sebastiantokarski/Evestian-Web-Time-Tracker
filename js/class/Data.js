@@ -2,7 +2,11 @@
 // @todo LACK OF GLOBAL TIME COUNTING (max is year)
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['../config.js', '../../node_modules/then-chrome/dist/then-chrome.js', '../utils.js'], factory);
+        define([
+            '../config.js',
+            '../../node_modules/then-chrome/dist/then-chrome.js',
+            '../utils.js'
+        ], factory);
     } else if (typeof exports === 'object') {
         module.exports = factory();
     } else {
@@ -21,7 +25,6 @@
          */
         constructor(dataName) {
             this.dataName = dataName;
-            this.loadFromStorage();
         }
 
         /**
@@ -37,16 +40,20 @@
          * Load extension data from chrome storage API
          */
         loadFromStorage() {
-            thenChrome.storage.local.get(this.dataName)
-                .then((data) => {
-                    if (data[this.dataName]) {
-                        this.data = data[this.dataName];
-                        utils.debugLog(`Loaded from storage - ${this.dataName}:`, this.data);
-                    } else {
-                        this.data = {};
-                        utils.debugLog(`Item not found in storage - ${this.dataName}`, this.data);
-                    }
-                })
+            let self = this;
+            return new Promise((resolve) => {
+                thenChrome.storage.local.get(self.dataName)
+                    .then((data) => {
+                        if (data[self.dataName]) {
+                            self.data = data[self.dataName];
+                            utils.debugLog(`Loaded from storage - ${self.dataName}:`, self.data);
+                        } else {
+                            self.data = {};
+                            utils.debugLog(`Item not found in storage - ${self.dataName}`, self.data);
+                        }
+                        resolve(self.data);
+                    });
+            });
         }
 
         /**
@@ -192,7 +199,7 @@
                 [dataObj.currentQuarter]: dataObj.quarterObj
             };
 
-            return dataObj
+            return dataObj;
         };
 
         /**

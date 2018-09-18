@@ -9,18 +9,20 @@ requirejs([
 
     function show() {
 
-        let a = new DataProcessing(config.EXTENSION_DATA_NAME);
+        let data = new DataProcessing(config.EXTENSION_DATA_NAME);
+        data.loadFromStorage().then(() => {
+            data.proceedDataProcessing();
+        });
 
-
-        function showResults(data) {
+        function showResults(arr) {
             let table = document.createElement('table');
             table.setAttribute('style', 'margin: auto; font-size: 16px');
-            for (let i = 0; i < data.length; i++) {
+            for (let i = 0; i < arr.length; i++) {
                 let tr = document.createElement('tr');
-                if (!data[i][2]) {
-                    data[i][2] = chrome.runtime.getURL('assets/defaultFavicon16.png');
+                if (!arr[i][2]) {
+                    arr[i][2] = chrome.runtime.getURL('assets/defaultFavicon16.png');
                 }
-                tr.innerHTML = `<td>${i + 1}</td><td><img src="${data[i][2]}" height="16" width="16"></td></td><td>${data[i][0]}</td><td>${a.parseSecondsIntoTime(data[i][1])}</td>`;
+                tr.innerHTML = `<td>${i + 1}</td><td><img src="${arr[i][2]}" height="16" width="16"></td></td><td>${arr[i][0]}</td><td>${data.parseSecondsIntoTime(arr[i][1])}</td>`;
                 table.appendChild(tr);
             }
             document.querySelector('.container-table').appendChild(table);

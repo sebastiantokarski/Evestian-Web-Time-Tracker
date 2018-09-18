@@ -6,6 +6,7 @@ requirejs(['../js/config.js', '../js/utils.js', '../js/class/Data.js'], (config,
     let currentState = chrome.idle.IdleState.ACTIVE;
 
     let data = new Data(config.EXTENSION_DATA_NAME);
+    data.loadFromStorage();
 
     /**
      * Update badge on the extension icon

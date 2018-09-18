@@ -13,11 +13,6 @@
     return class DataProcessing extends Data {
         constructor(dataName) {
             super(dataName);
-            let self = this;
-            // @todo this setTimeout isn't good idea, processing should be initiated by e.g popup.js, not constructor
-            setTimeout(function () {
-                self.proceedDataProcessing();
-            }, 100);
         }
 
         /**
