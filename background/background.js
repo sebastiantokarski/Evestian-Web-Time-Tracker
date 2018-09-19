@@ -99,9 +99,13 @@ requirejs(['../js/config.js', '../js/utils.js', '../js/class/Data.js'], (config,
 
                 if (tab && utils.isWindowActive(window) && !utils.isProtocolOnBlacklist(tab.url)
                     && (utils.isStateActive(currentState) || utils.isSoundFromTab(tab))) {
-                    utils.debugLog('Active tab:', hostname, window, tab);
 
-                    data.updateDataFor(hostname, tab);
+                    const details = data.updateDataFor(hostname, tab);
+
+                    utils.debugLog('Active tab:', hostname,
+                                   '\nToday in seconds:', details.todayInSec,
+                                   '\nAll time in seconds:', details.allTimeInSec,
+                                   '\nTab:', tab, 'Window:', window);
 
                     if (config.DISPLAY_BADGE) {
                         updateBadge(tab, hostname);

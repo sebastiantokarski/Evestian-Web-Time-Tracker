@@ -14,7 +14,7 @@
         ALL_TIME: '_',
         BLACKLIST_PROTOCOL: ['chrome:', 'chrome-extension:', 'vivaldi:', 'file:'],
         COUNT_ONLY_ACTIVE_STATE: true,
-        DAY_OF_THE_WEEK: 'dw',
+        WEEK_DETAILS: '_wd',
         DEVELOPMENT_MODE: !!chrome.runtime.getManifest().debug,
         DISPLAY_BADGE: true,
         EXTENSION_DATA_NAME: 'dataOfAllVisitedPages',

@@ -33,11 +33,23 @@
         saveInStorage(data = this.data) {
             chrome.storage.local.set({[this.dataName]: data}, () => {
                 utils.debugLog(`Successfully saved in storage - ${this.dataName}:`, data);
-            })
+                this.checkDataSize();
+            });
+        }
+
+        /**
+         * Check how many bytes in currently used in storage
+         */
+        checkDataSize() {
+            chrome.storage.local.getBytesInUse(this.dataName, function (size) {
+                const totalSize = chrome.storage.local.QUOTA_BYTES;
+                utils.debugLog(`Used storage size in bytes: ${size}. Percentage: ${ (size / totalSize).toFixed(3) }%`);
+            });
         }
 
         /**
          * Load extension data from chrome storage API
+         * If data does not exist, they are created
          */
         loadFromStorage() {
             let self = this;
@@ -50,6 +62,9 @@
                         } else {
                             self.createEmptyDataObject();
                             utils.debugLog(`Item not found in storage - ${self.dataName}`, self.data);
+                        }
+                        if (config.DEVELOPMENT_MODE) {
+                            window.data = self.data;
                         }
                         resolve(self.data);
                     });
@@ -102,13 +117,13 @@
         }
 
         /**
-         * Gets day of the week data object for a given domain
+         * Gets week details (week of the year and day of the week) data object for a given domain
          * @param {string} hostname
-         * @param {string} [dayOfTheWeek = utils.getCurrentDayOfTheWeek()]
+         * @param {string} [weekDetails = utils.getCurrentWeekDetails()]
          * @returns {Object}
          */
-        getDayOfTheWeekFor(hostname, dayOfTheWeek = utils.getCurrentDayOfTheWeek()) {
-            return this.getMonthFor(hostname)[config.DAY_OF_THE_WEEK][dayOfTheWeek];
+        getWeekDetailsFor(hostname, weekDetails = utils.getCurrentWeekDetails()) {
+            return this.getYearFor(hostname)[config.WEEK_DETAILS][weekDetails];
         }
 
         /**
@@ -134,8 +149,18 @@
          */
         createEmptyDataObject() {
             this.data = {};
-            this.data[config.ALL_TIME] = 0;
-            this.data[config.FIRST_VISIT] = utils.getDateString();
+
+            Object.defineProperties(this.data, {
+                [config.ALL_TIME]: {
+                    value: 0,
+                    enumerable: false
+                },
+                [config.FIRST_VISIT]: {
+                    value: utils.getDateString(),
+                    enumerable: false
+                }
+            });
+
         }
 
         /**
@@ -172,7 +197,7 @@
          * currentDayOfTheMonth: (string),
          * currentTime: (string),
          * dayOfTheMonthObj: (object),
-         * dayOfTheWeekObj: (object),
+         * weekDetailsObj: (object),
          * monthObj: (object),
          * quarterObj: (object),
          * yearObj: (object)
@@ -182,9 +207,10 @@
 
             let dataObj = {
                 currentYear: utils.getCurrentYear(),
+                currentWeekOfTheYear: utils.getCurrentWeekOfTheYear(),
                 currentQuarter: utils.getCurrentQuarter(),
                 currentMonth: utils.getCurrentMonth(),
-                currentDayOfTheWeek: utils.getCurrentDayOfTheWeek(),
+                currentWeekDetails: utils.getCurrentWeekDetails(),
                 currentDayOfTheMonth: utils.getCurrentDayOfTheMonth(),
                 currentTime: utils.getCurrentTime()
             };
@@ -192,12 +218,11 @@
                 [config.ALL_TIME]: 0,
                 [dataObj.currentTime]: 0
             };
-            dataObj.dayOfTheWeekObj = {
-                [dataObj.currentDayOfTheWeek]: 0
+            dataObj.weekDetailsObj = {
+                [dataObj.currentWeekDetails]: 0
             };
             dataObj.monthObj = {
                 [config.ALL_TIME]: 0,
-                [config.DAY_OF_THE_WEEK]: dataObj.dayOfTheWeekObj,
                 [dataObj.currentDayOfTheMonth]: dataObj.dayOfTheMonthObj
             };
             dataObj.quarterObj = {
@@ -206,17 +231,18 @@
             };
             dataObj.yearObj = {
                 [config.ALL_TIME]: 0,
+                [config.WEEK_DETAILS]: dataObj.weekDetailsObj,
                 [dataObj.currentQuarter]: dataObj.quarterObj
             };
 
             return dataObj;
-        };
+        }
 
         /**
          * Update extension storage with data
          * @param {Object} tab
          * @param {string} hostname
-         * @returns {undefined}
+         * @returns {Object}
          */
         updateDataFor(hostname, tab) {
 
@@ -234,11 +260,11 @@
                 this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth] = dataObj.monthObj;
             } else if (!this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth)) {
                 this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][dataObj.currentDayOfTheMonth] = dataObj.dayOfTheMonthObj;
-            } else if (!this.getDayOfTheWeekFor(hostname, dataObj.currentDayOfTheWeek)) {
-                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][config.DAY_OF_THE_WEEK] = dataObj.dayOfTheWeekObj;
+            } else if (!this.getWeekDetailsFor(hostname, dataObj.currentWeekDetails)) {
+                this.data[hostname][dataObj.currentYear][config.WEEK_DETAILS] = dataObj.weekDetailsObj;
             }
 
-            utils.increment(this.data, config.ALL_TIME)
+            utils.increment(this.data, config.ALL_TIME);
 
             utils.increment(this.data[hostname], config.ALL_TIME);
 
@@ -246,12 +272,17 @@
             utils.increment(this.getQuarterFor(hostname, dataObj.currentQuarter), config.ALL_TIME);
             utils.increment(this.getMonthFor(hostname, dataObj.currentMonth), config.ALL_TIME);
             utils.increment(this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth), config.ALL_TIME);
-            utils.increment(this.getMonthFor(hostname, dataObj.currentMonth)[config.DAY_OF_THE_WEEK], dataObj.currentDayOfTheWeek);
+            utils.increment(this.getYearFor(hostname, dataObj.currentYear)[config.WEEK_DETAILS], dataObj.currentWeekDetails);
             utils.increment(this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth), dataObj.currentTime);
 
             this.data[hostname].favicon = tab.favIconUrl;
             this.data[hostname][config.LAST_VISIT] = utils.getDateString();
+
+            return {
+                todayInSec: this.getTodayFor(hostname)[config.ALL_TIME],
+                allTimeInSec: this.data[hostname][config.ALL_TIME]
+            };
         }
-    }
+    };
 
 }));

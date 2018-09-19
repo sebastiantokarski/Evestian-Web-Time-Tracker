@@ -132,14 +132,14 @@ describe('Date functions', function() {
         expect(utils.getCurrentDayOfTheMonth()).to.be.a('string').to.equal(currentDayOfTheMonth);
     });
 
-    it('Should return current day of the week\'s mock date', function() {
-        const currentDayOfTheWeek = '5';
-        const sunday = '7';
-        expect(utils.getCurrentDayOfTheWeek()).to.be.a('string').to.equal(currentDayOfTheWeek);
-        clock = sinon.useFakeTimers(time + (dayInMs * 2));
-        expect(utils.getCurrentDayOfTheWeek()).to.be.a('string').to.equal(sunday);
-        clock = sinon.useFakeTimers(time);
-    });
+    // it('Should return current day of the week\'s mock date', function() {
+    //     const currentDayOfTheWeek = '5';
+    //     const sunday = '7';
+    //     expect(utils.getCurrentDayOfTheWeek()).to.be.a('string').to.equal(currentDayOfTheWeek);
+    //     clock = sinon.useFakeTimers(time + (dayInMs * 2));
+    //     expect(utils.getCurrentDayOfTheWeek()).to.be.a('string').to.equal(sunday);
+    //     clock = sinon.useFakeTimers(time);
+    // });
 
     it('Should return current time\'s mock date', function() {
         const currentTime = '04:40';

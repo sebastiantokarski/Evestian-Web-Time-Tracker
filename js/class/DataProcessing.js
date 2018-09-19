@@ -38,7 +38,7 @@
             let pagesArray = [];
             let data = this.data;
             for (let key in data) {
-                if (data.hasOwnProperty(key) && key !== config.ALL_TIME && this[methodName](key, period)) {
+                if (data.hasOwnProperty(key) && this[methodName](key, period)) {
                     pagesArray.push([
                         key,
                         this[methodName](key, period)[config.ALL_TIME],
@@ -169,6 +169,6 @@
             console.log(this);
             /* eslint-enable no-console */
         }
-    }
+    };
 
 }));

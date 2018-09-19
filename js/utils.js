@@ -124,6 +124,17 @@
         },
 
         /**
+         * Get current week of the year
+         * @returns {string}
+         */
+        getCurrentWeekOfTheYear() {
+            const now = new Date();
+            const oneJan = new Date(now.getFullYear(), 0, 1);
+            const oneDayInMs = 86400000;
+            return Math.ceil( (((now - oneJan) / oneDayInMs) + oneJan.getDay() + 1) / 7 ).toString();
+        },
+
+        /**
          * Get current day of the month
          * @returns {string}
          */
@@ -132,16 +143,17 @@
         },
 
         /**
-         * Get current day of the week
+         * Get current week of the year and day of the week
          * @returns {string}
          */
-        getCurrentDayOfTheWeek() {
+        getCurrentWeekDetails() {
             let dayOfTheWeek = new Date().getDay();
+            let weekOfTheYear = this.getCurrentWeekOfTheYear();
             // Sunday should be 7th day of the week
             if (dayOfTheWeek === 0) {
                 dayOfTheWeek = 7;
             }
-            return dayOfTheWeek.toString();
+            return `${weekOfTheYear}-${dayOfTheWeek}`;
         },
 
         /**
