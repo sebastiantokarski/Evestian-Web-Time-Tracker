@@ -15,7 +15,7 @@
         BLACKLIST_PROTOCOL: ['chrome:', 'chrome-extension:', 'vivaldi:', 'file:'],
         COUNT_ONLY_ACTIVE_STATE: true,
         WEEK_DETAILS: '_wd',
-        DEVELOPMENT_MODE: !!chrome.runtime.getManifest().debug,
+        DEVELOPMENT_MODE: this.chrome ? !!chrome.runtime.getManifest().debug : false,
         DISPLAY_BADGE: true,
         EXTENSION_DATA_NAME: 'dataOfAllVisitedPages',
         FIRST_VISIT: '_fv',

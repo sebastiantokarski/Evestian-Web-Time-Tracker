@@ -1,5 +1,5 @@
 const assert = require('assert');
-const utils = require('../js/utils.js');
+const utils = require('../../../js/utils');
 const mlog = require('mocha-logger');
 const sinon = require('sinon');
 const chai = require('chai');

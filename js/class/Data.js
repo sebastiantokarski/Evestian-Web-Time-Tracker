@@ -1,5 +1,4 @@
 /* global chrome, define, module */
-// @todo LACK OF GLOBAL TIME COUNTING (max is year)
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([
@@ -25,6 +24,17 @@
          */
         constructor(dataName) {
             this.dataName = dataName;
+        }
+
+        get dataName() {
+            return this._dataName;
+        }
+
+        set dataName(value) {
+            if (!value || typeof value !== 'string') {
+                throw('dataName is required');
+            }
+            this._dataName = value;
         }
 
         /**
