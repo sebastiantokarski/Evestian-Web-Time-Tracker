@@ -149,18 +149,8 @@
          */
         createEmptyDataObject() {
             this.data = {};
-
-            Object.defineProperties(this.data, {
-                [config.ALL_TIME]: {
-                    value: 0,
-                    enumerable: false
-                },
-                [config.FIRST_VISIT]: {
-                    value: utils.getDateString(),
-                    enumerable: false
-                }
-            });
-
+            this.data[config.ALL_TIME] = 0;
+            this.data[config.FIRST_VISIT] = utils.getDateString();
         }
 
         /**

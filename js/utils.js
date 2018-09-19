@@ -81,7 +81,7 @@
             let currentMonth = parseInt(this.getCurrentMonth(), 10);
             let lastMonth = currentMonth - 1;
             if (lastMonth === 0) {
-                return 12;
+                return '12';
             }
             return lastMonth.toString();
         },
@@ -90,11 +90,11 @@
          * Get last quarter
          * @returns {string}
          */
-        getLastQuarter: function () {
+        getLastQuarter() {
             let currentQuarter = parseInt(this.getCurrentQuarter(), 10);
             let lastQuarter = currentQuarter - 1;
             if (lastQuarter === 0) {
-                return 4;
+                return '4';
             }
             return lastQuarter.toString();
         },
@@ -201,7 +201,7 @@
          * @param {string} url
          * @returns {boolean}
          */
-        isProtocolOnBlacklist: function (url) {
+        isProtocolOnBlacklist(url) {
             return config.BLACKLIST_PROTOCOL.indexOf(this.getFromUrl('protocol', url)) !== -1;
         },
 

@@ -38,7 +38,7 @@
             let pagesArray = [];
             let data = this.data;
             for (let key in data) {
-                if (data.hasOwnProperty(key) && this[methodName](key, period)) {
+                if (data.hasOwnProperty(key) && key !== config.FIRST_VISIT && key !== config.ALL_TIME && this[methodName](key, period)) {
                     pagesArray.push([
                         key,
                         this[methodName](key, period)[config.ALL_TIME],
@@ -128,7 +128,7 @@
                 options: {
                     tooltips: {
                         callbacks: {
-                            label: function (tooltipItem, chart) {
+                            label(tooltipItem, chart) {
                                 let seconds = chart.datasets[0].data[tooltipItem.index];
                                 let labelText = chart.labels[tooltipItem.index];
                                 return `${labelText}: ${self.parseSecondsIntoTime(seconds)}`;
