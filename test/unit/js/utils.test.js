@@ -16,7 +16,7 @@ describe('utils.js', () => {
         delete global.chrome;
     });
 
-    describe('Date functions',()  =>{
+    describe('Date functions', ()  =>{
 
         // Fri Jul 14 2017 04:40:00 GMT+0200
         const time = 1500000000000;
@@ -31,60 +31,60 @@ describe('utils.js', () => {
             clock.restore();
         });
 
-        it('getDateString',()  =>{
+        it('getDateString', () => {
             const todayDate = '2017-07-14';
             expect(utils.getDateString()).to.be.a('string').to.equal(todayDate);
             expect(utils.getDateString(new Date(1))).to.be.a('string').to.equal('1970-01-01');
             expect(utils.getDateString(new Date(2000000000000))).to.be.a('string').to.equal('2033-05-18');
         });
 
-        it('getYesterdayDate',()  =>{
+        it('getYesterdayDate', () => {
             const yesterdayInMs = new Date(Date.now() - dayInMs);
             // Without toString chai see difference
             expect(utils.getYesterdayDate().toString()).to.equal(yesterdayInMs.toString());
         });
 
-        it('getYesterdayDay',()  =>{
+        it('getYesterdayDay', () => {
             const yesterdayDay = '13';
             expect(utils.getYesterdayDay()).to.be.a('string').to.equal(yesterdayDay);
         });
 
-        it('getLastMonth',()  =>{
+        it('getLastMonth', () => {
             const lastMonth = '6';
             expect(utils.getLastMonth()).to.be.a('string').to.equal(lastMonth);
         });
 
-        it('getLastQuarter',()  =>{
+        it('getLastQuarter', () => {
             const lastQuarter = '2';
             expect(utils.getLastQuarter()).to.be.a('string').to.equal(lastQuarter);
         });
 
-        it('getCurrentYear',()  =>{
+        it('getCurrentYear', () => {
             const currentYear = '2017';
             expect(utils.getCurrentYear()).to.be.a('string').to.equal(currentYear);
         });
 
-        it('getCurrentQuarter',()  =>{
+        it('getCurrentQuarter', () => {
             const currentQuarter = '3';
             expect(utils.getCurrentQuarter()).to.be.a('string').to.equal(currentQuarter);
         });
 
-        it('getCurrentMonth',()  =>{
+        it('getCurrentMonth', () => {
             const currentMonth = '7';
             expect(utils.getCurrentMonth()).to.be.a('string').to.equal(currentMonth);
         });
 
-        it('getCurrentWeekOfTheYear',()  =>{
+        it('getCurrentWeekOfTheYear', () => {
             const currentWeekOfTheYear = '28';
             expect(utils.getCurrentWeekOfTheYear()).to.be.a('string').to.equal(currentWeekOfTheYear);
         });
 
-        it('getCurrentDayOfTheMonth',()  =>{
+        it('getCurrentDayOfTheMonth', () => {
             const currentDayOfTheMonth = '14';
             expect(utils.getCurrentDayOfTheMonth()).to.be.a('string').to.equal(currentDayOfTheMonth);
         });
 
-        it('getCurrentWeekDetails',()  =>{
+        it('getCurrentWeekDetails', () => {
             const currentWeekDetails = '28-5';
             const sundayWeekDetails = '28-7';
             const mondayWeekDetails = '29-1';
@@ -100,13 +100,13 @@ describe('utils.js', () => {
             clock = sinon.useFakeTimers(time);
         });
 
-        it('getCurrentTime',()  =>{
+        it('getCurrentTime', () => {
             const currentTime = '04:40';
             expect(utils.getCurrentTime()).to.be.a('string').to.equal(currentTime);
         });
     });
 
-    it('getFromUrl',()  =>{
+    it('getFromUrl', () => {
         const url = 'https://www.test.pl/search?q=test';
         const emptyUrl = '';
         expect(utils.getFromUrl('pathname', url)).to.be.a('string').to.equal('/search');
@@ -151,7 +151,8 @@ describe('utils.js', () => {
     });
 
     it('isStateActive', () => {
-        sandbox = sinon.createSandbox();
+        let sandbox = sinon.createSandbox();
+
         sandbox.stub(config, 'COUNT_ONLY_ACTIVE_STATE').value(false);
         expect(utils.isStateActive()).to.be.a('boolean').to.equal(true);
         sandbox.restore();
@@ -173,7 +174,8 @@ describe('utils.js', () => {
         const url1 = 'https://www.test.pl/search?q=test';
         const url2 = 'chrome-extension://nfawpnfwiabobopafwanpmodwat';
 
-        sandbox = sinon.createSandbox();
+        let sandbox = sinon.createSandbox();
+
         sandbox.stub(config, 'BLACKLIST_PROTOCOL').value(['chrome:', 'chrome-extension:']);
         expect(utils.isProtocolOnBlacklist(url1)).to.be.a('boolean').to.equal(false);
         expect(utils.isProtocolOnBlacklist(url2)).to.be.a('boolean').to.equal(true);
@@ -189,7 +191,7 @@ describe('utils.js', () => {
         let obj = {
             prop1: 12,
             prop2: 0
-        }
+        };
 
         expect(utils.increment(obj, 'prop1')).to.be.a('number').to.equal(13);
         expect(utils.increment(obj, 'prop2')).to.be.a('number').to.equal(1);
