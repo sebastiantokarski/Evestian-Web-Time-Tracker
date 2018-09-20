@@ -4,42 +4,13 @@
     if (typeof define === 'function' && define.amd) {
         define(['./config.js'], factory);
     } else if (typeof exports === 'object') {
-        module.exports = factory();
+        module.exports = factory(require('./config.js'));
     } else {
-        root.utils = factory();
+        root.utils = factory(root.config);
     }
 }(this, (config) => {
 
     return {
-
-        /**
-         * Get some properties from url such as protocol, pathname etc.
-         * @param {string} property
-         * @param {string} url
-         * @returns {string}
-         */
-        getFromUrl(property, url) {
-            let a = document.createElement('a');
-            a.href = url;
-            return a[property];
-        },
-
-        /**
-         * Get active and focused tab
-         * @param {Object[]} tabs
-         * @returns {Object|boolean} tab object or false
-         */
-        getActiveTab(tabs) {
-            let i = 0;
-            while (i < tabs.length && !tabs[i].active) {
-                i++;
-            }
-
-            if (tabs[i]) {
-                return tabs[i];
-            }
-            return false;
-        },
 
         /**
          * Get date with format yyyy-mm-dd
@@ -127,11 +98,12 @@
          * Get current week of the year
          * @returns {string}
          */
-        getCurrentWeekOfTheYear() {
-            const now = new Date();
-            const oneJan = new Date(now.getFullYear(), 0, 1);
-            const oneDayInMs = 86400000;
-            return Math.ceil( (((now - oneJan) / oneDayInMs) + oneJan.getDay() + 1) / 7 ).toString();
+        getCurrentWeekOfTheYear(date = new Date()) {
+            date = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+            let yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
+            let weekNo = Math.ceil(( ( (date - yearStart) / 86400000) + 1) / 7);
+            return weekNo.toString();
         },
 
         /**
@@ -165,6 +137,35 @@
                 hour = ('0' + date.getHours()).slice(-2),
                 minute = ('0' + date.getMinutes()).slice(-2);
             return `${hour}:${minute}`;
+        },
+
+        /**
+         * Get some properties from url such as protocol, pathname etc.
+         * @param {string} property
+         * @param {string} url
+         * @returns {string}
+         */
+        getFromUrl(property, url) {
+            let a = document.createElement('a');
+            a.href = url;
+            return a[property];
+        },
+
+        /**
+         * Get active and focused tab
+         * @param {Object[]} tabs
+         * @returns {Object|boolean} tab object or false
+         */
+        getActiveTab(tabs) {
+            let i = 0;
+            while (i < tabs.length && !tabs[i].active) {
+                i++;
+            }
+
+            if (tabs[i]) {
+                return tabs[i];
+            }
+            return false;
         },
 
         /**
