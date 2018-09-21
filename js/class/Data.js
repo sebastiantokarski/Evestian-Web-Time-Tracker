@@ -7,9 +7,17 @@
             '../utils.js'
         ], factory);
     } else if (typeof exports === 'object') {
-        module.exports = factory();
+        module.exports = factory(
+            require('../config.js'),
+            require('../../node_modules/then-chrome/dist/then-chrome.js'),
+            require('../utils.js')
+        );
     } else {
-        root.Data = factory();
+        root.Data = factory(
+            root.config,
+            root.thenChrome,
+            root.utils
+        );
     }
 }(this, (config, thenChrome, utils) => {
 

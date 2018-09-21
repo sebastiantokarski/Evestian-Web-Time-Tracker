@@ -8,11 +8,11 @@ const expect = chai.expect;
 
 
 
-describe('Data', () => {
+describe('Data.js', () => {
 
     let data;
 
-    beforeEach(() => {
+    before(() => {
         data = new Data(config.EXTENSION_DATA_NAME);
     });
 

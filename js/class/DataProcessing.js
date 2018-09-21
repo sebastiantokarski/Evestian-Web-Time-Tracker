@@ -2,13 +2,25 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['./Data.js', '../config.js', '../utils.js'], factory);
+        define([
+            '../config.js',
+            '../utils.js',
+            './Data.js'
+        ], factory);
     } else if (typeof exports === 'object') {
-        module.exports = factory();
+        module.exports = factory(
+            require('../config.js'),
+            require('../utils.js'),
+            require('./Data.js')
+        );
     } else {
-        root.DataProcessing = factory();
+        root.DataProcessing = factory(
+            root.config,
+            root.utils,
+            root.Data
+        );
     }
-}(this, (Data, config, utils) => {
+}(this, (config, utils, Data) => {
 
     return class DataProcessing extends Data {
         constructor(dataName) {
