@@ -182,7 +182,7 @@
                 [dataObj.currentYear]: dataObj.yearObj,
                 [config.ALL_TIME]: 0
             };
-            this.data[hostname].favicon = null;
+            this.data[hostname][config.FAVICON_URL] = null;
             this.data[hostname][config.FIRST_VISIT] = utils.getDateString();
         }
 
@@ -283,7 +283,7 @@
             utils.increment(this.getYearFor(hostname, dataObj.currentYear)[config.WEEK_DETAILS], dataObj.currentWeekDetails);
             utils.increment(this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth), dataObj.currentTime);
 
-            this.data[hostname].favicon = tab.favIconUrl;
+            this.data[hostname][config.FAVICON_URL] = tab.favIconUrl;
             this.data[hostname][config.LAST_VISIT] = utils.getDateString();
 
             return {

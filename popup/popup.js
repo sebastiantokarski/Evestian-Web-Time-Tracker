@@ -38,7 +38,8 @@ requirejs([
                         arr.push([
                             key,
                             data[key][config.ALL_TIME],
-                            data[key].favicon]);
+                            data[key][config.FAVICON_URL]
+                        ]);
                     }
                 }
                 arr.sort(function (a, b) {

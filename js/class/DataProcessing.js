@@ -54,7 +54,7 @@
                     pagesArray.push([
                         key,
                         this[methodName](key, period)[config.ALL_TIME],
-                        data[key].favicon
+                        data[key][config.FAVICON_URL]
                     ]);
                 }
             }

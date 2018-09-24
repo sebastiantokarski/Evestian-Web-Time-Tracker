@@ -18,6 +18,7 @@
         DEVELOPMENT_MODE: this.chrome ? !!chrome.runtime.getManifest().debug : false,
         DISPLAY_BADGE: true,
         EXTENSION_DATA_NAME: 'dataOfAllVisitedPages',
+        FAVICON_URL: '_fu',
         FIRST_VISIT: '_fv',
         INTERVAL_UPDATE_S: 1000,
         INTERVAL_UPDATE_MIN: 1000 * 60,
