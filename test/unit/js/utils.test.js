@@ -104,6 +104,16 @@ describe('utils.js', () => {
             const currentTime = '04:40';
             expect(utils.getCurrentTime()).to.be.a('string').to.equal(currentTime);
         });
+
+        it('getCurrentHour', () => {
+            const currentTime = '4';
+            expect(utils.getCurrentHour()).to.be.a('string').to.equal(currentTime);
+        });
+
+        it('getCurrentMinute', () => {
+            const currentTime = '40';
+            expect(utils.getCurrentMinute()).to.be.a('string').to.equal(currentTime);
+        });
     });
 
     it('getFromUrl', () => {

@@ -140,6 +140,22 @@
         },
 
         /**
+         * Get current hour
+         * @returns {string}
+         */
+        getCurrentHour() {
+            return new Date().getHours().toString();
+        },
+
+        /**
+         * Get current minute
+         * @returns {string}
+         */
+        getCurrentMinute() {
+            return new Date().getMinutes().toString();
+        },
+
+        /**
          * Get some properties from url such as protocol, pathname etc.
          * @param {string} property
          * @param {string} url

@@ -82,7 +82,7 @@
                             utils.debugLog(`Item not found in storage - ${self.dataName}`, self.data);
                         }
                         if (config.DEVELOPMENT_MODE) {
-                            window.data = self.data;
+                            window.data = this;
                         }
                         resolve(self.data);
                     });
@@ -132,6 +132,16 @@
          */
         getDayOfTheMonthFor(hostname, dayOfTheMonth = utils.getCurrentDayOfTheMonth()) {
             return this.getMonthFor(hostname)[dayOfTheMonth];
+        }
+
+        /**
+         * Gets hour data object for a given domain
+         * @param {string} hostname
+         * @param {string} [hour = utils.getCurrentHour()]
+         * @returns {Object}
+         */
+        getHourFor(hostname, hour = utils.getCurrentHour()) {
+            return this.getDayOfTheMonthFor(hostname)[hour];
         }
 
         /**
@@ -220,11 +230,16 @@
                 currentMonth: utils.getCurrentMonth(),
                 currentWeekDetails: utils.getCurrentWeekDetails(),
                 currentDayOfTheMonth: utils.getCurrentDayOfTheMonth(),
-                currentTime: utils.getCurrentTime()
+                currentHour: utils.getCurrentHour(),
+                currentMinute: utils.getCurrentMinute()
+            };
+            dataObj.minuteObj = {
+                [config.ALL_TIME]: 0,
+                [dataObj.currentMinute]: 0
             };
             dataObj.dayOfTheMonthObj = {
                 [config.ALL_TIME]: 0,
-                [dataObj.currentTime]: 0
+                [dataObj.currentHour]: dataObj.minuteObj
             };
             dataObj.weekDetailsObj = {
                 [dataObj.currentWeekDetails]: 0
@@ -266,10 +281,12 @@
                 this.data[hostname][dataObj.currentYear] = dataObj.quarterObj;
             } else if (!this.getMonthFor(hostname, dataObj.currentMonth)) {
                 this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth] = dataObj.monthObj;
-            } else if (!this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth)) {
-                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][dataObj.currentDayOfTheMonth] = dataObj.dayOfTheMonthObj;
             } else if (!this.getWeekDetailsFor(hostname, dataObj.currentWeekDetails)) {
                 this.data[hostname][dataObj.currentYear][config.WEEK_DETAILS] = dataObj.weekDetailsObj;
+            } else if (!this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth)) {
+                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][dataObj.currentDayOfTheMonth] = dataObj.dayOfTheMonthObj;
+            } else if (!this.getHourFor(hostname, dataObj.currentHour)) {
+                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][dataObj.currentDayOfTheMonth][dataObj.currentHour] = dataObj.minuteObj;
             }
 
             utils.increment(this.data, config.ALL_TIME);
@@ -281,7 +298,8 @@
             utils.increment(this.getMonthFor(hostname, dataObj.currentMonth), config.ALL_TIME);
             utils.increment(this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth), config.ALL_TIME);
             utils.increment(this.getYearFor(hostname, dataObj.currentYear)[config.WEEK_DETAILS], dataObj.currentWeekDetails);
-            utils.increment(this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth), dataObj.currentTime);
+            utils.increment(this.getHourFor(hostname, dataObj.currentHour), config.ALL_TIME);
+            utils.increment(this.getHourFor(hostname, dataObj.currentHour), dataObj.currentMinute);
 
             this.data[hostname][config.FAVICON_URL] = tab.favIconUrl;
             this.data[hostname][config.LAST_VISIT] = utils.getDateString();
