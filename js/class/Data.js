@@ -284,7 +284,8 @@
                 this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth] = dataObj.monthObj;
             } else if (!this.getWeekDetailsFor(hostname, dataObj.currentWeekDetails)) {
                 this.data[hostname][dataObj.currentYear][config.WEEK_DETAILS] = dataObj.weekDetailsObj;
-            } else if (!this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth)) {
+            }
+            if (!this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth)) {
                 this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][dataObj.currentDayOfTheMonth] = dataObj.dayOfTheMonthObj;
             } else if (!this.getHourFor(hostname, dataObj.currentHour)) {
                 this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][dataObj.currentDayOfTheMonth][dataObj.currentHour] = dataObj.minuteObj;
