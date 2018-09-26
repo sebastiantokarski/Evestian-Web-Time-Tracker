@@ -275,6 +275,7 @@
                 this.createEmptyHostnameDataObject(hostname, dataObj);
             }
 
+            // Checking if all objects exist, if not creates "initial" object
             if (!this.getYearFor(hostname, dataObj.currentYear)) {
                 this.data[hostname][dataObj.currentYear] = dataObj.yearObj;
             } else if (!this.getQuarterFor(hostname, dataObj.currentQuarter)) {
@@ -289,8 +290,10 @@
                 this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][dataObj.currentDayOfTheMonth][dataObj.currentHour] = dataObj.minuteObj;
             }
 
+            // Increment global data
             utils.increment(this.data, config.ALL_TIME);
 
+            // Increment hostname data
             utils.increment(this.data[hostname], config.ALL_TIME);
 
             utils.increment(this.getYearFor(hostname, dataObj.currentYear), config.ALL_TIME);
@@ -301,6 +304,7 @@
             utils.increment(this.getHourFor(hostname, dataObj.currentHour), config.ALL_TIME);
             utils.increment(this.getHourFor(hostname, dataObj.currentHour), dataObj.currentMinute);
 
+            // Update other data
             this.data[hostname][config.FAVICON_URL] = tab.favIconUrl;
             this.data[hostname][config.LAST_VISIT] = utils.getDateString();
 

@@ -50,7 +50,7 @@
             let pagesArray = [];
             let data = this.data;
             for (let key in data) {
-                if (data.hasOwnProperty(key) && key !== config.FIRST_VISIT && key !== config.ALL_TIME && this[methodName](key, period)) {
+                if (this.isThisHostnameData(key) && this[methodName](key, period)) {
                     pagesArray.push([
                         key,
                         this[methodName](key, period)[config.ALL_TIME],
@@ -152,6 +152,114 @@
                     }
                 }
             });
+
+            let myChartTimeTodayHours = new Chart(document.getElementById('myChartTimeTodayHours'), {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Time spend each hour today',
+                        data: self.timeSpentInHours.map(hour => hour[1])
+                    }],
+                    labels: self.timeSpentInHours.map(hour => hour[0])
+                }
+            });
+
+            let myChartTimeTodayMinutes = new Chart(document.getElementById('myChartTimeTodayMinutes'), {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Time spend each minute today',
+                        data: self.timeSpentInMinutes.map(minute => minute[1])
+                    }],
+                    labels: self.timeSpentInMinutes.map(minute => minute[0])
+                }
+            })
+        }
+
+        /**
+         * Creates map, where keys are numbers, and value is the same for every key
+         * @param {number} numberOfKeys
+         * @param {*} value
+         * @param {number} [startNumber=0]
+         * @returns {Object}
+         */
+        createMap(numberOfKeys, value, startNumber = 0) {
+            let newObj = {};
+
+            for (let i = startNumber; i < numberOfKeys + startNumber; i++) {
+                newObj[i] = value;
+            }
+
+            return newObj;
+        }
+
+        /**
+         * Converts key to first element, and value to second element of an array
+         * Returns Array of arrays
+         * @param {Object} obj
+         * @returns {Array[]}
+         */
+        convertSimpleObjectToArray(obj) {
+            let newArray = [];
+
+            for (let key in obj) {
+                if (!obj.hasOwnProperty(key)) continue;
+
+                newArray.push([
+                    key,
+                    obj[key]
+                ]);
+            }
+
+            return newArray;
+        }
+
+        /**
+         * Checks is this hostname data by checking if it is data property, and has all_time property
+         * @param {Object} data
+         * @param {string} hostname
+         * @returns {boolean}
+         */
+        isThisHostnameData(hostname) {
+            return this.data.hasOwnProperty(hostname) && !!this.data[hostname][config.ALL_TIME];
+        }
+
+        getTimeSpentInHours() {
+            let hoursMap = this.createMap(24, 0);
+
+            for (let hostname in this.data) {
+                if (this.isThisHostnameData(hostname)) {
+                    let today = this.getTodayFor(hostname);
+                    for (let hour in today) {
+                        if (hour !== config.ALL_TIME) {
+                            hoursMap[hour] += today[hour][config.ALL_TIME];
+                        }
+                    }
+                }
+            }
+
+            return this.convertSimpleObjectToArray(hoursMap);
+        }
+
+        getTimeSpentInMinutes() {
+            let minutesMap = this.createMap(60, 0);
+
+            for (let hostname in this.data) {
+                if (this.isThisHostnameData(hostname)) {
+                    let today = this.getTodayFor(hostname);
+                    for (let hour in today) {
+                        if (hour !== config.ALL_TIME) {
+                            for (let minute in today[hour]) {
+                                if (minute !== config.ALL_TIME) {
+                                    minutesMap[minute] += today[hour][minute];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return this.convertSimpleObjectToArray(minutesMap);
         }
 
         proceedDataProcessing() {
@@ -174,6 +282,10 @@
 
             this.pagesVisitedLastQuarter = this.getPagesVisitedInGivenPeriod('getQuarterFor', utils.getLastQuarter());
             this.pagesVisitedLastQuarter = this.sortDescending(this.pagesVisitedLastQuarter, 1);
+
+            this.timeSpentInHours = this.getTimeSpentInHours();
+
+            this.timeSpentInMinutes = this.getTimeSpentInMinutes();
 
             this.generateChart();
 
