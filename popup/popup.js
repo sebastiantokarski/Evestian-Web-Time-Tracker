@@ -3,7 +3,7 @@
 requirejs([
     '../js/config.js',
     '../js/utils.js',
-    '../node_modules/chart.js/dist/Chart.js',
+    '../node_modules/chart.js/dist/Chart.bundle.js',
     '../js/class/DataProcessing.js'
 ], function(config, utils, Chart, DataProcessing) {
 
