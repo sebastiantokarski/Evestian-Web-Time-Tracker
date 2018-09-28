@@ -9,9 +9,153 @@ requirejs([
 
     function show() {
 
+        // @todo generate empty chart if data is not available
+        function generateCharts() {
+            let todayChart = new Chart(document.getElementById('myChartToday'), {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: data.pagesVisitedToday.data,
+                        // @todo colors from favicos: https://stackoverflow.com/questions/2541481/get-average-color-of-image-via-javascript
+                        backgroundColor: ['red', 'orange', 'purple', 'green', 'yellow', 'blue', 'brown', 'lime', 'pink']
+                    }],
+
+                    // These labels appear in the legend and in the tooltips when hovering different arcs
+                    labels: data.pagesVisitedToday.labels,
+                },
+                options: {
+                    tooltips: {
+                        callbacks: {
+                            label(tooltipItem, chart) {
+                                let seconds = chart.datasets[0].data[tooltipItem.index];
+                                let labelText = chart.labels[tooltipItem.index];
+                                return `${labelText}: ${DataProcessing.parseSecondsIntoTime(seconds)}`;
+                            }
+                        }
+                    },
+                    legend: {
+                        labels: {
+                            usePointStyle: true
+                        },
+                        position: 'right'
+                    }
+                }
+            });
+
+            let yesterdayChart = new Chart(document.getElementById('myChartYesterday'), {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: data.pagesVisitedYesterday.data,
+                        backgroundColor: ['red', 'orange', 'purple', 'green', 'yellow', 'blue', 'brown', 'lime', 'pink']
+                    }],
+                    labels: data.pagesVisitedYesterday.labels
+                },
+                options: {
+                    tooltips: {
+                        callbacks: {
+                            label(tooltipItem, chart) {
+                                let seconds = chart.datasets[0].data[tooltipItem.index];
+                                let labelText = chart.labels[tooltipItem.index];
+                                return `${labelText}: ${DataProcessing.parseSecondsIntoTime(seconds)}`;
+                            }
+                        }
+                    },
+                    legend: {
+                        labels: {
+                            usePointStyle: true
+                        },
+                        position: 'right'
+                    }
+                }
+            });
+
+            let monthChart = new Chart(document.getElementById('myChartMonth'), {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: data.pagesVisitedThisMonth.data,
+                        backgroundColor: ['red', 'orange', 'purple', 'green', 'yellow', 'blue', 'brown', 'lime', 'pink']
+                    }],
+                    labels: data.pagesVisitedThisMonth.labels
+                },
+                options: {
+                    tooltips: {
+                        callbacks: {
+                            label(tooltipItem, chart) {
+                                let seconds = chart.datasets[0].data[tooltipItem.index];
+                                let labelText = chart.labels[tooltipItem.index];
+                                return `${labelText}: ${DataProcessing.parseSecondsIntoTime(seconds)}`;
+                            }
+                        }
+                    },
+                    legend: {
+                        labels: {
+                            usePointStyle: true
+                        },
+                        position: 'right'
+                    }
+                }
+            });
+
+
+            let myChartTimeTodayHours = new Chart(document.getElementById('myChartTimeTodayHours'), {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label:'Time in minutes',
+                        data: data.timeSpentInHours.data,
+                        borderColor: 'rgb(0, 102, 255)',
+                        backgroundColor: 'rgb(77, 148, 255)'
+                    }],
+                    labels: data.timeSpentInHours.labels
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                suggestedMin: 0,
+                                suggestedMax: 60
+                            }
+                        }]
+                    }
+                }
+            });
+
+            let myChartTimDaysOfTheWeek = new Chart(document.getElementById('myChartTimDaysOfTheWeek'), {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label:'Time in minutes',
+                        data: data.timeSpentEachDayOfTheWeek.data,
+                        borderColor: 'rgb(0, 102, 255)',
+                        backgroundColor: 'rgb(77, 148, 255)'
+                    }],
+                    labels: data.timeSpentEachDayOfTheWeek.labels
+                }
+            });
+
+            let myChartTimeTodayMinutes = new Chart(document.getElementById('myChartTimeTodayMinutes'), {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label:'Time in seconds',
+                        data: data.timeSpentInMinutes.data,
+                        borderColor: 'rgb(0, 102, 255)',
+                        backgroundColor: 'rgb(77, 148, 255)'
+                    }],
+                    labels: data.timeSpentInMinutes.labels
+                }
+            });
+        }
+
         let data = new DataProcessing(config.EXTENSION_DATA_NAME);
         data.loadFromStorage().then(() => {
             data.proceedDataProcessing();
+
+            utils.debugLog('Generated data:', data);
+
+            generateCharts();
         });
 
         function showResults(arr) {
@@ -22,7 +166,7 @@ requirejs([
                 if (!arr[i][2]) {
                     arr[i][2] = chrome.runtime.getURL('assets/defaultFavicon16.png');
                 }
-                tr.innerHTML = `<td>${i + 1}</td><td><img src="${arr[i][2]}" height="16" width="16"></td></td><td>${arr[i][0]}</td><td>${data.parseSecondsIntoTime(arr[i][1])}</td>`;
+                tr.innerHTML = `<td>${i + 1}</td><td><img src="${arr[i][2]}" height="16" width="16"></td></td><td>${arr[i][0]}</td><td>${DataProcessing.parseSecondsIntoTime(arr[i][1])}</td>`;
                 table.appendChild(tr);
             }
             document.querySelector('.container-table').appendChild(table);

@@ -107,11 +107,18 @@
         },
 
         /**
-         * Get current day of the month
+         * Get current day of the week e.g monday is 1st, sunday is 7th
          * @returns {string}
          */
-        getCurrentDayOfTheMonth() {
-            return new Date().getDate().toString();
+        getCurrentDayOfTheWeek() {
+            let dayOfTheWeek = new Date().getDay();
+
+            // Sunday should be 7th day of the week
+            if (dayOfTheWeek === 0) {
+                dayOfTheWeek = 7;
+            }
+
+            return dayOfTheWeek.toString();
         },
 
         /**
@@ -119,13 +126,15 @@
          * @returns {string}
          */
         getCurrentWeekDetails() {
-            let dayOfTheWeek = new Date().getDay();
-            let weekOfTheYear = this.getCurrentWeekOfTheYear();
-            // Sunday should be 7th day of the week
-            if (dayOfTheWeek === 0) {
-                dayOfTheWeek = 7;
-            }
-            return `${weekOfTheYear}-${dayOfTheWeek}`;
+            return `${this.getCurrentWeekOfTheYear()}-${this.getCurrentDayOfTheWeek()}`;
+        },
+
+        /**
+         * Get current day of the month
+         * @returns {string}
+         */
+        getCurrentDayOfTheMonth() {
+            return new Date().getDate().toString();
         },
 
         /**

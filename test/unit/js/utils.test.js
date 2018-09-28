@@ -79,9 +79,9 @@ describe('utils.js', () => {
             expect(utils.getCurrentWeekOfTheYear()).to.be.a('string').to.equal(currentWeekOfTheYear);
         });
 
-        it('getCurrentDayOfTheMonth', () => {
-            const currentDayOfTheMonth = '14';
-            expect(utils.getCurrentDayOfTheMonth()).to.be.a('string').to.equal(currentDayOfTheMonth);
+        it('getCurrentDayOfTheWeek', () => {
+            const currentDayOfTheWeek = '5';
+            expect(utils.getCurrentDayOfTheWeek()).to.be.a('string').to.equal(currentDayOfTheWeek);
         });
 
         it('getCurrentWeekDetails', () => {
@@ -98,6 +98,11 @@ describe('utils.js', () => {
             clock = sinon.useFakeTimers(time + (dayInMs * 3));
             expect(utils.getCurrentWeekDetails()).to.be.a('string').to.equal(mondayWeekDetails);
             clock = sinon.useFakeTimers(time);
+        });
+
+        it('getCurrentDayOfTheMonth', () => {
+            const currentDayOfTheMonth = '14';
+            expect(utils.getCurrentDayOfTheMonth()).to.be.a('string').to.equal(currentDayOfTheMonth);
         });
 
         it('getCurrentTime', () => {

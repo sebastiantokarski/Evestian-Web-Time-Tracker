@@ -23,6 +23,11 @@
 }(this, (config, utils, Data) => {
 
     return class DataProcessing extends Data {
+
+        /**
+         * Constructor same as in Data class
+         * @param {string} dataName
+         */
         constructor(dataName) {
             super(dataName);
         }
@@ -33,147 +38,10 @@
          * @param {number} indexToCompare
          * @returns {*|void}
          */
-        sortDescending(array, indexToCompare) {
+        static sortDescending(array, indexToCompare) {
             return array.sort(function (a, b) {
                 return b[indexToCompare] - a[indexToCompare];
             });
-        }
-
-        /**
-         * Returns an array with pages visited in given period
-         * @param {string} methodName (getToday|getYesterday)
-         * @param {string} [period]
-         * @returns {Array}
-         */
-        getPagesVisitedInGivenPeriod(methodName, period) {
-
-            let pagesArray = [];
-            let data = this.data;
-            for (let key in data) {
-                if (this.isThisHostnameData(key) && this[methodName](key, period)) {
-                    pagesArray.push([
-                        key,
-                        this[methodName](key, period)[config.ALL_TIME],
-                        data[key][config.FAVICON_URL]
-                    ]);
-                }
-            }
-            return pagesArray;
-        }
-
-        parseSecondsIntoTime(seconds) {
-
-            let time = {
-                days: '',
-                hours: '',
-                minutes: '',
-                seconds
-            };
-
-            let oneDay = 60 * 60 * 24,
-                oneHour = 60 * 60,
-                oneMinute = 60;
-
-            if (time.seconds > oneDay) {
-                time.days = Math.floor(time.seconds / 60 / 60 / 24);
-                time.seconds -= (time.days * oneDay);
-                time.days = time.days + 'd';
-            }
-
-            if (time.seconds > oneHour) {
-                time.hours = Math.floor(time.seconds / 60 / 60);
-                time.seconds -= (time.hours * oneHour);
-                time.hours = time.days ? ('0' + time.hours).slice(-2) + 'h' : time.hours + 'h';
-            }
-
-            if (time.seconds > oneMinute) {
-                time.minutes = Math.floor(time.seconds / 60);
-                time.seconds -= (time.minutes * oneMinute);
-                time.minutes = time.hours ? ('0' + time.minutes).slice(-2) + 'm' : time.minutes + 'm';
-            }
-
-            time.seconds = time.minutes ? ('0' + time.seconds).slice(-2) + 's' : time.seconds + 's';
-
-            return `${time.days}${time.hours}${time.minutes}${time.seconds}`;
-        }
-
-        // @todo generate empty chart if data is not available
-        generateChart() {
-            let self = this;
-            let todayChart = new Chart(document.getElementById('myChartToday'), {
-                type: 'doughnut',
-                data: {
-                    datasets: [{
-                        data: this.pagesVisitedToday.map((page) => page[1]).slice(0, 10),
-                        // @todo colors from favicos: https://stackoverflow.com/questions/2541481/get-average-color-of-image-via-javascript
-                        backgroundColor: ['red', 'orange', 'purple', 'green', 'yellow', 'blue', 'brown', 'lime', 'pink']
-                    }],
-
-                    // These labels appear in the legend and in the tooltips when hovering different arcs
-                    labels: this.pagesVisitedToday.map((page) => page[0]).slice(0, 10),
-                },
-                options: {
-                    tooltips: {
-                        callbacks: {
-                            label(tooltipItem, chart) {
-                                let seconds = chart.datasets[0].data[tooltipItem.index];
-                                let labelText = chart.labels[tooltipItem.index];
-                                return `${labelText}: ${self.parseSecondsIntoTime(seconds)}`;
-                            }
-                        }
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            });
-
-            let yesterdayChart = new Chart(document.getElementById('myChartYesterday'), {
-                type: 'doughnut',
-                data: {
-                    datasets: [{
-                        data: this.pagesVisitedYesterday.map((page) => page[1]).slice(0, 10),
-                        backgroundColor: ['red', 'orange', 'purple', 'green', 'yellow', 'blue', 'brown', 'lime', 'pink']
-                    }],
-                    labels: this.pagesVisitedYesterday.map((page) => page[0]).slice(0, 10),
-                },
-                options: {
-                    tooltips: {
-                        callbacks: {
-                            label(tooltipItem, chart) {
-                                let seconds = chart.datasets[0].data[tooltipItem.index];
-                                let labelText = chart.labels[tooltipItem.index];
-                                return `${labelText}: ${self.parseSecondsIntoTime(seconds)}`;
-                            }
-                        }
-                    },
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            });
-
-            let myChartTimeTodayHours = new Chart(document.getElementById('myChartTimeTodayHours'), {
-                type: 'line',
-                data: {
-                    datasets: [{
-                        label: 'Time spend each hour today',
-                        data: self.timeSpentInHours.map(hour => hour[1])
-                    }],
-                    labels: self.timeSpentInHours.map(hour => hour[0])
-                }
-            });
-
-            let myChartTimeTodayMinutes = new Chart(document.getElementById('myChartTimeTodayMinutes'), {
-                type: 'line',
-                data: {
-                    datasets: [{
-                        label: 'Time spend each minute today',
-                        data: self.timeSpentInMinutes.map(minute => minute[1])
-                    }],
-                    labels: self.timeSpentInMinutes.map(minute => minute[0])
-                }
-            })
         }
 
         /**
@@ -183,7 +51,7 @@
          * @param {number} [startNumber=0]
          * @returns {Object}
          */
-        createMap(numberOfKeys, value, startNumber = 0) {
+        static createSimpleMap(numberOfKeys, value, startNumber = 0) {
             let newObj = {};
 
             for (let i = startNumber; i < numberOfKeys + startNumber; i++) {
@@ -199,7 +67,7 @@
          * @param {Object} obj
          * @returns {Array[]}
          */
-        convertSimpleObjectToArray(obj) {
+        static convertSimpleObjectToArray(obj) {
             let newArray = [];
 
             for (let key in obj) {
@@ -215,19 +83,98 @@
         }
 
         /**
+         * Convert 1 to Monday, 2 to Tuesday etc.
+         * @param {number} dayNumber
+         * @returns {string}
+         */
+        static convertDayOfTheWeekToName(dayNumber) {
+            const daysMap = {
+                1: 'Monday',
+                2: 'Tuesday',
+                3: 'Wednesday',
+                4: 'Thursday',
+                5: 'Friday',
+                6: 'Saturday',
+                7: 'Sunday'
+            };
+
+            return daysMap[dayNumber];
+        }
+
+        static parseSecondsIntoTime(seconds) {
+
+            const oneDay = 60 * 60 * 24;
+            const oneHour = 60 * 60;
+            const oneMinute = 60;
+
+            let time = {
+                days: '',
+                hours: '',
+                minutes: '',
+                seconds
+            };
+
+
+            if (time.seconds > oneDay) {
+                time.days = Math.floor(time.seconds / oneDay);
+                time.seconds -= (time.days * oneDay);
+                time.days = time.days + 'd';
+            }
+
+            if (time.seconds > oneHour) {
+                time.hours = Math.floor(time.seconds / oneHour);
+                time.seconds -= (time.hours * oneHour);
+                time.hours = time.days ? ('0' + time.hours).slice(-2) + 'h' : time.hours + 'h';
+            }
+
+            if (time.seconds > oneMinute) {
+                time.minutes = Math.floor(time.seconds / oneMinute);
+                time.seconds -= (time.minutes * oneMinute);
+                time.minutes = time.hours ? ('0' + time.minutes).slice(-2) + 'm' : time.minutes + 'm';
+            }
+
+            time.seconds = time.minutes ? ('0' + time.seconds).slice(-2) + 's' : time.seconds + 's';
+
+            return `${time.days}${time.hours}${time.minutes}${time.seconds}`;
+        }
+
+        /**
+         * Returns an array with pages visited in given period
+         * @param {string} methodName (getToday|getYesterday)
+         * @param {string} [period]
+         * @returns {Array}
+         */
+        getPagesVisitedInGivenPeriod(methodName, period) {
+
+            let pagesArray = [];
+            let data = this.data;
+            for (let key in data) {
+                if (!data.hasOwnProperty(key)) continue;
+                if (this.isThisHostnameData(key) && this[methodName](key, period)) {
+                    pagesArray.push([
+                        key,
+                        this[methodName](key, period)[config.ALL_TIME],
+                        data[key][config.FAVICON_URL]
+                    ]);
+                }
+            }
+            return pagesArray;
+        }
+
+        /**
          * Checks is this hostname data by checking if it is data property, and has all_time property
-         * @param {Object} data
          * @param {string} hostname
          * @returns {boolean}
          */
         isThisHostnameData(hostname) {
-            return this.data.hasOwnProperty(hostname) && !!this.data[hostname][config.ALL_TIME];
+            return typeof this.data[hostname] === 'object' && !!this.data[hostname][config.ALL_TIME];
         }
 
         getTimeSpentInHours() {
-            let hoursMap = this.createMap(24, 0);
+            let hoursMap = this.constructor.createSimpleMap(24, 0);
 
             for (let hostname in this.data) {
+                if (!this.data.hasOwnProperty(hostname)) continue;
                 if (this.isThisHostnameData(hostname)) {
                     let today = this.getTodayFor(hostname);
                     for (let hour in today) {
@@ -238,60 +185,106 @@
                 }
             }
 
-            return this.convertSimpleObjectToArray(hoursMap);
+            return this.constructor.convertSimpleObjectToArray(hoursMap);
         }
 
         getTimeSpentInMinutes() {
-            let minutesMap = this.createMap(60, 0);
+            let minutesMap = this.constructor.createSimpleMap(60, 0);
 
             for (let hostname in this.data) {
-                if (this.isThisHostnameData(hostname)) {
-                    let today = this.getTodayFor(hostname);
-                    for (let hour in today) {
-                        if (hour !== config.ALL_TIME) {
-                            for (let minute in today[hour]) {
-                                if (minute !== config.ALL_TIME) {
-                                    minutesMap[minute] += today[hour][minute];
-                                }
+                if (!this.data.hasOwnProperty(hostname) || !this.isThisHostnameData(hostname)) continue;
+
+                let today = this.getTodayFor(hostname);
+                for (let hour in today) {
+                    if (hour !== config.ALL_TIME) {
+                        for (let minute in today[hour]) {
+                            if (minute !== config.ALL_TIME) {
+                                minutesMap[minute] += today[hour][minute];
                             }
                         }
                     }
                 }
             }
 
-            return this.convertSimpleObjectToArray(minutesMap);
+            return this.constructor.convertSimpleObjectToArray(minutesMap);
+        }
+
+        getTimeSpentInDaysOfTheWeek() {
+            let daysOfTheWeekMap = this.constructor.createSimpleMap(7, 0, 1);
+
+            for (let hostname in this.data) {
+                if (!this.data.hasOwnProperty(hostname) || !this.isThisHostnameData(hostname)) continue;
+
+                // @todo if this will launch at the beginning of new year, there will be a problem
+                let weekDetails = this.getYearFor(hostname)[config.WEEK_DETAILS];
+                let currentWeek = utils.getCurrentWeekOfTheYear();
+                let dayOfTheWeek;
+                let weekOfTheYear;
+                for (let week in weekDetails) {
+                    if (!weekDetails.hasOwnProperty(week)) continue;
+
+                    weekOfTheYear = week.split('-')[0];
+                    dayOfTheWeek = week.split('-')[1];
+
+                    if (weekOfTheYear === currentWeek) {
+                        daysOfTheWeekMap[dayOfTheWeek] += weekDetails[week];
+                    }
+                }
+            }
+
+            return this.constructor.convertSimpleObjectToArray(daysOfTheWeekMap);
         }
 
         proceedDataProcessing() {
-            this.alltime = this.data[config.ALL_TIME];
+            this.alltime = this.constructor.parseSecondsIntoTime(this.data[config.ALL_TIME]);
 
-            this.pagesVisitedToday = this.getPagesVisitedInGivenPeriod('getTodayFor');
-            this.pagesVisitedToday = this.sortDescending(this.pagesVisitedToday, 1);
+            let pagesVisitedTodayArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getTodayFor'), 1);
+            this.pagesVisitedToday = {
+                data: pagesVisitedTodayArrayData.map((page) => page[1]).slice(0, 10),
+                labels: pagesVisitedTodayArrayData.map((page) => page[0]).slice(0, 10)
+            };
 
-            this.pagesVisitedYesterday = this.getPagesVisitedInGivenPeriod('getYesterdayFor');
-            this.pagesVisitedYesterday = this.sortDescending(this.pagesVisitedYesterday, 1);
+            let pagesVisitedYesterdayArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getYesterdayFor'), 1);
+            this.pagesVisitedYesterday = {
+                data: pagesVisitedYesterdayArrayData.map((page) => page[1]).slice(0, 10),
+                labels: pagesVisitedYesterdayArrayData.map((page) => page[0]).slice(0, 10)
+            };
 
-            this.pagesVisitedThisMonth = this.getPagesVisitedInGivenPeriod('getMonthFor');
-            this.pagesVisitedThisMonth = this.sortDescending(this.pagesVisitedThisMonth, 1);
+            let pagesVisitedThisMonthArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getMonthFor'), 1);
+            this.pagesVisitedThisMonth = {
+                data: pagesVisitedThisMonthArrayData.map((page) => page[1]).slice(0, 10),
+                labels: pagesVisitedThisMonthArrayData.map((page) => page[0]).slice(0, 10)
+            };
 
-            this.pagesVisitedLastMonth = this.getPagesVisitedInGivenPeriod('getMonthFor', utils.getLastMonth());
-            this.pagesVisitedLastMonth = this.sortDescending(this.pagesVisitedLastMonth, 1);
+            let pagesVisitedLastMonthArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getMonthFor', utils.getLastMonth()), 1);
+            this.pagesVisitedLastMonth = {
+                data: pagesVisitedLastMonthArrayData.map((page) => page[1]).slice(0, 10),
+                labels: pagesVisitedLastMonthArrayData.map((page) => page[0]).slice(0, 10)
+            };
 
-            this.pagesVisitedThisQuarter = this.getPagesVisitedInGivenPeriod('getQuarterFor', utils.getCurrentQuarter());
-            this.pagesVisitedThisQuarter = this.sortDescending(this.pagesVisitedThisQuarter, 1);
+            let timeSpentInHoursDataArray = this.getTimeSpentInHours();
+            this.timeSpentInHours = {
+                data: timeSpentInHoursDataArray.map(hour => Math.round(hour[1] / 60)),
+                labels: timeSpentInHoursDataArray.map(hour => hour[0])
+            };
 
-            this.pagesVisitedLastQuarter = this.getPagesVisitedInGivenPeriod('getQuarterFor', utils.getLastQuarter());
-            this.pagesVisitedLastQuarter = this.sortDescending(this.pagesVisitedLastQuarter, 1);
+            // let timeSpentInHoursTotalDataArray = this.getTimeSpentInHoursTotal();
+            // this.timeSpentInHoursTotal = {
+            //     data: timeSpentInHoursTotalDataArray.map(hour => Math.round(hour[1] / 60)),
+            //     labels: timeSpentInHoursTotalDataArray.map(hour => hour[0])
+            // };
 
-            this.timeSpentInHours = this.getTimeSpentInHours();
+            let timeSpentInMinutesDataArray = this.getTimeSpentInMinutes();
+            this.timeSpentInMinutes = {
+                data: timeSpentInMinutesDataArray.map(minute => minute[1]),
+                labels: timeSpentInMinutesDataArray.map(minute => minute[0])
+            };
 
-            this.timeSpentInMinutes = this.getTimeSpentInMinutes();
-
-            this.generateChart();
-
-            /* eslint-disable no-console */
-            console.log(this);
-            /* eslint-enable no-console */
+            let timeSpentEachDayOfTheWeekDataArray = this.getTimeSpentInDaysOfTheWeek();
+            this.timeSpentEachDayOfTheWeek = {
+                data: timeSpentEachDayOfTheWeekDataArray.map(dayOfTheWeek => Math.round(dayOfTheWeek[1] / 60)),
+                labels: timeSpentEachDayOfTheWeekDataArray.map(dayOfTheWeek => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0]))
+            };
         }
     };
 
