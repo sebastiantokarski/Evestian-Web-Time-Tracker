@@ -283,7 +283,7 @@
             } else if (!this.getMonthFor(hostname, dataObj.currentMonth)) {
                 this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth] = dataObj.monthObj;
             } else if (!this.getWeekDetailsFor(hostname, dataObj.currentWeekDetails)) {
-                this.data[hostname][dataObj.currentYear][config.WEEK_DETAILS] = dataObj.weekDetailsObj;
+                this.data[hostname][dataObj.currentYear][config.WEEK_DETAILS][dataObj.currentWeekDetails] = 0;
             }
             if (!this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth)) {
                 this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][dataObj.currentDayOfTheMonth] = dataObj.dayOfTheMonthObj;
