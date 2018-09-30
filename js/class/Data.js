@@ -279,7 +279,7 @@
             if (!this.getYearFor(hostname, dataObj.currentYear)) {
                 this.data[hostname][dataObj.currentYear] = dataObj.yearObj;
             } else if (!this.getQuarterFor(hostname, dataObj.currentQuarter)) {
-                this.data[hostname][dataObj.currentYear] = dataObj.quarterObj;
+                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter] = dataObj.quarterObj;
             } else if (!this.getMonthFor(hostname, dataObj.currentMonth)) {
                 this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth] = dataObj.monthObj;
             } else if (!this.getWeekDetailsFor(hostname, dataObj.currentWeekDetails)) {
