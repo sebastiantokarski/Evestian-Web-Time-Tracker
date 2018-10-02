@@ -93,71 +93,66 @@
          * Gets year data object for a given domain
          * @param {string} hostname
          * @param {string} [year = utils.getCurrentYear()]
-         * @returns {Object}
+         * @returns {Object|null}
          */
         getYearFor(hostname, year = utils.getCurrentYear()) {
-            return this.data[hostname][year];
+            return !!this.data[hostname] ? this.data[hostname][year] : null;
         }
 
         /**
          * Gets quarter data object for a given domain
          * @param {string} hostname
          * @param {string} [quarter = utils.getCurrentQuarter()]
-         * @returns {Object}
+         * @returns {Object|null}
          */
         getQuarterFor(hostname, quarter = utils.getCurrentQuarter()) {
-            try {
-                return this.getYearFor(hostname)[quarter];
-            } catch (ex) {
-                utils.debugLog(`Error in getQuarter: ${hostname}, ${quarter}`);
-                return false;
-            }
+            return this.getYearFor(hostname) ? this.getYearFor(hostname)[quarter] : null;
         }
 
         /**
          * Gets month data object for a given domain
          * @param {string} hostname
          * @param {string} [month = utils.getCurrentMonth()]
-         * @returns {Object}
+         * @returns {Object|null}
          */
         getMonthFor(hostname, month = utils.getCurrentMonth()) {
-            return this.getQuarterFor(hostname)[month];
+            return this.getQuarterFor(hostname) ? this.getQuarterFor(hostname)[month] : null;
         }
 
         /**
          * Gets day of the month data object for a given domain
          * @param {string} hostname
          * @param {string} [dayOfTheMonth = utils.getCurrentDayOfTheMonth()]
-         * @returns {Object}
+         * @returns {Object|null}
          */
         getDayOfTheMonthFor(hostname, dayOfTheMonth = utils.getCurrentDayOfTheMonth()) {
-            return this.getMonthFor(hostname)[dayOfTheMonth];
+            return this.getMonthFor(hostname) ? this.getMonthFor(hostname)[dayOfTheMonth] : null;
         }
 
         /**
          * Gets hour data object for a given domain
          * @param {string} hostname
          * @param {string} [hour = utils.getCurrentHour()]
-         * @returns {Object}
+         * @returns {Object|null}
          */
         getHourFor(hostname, hour = utils.getCurrentHour()) {
-            return this.getDayOfTheMonthFor(hostname)[hour];
+            return this.getDayOfTheMonthFor(hostname) ? this.getDayOfTheMonthFor(hostname)[hour] : null;
         }
 
         /**
          * Gets week details (week of the year and day of the week) data object for a given domain
          * @param {string} hostname
          * @param {string} [weekDetails = utils.getCurrentWeekDetails()]
-         * @returns {Object}
+         * @returns {Object|null}
          */
         getWeekDetailsFor(hostname, weekDetails = utils.getCurrentWeekDetails()) {
-            return this.getYearFor(hostname)[config.WEEK_DETAILS][weekDetails];
+            return this.getYearFor(hostname) ? this.getYearFor(hostname)[config.WEEK_DETAILS][weekDetails] : null;
         }
 
         /**
          * Gets today data object for a given domain
          * @param {string} hostname
-         * @returns {Object}
+         * @returns {Object|null}
          */
         getTodayFor(hostname) {
             return this.getDayOfTheMonthFor(hostname);

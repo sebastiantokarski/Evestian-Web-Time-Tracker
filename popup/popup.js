@@ -7,6 +7,8 @@ requirejs([
     '../js/class/DataProcessing.js'
 ], function(config, utils, Chart, DataProcessing) {
 
+    let data = new DataProcessing(config.EXTENSION_DATA_NAME);
+
     function show() {
 
         // @todo generate empty chart if data is not available
@@ -103,12 +105,17 @@ requirejs([
                 type: 'line',
                 data: {
                     datasets: [{
-                        label:'Time in minutes',
+                        label:'Time in minutes Today',
                         data: data.timeSpentInHours.data,
                         borderColor: 'rgb(0, 102, 255)',
                         backgroundColor: 'rgb(77, 148, 255)'
+                    }, {
+                        label:'Time in minutes Global',
+                        data: data.timeSpentInHoursTotal.data,
+                        borderColor: 'rgb(243, 26, 11)',
+                        backgroundColor: 'rgb(249, 106, 95)'
                     }],
-                    labels: data.timeSpentInHours.labels
+                    labels: data.timeSpentInHoursTotal.labels
                 },
                 options: {
                     scales: {
@@ -149,11 +156,13 @@ requirejs([
             });
         }
 
-        let data = new DataProcessing(config.EXTENSION_DATA_NAME);
         data.loadFromStorage().then(() => {
             data.proceedDataProcessing();
 
             utils.debugLog('Generated data:', data);
+
+            document.getElementById('totalTime').textContent = data.alltime;
+            document.getElementById('firstVisit').textContent = data.data[config.FIRST_VISIT];
 
             generateCharts();
         });

@@ -101,6 +101,12 @@
             return daysMap[dayNumber];
         }
 
+        /**
+         * Parse seconds into time in format 00d00h00m00s
+         * @todo if 00m then minutes do not appear
+         * @param {number} seconds
+         * @returns {string}
+         */
         static parseSecondsIntoTime(seconds) {
 
             const oneDay = 60 * 60 * 24;
@@ -136,6 +142,90 @@
             time.seconds = time.minutes ? ('0' + time.seconds).slice(-2) + 's' : time.seconds + 's';
 
             return `${time.days}${time.hours}${time.minutes}${time.seconds}`;
+        }
+
+        /**
+         * Gets all years object from data
+         * @returns {Array}
+         */
+        getAllYears() {
+            let allYears = [];
+            for (let hostname in this.data) {
+                if (!this.data.hasOwnProperty(hostname) || !this.isThisHostnameData(hostname)) continue;
+
+                let years = this.data[hostname];
+                for (let year in years) {
+                    if (!years.hasOwnProperty(year) || typeof years[year] !== 'object') continue;
+
+                    allYears.push([
+                        year,
+                        years[year]
+                    ]);
+                }
+            }
+
+            return allYears;
+        }
+
+        getAllQuarters() {
+            return this.getAllStatsInGivenParentUnit(this.getAllYears());
+        }
+
+        getAllDaysOfTheWeek() {
+            let allYears = this.getAllYears();
+            let allDaysOfTheWeek = [];
+            let weekDetails;
+
+            for (let i = 0; i < allYears.length; i++) {
+                weekDetails = allYears[i][1][config.WEEK_DETAILS];
+
+                for (let key in weekDetails) {
+                    if (!weekDetails.hasOwnProperty(key)) continue;
+
+                    allDaysOfTheWeek.push([
+                        key,
+                        weekDetails[key]
+                    ]);
+                }
+            }
+
+            return allDaysOfTheWeek;
+        }
+
+        getAllMonths() {
+            return this.getAllStatsInGivenParentUnit(this.getAllQuarters());
+        }
+
+        getAllDays() {
+            return this.getAllStatsInGivenParentUnit(this.getAllMonths());
+        }
+
+        getAllHours() {
+            return this.getAllStatsInGivenParentUnit(this.getAllDays());
+        }
+
+        getAllMinutes() {
+            return this.getAllStatsInGivenParentUnit(this.getAllHours());
+        }
+
+        getAllStatsInGivenParentUnit(parentUnit) {
+            let unit;
+            let all = [];
+
+            for (let i = 0; i < parentUnit.length; i++) {
+                unit = parentUnit[i][1];
+
+                for (let key in unit) {
+                    if (!unit.hasOwnProperty(key) || typeof unit[key] !== 'object') continue;
+
+                    all.push([
+                        key,
+                        unit[key]
+                    ]);
+                }
+            }
+
+            return all;
         }
 
         /**
@@ -268,11 +358,16 @@
                 labels: timeSpentInHoursDataArray.map(hour => hour[0])
             };
 
-            // let timeSpentInHoursTotalDataArray = this.getTimeSpentInHoursTotal();
-            // this.timeSpentInHoursTotal = {
-            //     data: timeSpentInHoursTotalDataArray.map(hour => Math.round(hour[1] / 60)),
-            //     labels: timeSpentInHoursTotalDataArray.map(hour => hour[0])
-            // };
+            let timeSpentInHoursTotalDataArray = this.getAllHours();
+            let timeMap = this.constructor.createSimpleMap(24, 0);
+            timeSpentInHoursTotalDataArray.map((time) => {
+                timeMap[time[0]] += time[1][config.ALL_TIME];
+            });
+            timeSpentInHoursTotalDataArray = this.constructor.convertSimpleObjectToArray(timeMap);
+            this.timeSpentInHoursTotal = {
+                data: timeSpentInHoursTotalDataArray.map(hour => Math.round(hour[1] / 60)),
+                labels: timeSpentInHoursTotalDataArray.map(hour => hour[0])
+            };
 
             let timeSpentInMinutesDataArray = this.getTimeSpentInMinutes();
             this.timeSpentInMinutes = {
