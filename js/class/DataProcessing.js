@@ -193,7 +193,7 @@
         }
 
         getAllMonths() {
-            return this.getAllStatsInGivenParentUnit(this.getAllQuarters());
+            return this.getAllStatsInGivenParentUnit(this.getAllYears());
         }
 
         getAllDays() {

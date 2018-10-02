@@ -100,23 +100,13 @@
         }
 
         /**
-         * Gets quarter data object for a given domain
-         * @param {string} hostname
-         * @param {string} [quarter = utils.getCurrentQuarter()]
-         * @returns {Object|null}
-         */
-        getQuarterFor(hostname, quarter = utils.getCurrentQuarter()) {
-            return this.getYearFor(hostname) ? this.getYearFor(hostname)[quarter] : null;
-        }
-
-        /**
          * Gets month data object for a given domain
          * @param {string} hostname
          * @param {string} [month = utils.getCurrentMonth()]
          * @returns {Object|null}
          */
         getMonthFor(hostname, month = utils.getCurrentMonth()) {
-            return this.getQuarterFor(hostname) ? this.getQuarterFor(hostname)[month] : null;
+            return this.getYearFor(hostname) ? this.getYearFor(hostname)[month] : null;
         }
 
         /**
@@ -204,7 +194,6 @@
          * Returns a data storage template for one domain
          * @returns {{
          * currentYear: (string),
-         * currentQuarter: (string),
          * currentMonth: (string),
          * currentDayOfTheWeek: (string),
          * currentDayOfTheMonth: (string),
@@ -212,7 +201,6 @@
          * dayOfTheMonthObj: (object),
          * weekDetailsObj: (object),
          * monthObj: (object),
-         * quarterObj: (object),
          * yearObj: (object)
          * }}
          */
@@ -221,7 +209,6 @@
             let dataObj = {
                 currentYear: utils.getCurrentYear(),
                 currentWeekOfTheYear: utils.getCurrentWeekOfTheYear(),
-                currentQuarter: utils.getCurrentQuarter(),
                 currentMonth: utils.getCurrentMonth(),
                 currentWeekDetails: utils.getCurrentWeekDetails(),
                 currentDayOfTheMonth: utils.getCurrentDayOfTheMonth(),
@@ -243,14 +230,10 @@
                 [config.ALL_TIME]: 0,
                 [dataObj.currentDayOfTheMonth]: dataObj.dayOfTheMonthObj
             };
-            dataObj.quarterObj = {
-                [config.ALL_TIME]: 0,
-                [dataObj.currentMonth]: dataObj.monthObj
-            };
             dataObj.yearObj = {
                 [config.ALL_TIME]: 0,
                 [config.WEEK_DETAILS]: dataObj.weekDetailsObj,
-                [dataObj.currentQuarter]: dataObj.quarterObj
+                [dataObj.currentMonth]: dataObj.monthObj
             };
 
             return dataObj;
@@ -273,17 +256,15 @@
             // Checking if all objects exist, if not creates "initial" object
             if (!this.getYearFor(hostname, dataObj.currentYear)) {
                 this.data[hostname][dataObj.currentYear] = dataObj.yearObj;
-            } else if (!this.getQuarterFor(hostname, dataObj.currentQuarter)) {
-                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter] = dataObj.quarterObj;
             } else if (!this.getMonthFor(hostname, dataObj.currentMonth)) {
-                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth] = dataObj.monthObj;
+                this.data[hostname][dataObj.currentYear][dataObj.currentMonth] = dataObj.monthObj;
             } else if (!this.getWeekDetailsFor(hostname, dataObj.currentWeekDetails)) {
                 this.data[hostname][dataObj.currentYear][config.WEEK_DETAILS][dataObj.currentWeekDetails] = 0;
             }
             if (!this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth)) {
-                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][dataObj.currentDayOfTheMonth] = dataObj.dayOfTheMonthObj;
+                this.data[hostname][dataObj.currentYear][dataObj.currentMonth][dataObj.currentDayOfTheMonth] = dataObj.dayOfTheMonthObj;
             } else if (!this.getHourFor(hostname, dataObj.currentHour)) {
-                this.data[hostname][dataObj.currentYear][dataObj.currentQuarter][dataObj.currentMonth][dataObj.currentDayOfTheMonth][dataObj.currentHour] = dataObj.minuteObj;
+                this.data[hostname][dataObj.currentYear][dataObj.currentMonth][dataObj.currentDayOfTheMonth][dataObj.currentHour] = dataObj.minuteObj;
             }
 
             // Increment global data
@@ -293,7 +274,6 @@
             utils.increment(this.data[hostname], config.ALL_TIME);
 
             utils.increment(this.getYearFor(hostname, dataObj.currentYear), config.ALL_TIME);
-            utils.increment(this.getQuarterFor(hostname, dataObj.currentQuarter), config.ALL_TIME);
             utils.increment(this.getMonthFor(hostname, dataObj.currentMonth), config.ALL_TIME);
             utils.increment(this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth), config.ALL_TIME);
             utils.increment(this.getYearFor(hostname, dataObj.currentYear)[config.WEEK_DETAILS], dataObj.currentWeekDetails);
