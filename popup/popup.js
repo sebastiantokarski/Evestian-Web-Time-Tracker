@@ -100,6 +100,33 @@ requirejs([
                 }
             });
 
+            let lastMonthChart = new Chart(document.getElementById('myChartLastMonth'), {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: data.pagesVisitedLastMonth.data,
+                        backgroundColor: ['red', 'orange', 'purple', 'green', 'yellow', 'blue', 'brown', 'lime', 'pink']
+                    }],
+                    labels: data.pagesVisitedLastMonth.labels
+                },
+                options: {
+                    tooltips: {
+                        callbacks: {
+                            label(tooltipItem, chart) {
+                                let seconds = chart.datasets[0].data[tooltipItem.index];
+                                let labelText = chart.labels[tooltipItem.index];
+                                return `${labelText}: ${DataProcessing.parseSecondsIntoTime(seconds)}`;
+                            }
+                        }
+                    },
+                    legend: {
+                        labels: {
+                            usePointStyle: true
+                        },
+                        position: 'right'
+                    }
+                }
+            });
 
             let myChartTimeTodayHours = new Chart(document.getElementById('myChartTimeTodayHours'), {
                 type: 'line',
