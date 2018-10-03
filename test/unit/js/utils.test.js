@@ -32,10 +32,10 @@ describe('utils.js', () => {
         });
 
         it('getDateString', () => {
-            const todayDate = '2017-07-14';
+            const todayDate = '14-07-2017';
             expect(utils.getDateString()).to.be.a('string').to.equal(todayDate);
-            expect(utils.getDateString(new Date(1))).to.be.a('string').to.equal('1970-01-01');
-            expect(utils.getDateString(new Date(2000000000000))).to.be.a('string').to.equal('2033-05-18');
+            expect(utils.getDateString(new Date(1))).to.be.a('string').to.equal('01-01-1970');
+            expect(utils.getDateString(new Date(2000000000000))).to.be.a('string').to.equal('18-05-2033');
         });
 
         it('getYesterdayDate', () => {

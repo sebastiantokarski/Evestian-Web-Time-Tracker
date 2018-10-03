@@ -208,6 +208,11 @@
             return this.getAllStatsInGivenParentUnit(this.getAllHours());
         }
 
+        /**
+         *
+         * @param parentUnit
+         * @returns {Array}
+         */
         getAllStatsInGivenParentUnit(parentUnit) {
             let unit;
             let all = [];
@@ -266,7 +271,7 @@
             for (let hostname in this.data) {
                 if (!this.data.hasOwnProperty(hostname)) continue;
                 if (this.isThisHostnameData(hostname)) {
-                    let today = this.getTodayFor(hostname);
+                    let today = this.getTodayData(hostname);
                     for (let hour in today) {
                         if (hour !== config.ALL_TIME) {
                             hoursMap[hour] += today[hour][config.ALL_TIME];
@@ -284,7 +289,7 @@
             for (let hostname in this.data) {
                 if (!this.data.hasOwnProperty(hostname) || !this.isThisHostnameData(hostname)) continue;
 
-                let today = this.getTodayFor(hostname);
+                let today = this.getTodayData(hostname);
                 for (let hour in today) {
                     if (hour !== config.ALL_TIME) {
                         for (let minute in today[hour]) {
@@ -306,7 +311,7 @@
                 if (!this.data.hasOwnProperty(hostname) || !this.isThisHostnameData(hostname)) continue;
 
                 // @todo if this will launch at the beginning of new year, there will be a problem
-                let weekDetails = this.getYearFor(hostname)[config.WEEK_DETAILS];
+                let weekDetails = this.getYearData(hostname)[config.WEEK_DETAILS];
                 let currentWeek = utils.getCurrentWeekOfTheYear();
                 let dayOfTheWeek;
                 let weekOfTheYear;
@@ -328,25 +333,41 @@
         proceedDataProcessing() {
             this.alltime = this.constructor.parseSecondsIntoTime(this.data[config.ALL_TIME]);
 
-            let pagesVisitedTodayArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getTodayFor'), 1);
+            let pagesVisitedTodayArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getTodayData'), 1);
             this.pagesVisitedToday = {
-                data: pagesVisitedTodayArrayData.map((page) => page[1]).slice(0, 10),
-                labels: pagesVisitedTodayArrayData.map((page) => page[0]).slice(0, 10)
+                data: (function () {
+                    let arr = [];
+                    let other = 0;
+                    for (let i = 0; i < pagesVisitedTodayArrayData.length; i++) {
+                        if (i < 10) {
+                            arr.push(pagesVisitedTodayArrayData[i][1]);
+                        } else {
+                            other += pagesVisitedTodayArrayData[i][1];
+                        }
+                    }
+                    arr.push(other);
+                    return arr;
+                })(),
+                labels: (function () {
+                    pagesVisitedTodayArrayData = pagesVisitedTodayArrayData.map((page) => page[0]).slice(0, 10);
+                    pagesVisitedTodayArrayData[10] = 'Other';
+                    return pagesVisitedTodayArrayData;
+                })()
             };
 
-            let pagesVisitedYesterdayArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getYesterdayFor'), 1);
+            let pagesVisitedYesterdayArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getYesterdayData'), 1);
             this.pagesVisitedYesterday = {
                 data: pagesVisitedYesterdayArrayData.map((page) => page[1]).slice(0, 10),
                 labels: pagesVisitedYesterdayArrayData.map((page) => page[0]).slice(0, 10)
             };
 
-            let pagesVisitedThisMonthArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getMonthFor'), 1);
+            let pagesVisitedThisMonthArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getMonthData'), 1);
             this.pagesVisitedThisMonth = {
                 data: pagesVisitedThisMonthArrayData.map((page) => page[1]).slice(0, 10),
                 labels: pagesVisitedThisMonthArrayData.map((page) => page[0]).slice(0, 10)
             };
 
-            let pagesVisitedLastMonthArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getMonthFor', utils.getLastMonth()), 1);
+            let pagesVisitedLastMonthArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getMonthData', utils.getLastMonth()), 1);
             this.pagesVisitedLastMonth = {
                 data: pagesVisitedLastMonthArrayData.map((page) => page[1]).slice(0, 10),
                 labels: pagesVisitedLastMonthArrayData.map((page) => page[0]).slice(0, 10)

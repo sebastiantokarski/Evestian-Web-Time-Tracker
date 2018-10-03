@@ -19,7 +19,7 @@ requirejs([
                     datasets: [{
                         data: data.pagesVisitedToday.data,
                         // @todo colors from favicos: https://stackoverflow.com/questions/2541481/get-average-color-of-image-via-javascript
-                        backgroundColor: ['red', 'orange', 'purple', 'green', 'yellow', 'blue', 'brown', 'lime', 'pink']
+                        backgroundColor: ['red', 'yellow', 'lime', 'cyan', 'blue', 'magenta', 'orange', 'pink', 'grey']
                     }],
 
                     // These labels appear in the legend and in the tooltips when hovering different arcs

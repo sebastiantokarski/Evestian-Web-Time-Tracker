@@ -95,7 +95,7 @@
          * @param {string} [year = utils.getCurrentYear()]
          * @returns {Object|null}
          */
-        getYearFor(hostname, year = utils.getCurrentYear()) {
+        getYearData(hostname, year = utils.getCurrentYear()) {
             return !!this.data[hostname] ? this.data[hostname][year] : null;
         }
 
@@ -105,8 +105,8 @@
          * @param {string} [month = utils.getCurrentMonth()]
          * @returns {Object|null}
          */
-        getMonthFor(hostname, month = utils.getCurrentMonth()) {
-            return this.getYearFor(hostname) ? this.getYearFor(hostname)[month] : null;
+        getMonthData(hostname, month = utils.getCurrentMonth()) {
+            return this.getYearData(hostname) ? this.getYearData(hostname)[month] : null;
         }
 
         /**
@@ -115,8 +115,8 @@
          * @param {string} [dayOfTheMonth = utils.getCurrentDayOfTheMonth()]
          * @returns {Object|null}
          */
-        getDayOfTheMonthFor(hostname, dayOfTheMonth = utils.getCurrentDayOfTheMonth()) {
-            return this.getMonthFor(hostname) ? this.getMonthFor(hostname)[dayOfTheMonth] : null;
+        getDayOfTheMonthData(hostname, dayOfTheMonth = utils.getCurrentDayOfTheMonth()) {
+            return this.getMonthData(hostname) ? this.getMonthData(hostname)[dayOfTheMonth] : null;
         }
 
         /**
@@ -125,8 +125,8 @@
          * @param {string} [hour = utils.getCurrentHour()]
          * @returns {Object|null}
          */
-        getHourFor(hostname, hour = utils.getCurrentHour()) {
-            return this.getDayOfTheMonthFor(hostname) ? this.getDayOfTheMonthFor(hostname)[hour] : null;
+        getHourData(hostname, hour = utils.getCurrentHour()) {
+            return this.getDayOfTheMonthData(hostname) ? this.getDayOfTheMonthData(hostname)[hour] : null;
         }
 
         /**
@@ -135,8 +135,8 @@
          * @param {string} [weekDetails = utils.getCurrentWeekDetails()]
          * @returns {Object|null}
          */
-        getWeekDetailsFor(hostname, weekDetails = utils.getCurrentWeekDetails()) {
-            return this.getYearFor(hostname) ? this.getYearFor(hostname)[config.WEEK_DETAILS][weekDetails] : null;
+        getWeekDetailsData(hostname, weekDetails = utils.getCurrentWeekDetails()) {
+            return this.getYearData(hostname) ? this.getYearData(hostname)[config.WEEK_DETAILS][weekDetails] : null;
         }
 
         /**
@@ -144,8 +144,8 @@
          * @param {string} hostname
          * @returns {Object|null}
          */
-        getTodayFor(hostname) {
-            return this.getDayOfTheMonthFor(hostname);
+        getTodayData(hostname) {
+            return this.getDayOfTheMonthData(hostname);
         }
 
         /**
@@ -153,8 +153,8 @@
          * @param {string} hostname
          * @returns {Object}
          */
-        getYesterdayFor(hostname) {
-            return this.getDayOfTheMonthFor(hostname, utils.getYesterdayDay());
+        getYesterdayData(hostname) {
+            return this.getDayOfTheMonthData(hostname, utils.getYesterdayDay());
         }
 
         /**
@@ -254,16 +254,16 @@
             }
 
             // Checking if all objects exist, if not creates "initial" object
-            if (!this.getYearFor(hostname, dataObj.currentYear)) {
+            if (!this.getYearData(hostname, dataObj.currentYear)) {
                 this.data[hostname][dataObj.currentYear] = dataObj.yearObj;
-            } else if (!this.getMonthFor(hostname, dataObj.currentMonth)) {
+            } else if (!this.getMonthData(hostname, dataObj.currentMonth)) {
                 this.data[hostname][dataObj.currentYear][dataObj.currentMonth] = dataObj.monthObj;
-            } else if (!this.getWeekDetailsFor(hostname, dataObj.currentWeekDetails)) {
+            } else if (!this.getWeekDetailsData(hostname, dataObj.currentWeekDetails)) {
                 this.data[hostname][dataObj.currentYear][config.WEEK_DETAILS][dataObj.currentWeekDetails] = 0;
             }
-            if (!this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth)) {
+            if (!this.getDayOfTheMonthData(hostname, dataObj.currentDayOfTheMonth)) {
                 this.data[hostname][dataObj.currentYear][dataObj.currentMonth][dataObj.currentDayOfTheMonth] = dataObj.dayOfTheMonthObj;
-            } else if (!this.getHourFor(hostname, dataObj.currentHour)) {
+            } else if (!this.getHourData(hostname, dataObj.currentHour)) {
                 this.data[hostname][dataObj.currentYear][dataObj.currentMonth][dataObj.currentDayOfTheMonth][dataObj.currentHour] = dataObj.minuteObj;
             }
 
@@ -273,19 +273,19 @@
             // Increment hostname data
             utils.increment(this.data[hostname], config.ALL_TIME);
 
-            utils.increment(this.getYearFor(hostname, dataObj.currentYear), config.ALL_TIME);
-            utils.increment(this.getMonthFor(hostname, dataObj.currentMonth), config.ALL_TIME);
-            utils.increment(this.getDayOfTheMonthFor(hostname, dataObj.currentDayOfTheMonth), config.ALL_TIME);
-            utils.increment(this.getYearFor(hostname, dataObj.currentYear)[config.WEEK_DETAILS], dataObj.currentWeekDetails);
-            utils.increment(this.getHourFor(hostname, dataObj.currentHour), config.ALL_TIME);
-            utils.increment(this.getHourFor(hostname, dataObj.currentHour), dataObj.currentMinute);
+            utils.increment(this.getYearData(hostname, dataObj.currentYear), config.ALL_TIME);
+            utils.increment(this.getMonthData(hostname, dataObj.currentMonth), config.ALL_TIME);
+            utils.increment(this.getDayOfTheMonthData(hostname, dataObj.currentDayOfTheMonth), config.ALL_TIME);
+            utils.increment(this.getYearData(hostname, dataObj.currentYear)[config.WEEK_DETAILS], dataObj.currentWeekDetails);
+            utils.increment(this.getHourData(hostname, dataObj.currentHour), config.ALL_TIME);
+            utils.increment(this.getHourData(hostname, dataObj.currentHour), dataObj.currentMinute);
 
             // Update other data
             this.data[hostname][config.FAVICON_URL] = tab.favIconUrl;
             this.data[hostname][config.LAST_VISIT] = utils.getDateString();
 
             return {
-                todayInSec: this.getTodayFor(hostname)[config.ALL_TIME],
+                todayInSec: this.getTodayData(hostname)[config.ALL_TIME],
                 allTimeInSec: this.data[hostname][config.ALL_TIME]
             };
         }

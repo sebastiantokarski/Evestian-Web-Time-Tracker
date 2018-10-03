@@ -16,7 +16,7 @@ requirejs(['../js/config.js', '../js/utils.js', '../js/class/Data.js'], (config,
     function updateBadge(tab, hostname) {
         let tabTime = 0;
 
-        let timeInSeconds = data.getDayOfTheMonthFor(hostname)[config.ALL_TIME];
+        let timeInSeconds = data.getDayOfTheMonthData(hostname)[config.ALL_TIME];
         if (timeInSeconds < 60) {
             tabTime = timeInSeconds + 's';
         } else if (timeInSeconds < 60 * 100) {

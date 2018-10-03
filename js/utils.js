@@ -13,7 +13,7 @@
     return {
 
         /**
-         * Get date with format yyyy-mm-dd
+         * Get date with format dd-mm-yyyy
          * @param {Date} [date=new Date()]
          * @returns {string}
          */
@@ -22,7 +22,7 @@
                 year = date.getFullYear(),
                 month = ('0' + (date.getMonth() + 1)).slice(-2),
                 day = ('0' + date.getDate()).slice(-2);
-            return `${year}-${month}-${day}`;
+            return `${day}-${month}-${year}`;
         },
 
         /**
