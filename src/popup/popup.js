@@ -1,10 +1,10 @@
 /* global chrome, requirejs */
 
 requirejs([
-    '../config.js',
-    '../utils.js',
+    '../js/config.js',
+    '../js/utils.js',
     '../../node_modules/chart.js/dist/Chart.bundle.js',
-    '../DataProcessing.js'
+    '../js/DataProcessing.js'
 ], function(config, utils, Chart, DataProcessing) {
 
     let data = new DataProcessing(config.EXTENSION_DATA_NAME);

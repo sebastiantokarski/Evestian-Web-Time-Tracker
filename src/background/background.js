@@ -1,9 +1,9 @@
 /* global chrome, requirejs */
 
 requirejs([
-    '../config.js',
-    '../utils.js',
-    '../Data.js'
+    '../js/config.js',
+    '../js/utils.js',
+    '../js/Data.js'
 ], (config, utils, Data) => {
 
     // It can be active, idle or locked

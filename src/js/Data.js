@@ -3,13 +3,13 @@
     if (typeof define === 'function' && define.amd) {
         define([
             './config.js',
-            '../node_modules/then-chrome/dist/then-chrome.js',
+            '../../node_modules/then-chrome/dist/then-chrome.js',
             './utils.js'
         ], factory);
     } else if (typeof exports === 'object') {
         module.exports = factory(
             require('./config.js'),
-            require('../node_modules/then-chrome/dist/then-chrome.js'),
+            require('../../node_modules/then-chrome/dist/then-chrome.js'),
             require('./utils.js')
         );
     } else {
