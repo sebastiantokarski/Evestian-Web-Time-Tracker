@@ -1,3 +1,5 @@
+/* global MAIN_DIR, chrome */
+
 const utils = require(`${MAIN_DIR}/src/js/utils`);
 const config = require(`${MAIN_DIR}/src/js/config`);
 const Data = require(`${MAIN_DIR}/src/js/Data`);

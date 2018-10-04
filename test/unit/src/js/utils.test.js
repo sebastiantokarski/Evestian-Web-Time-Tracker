@@ -1,3 +1,5 @@
+/* global MAIN_DIR, chrome */
+
 const utils = require(`${MAIN_DIR}/src/js/utils`);
 const config = require(`${MAIN_DIR}/src/js/config`);
 const sinon = require('sinon');
@@ -7,7 +9,7 @@ const expect = chai.expect;
 
 describe('utils.js', () => {
 
-    describe('Date functions', ()  =>{
+    describe('Date functions', () => {
 
         // Fri Jul 14 2017 04:40:00 GMT+0200
         const time = 1500000000000;
