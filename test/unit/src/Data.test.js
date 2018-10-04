@@ -1,7 +1,7 @@
-const utils = require('../../../../js/utils');
-const config = require('../../../../js/config');
+const utils = require('../../../src/utils');
+const config = require('../../../src/config');
 
-const Data = require('../../../../js/class/Data');
+const Data = require('../../../src/Data');
 
 const chai = require('chai');
 const expect = chai.expect;

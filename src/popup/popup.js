@@ -1,10 +1,10 @@
 /* global chrome, requirejs */
 
 requirejs([
-    '../js/config.js',
-    '../js/utils.js',
-    '../node_modules/chart.js/dist/Chart.bundle.js',
-    '../js/class/DataProcessing.js'
+    '../config.js',
+    '../utils.js',
+    '../../node_modules/chart.js/dist/Chart.bundle.js',
+    '../DataProcessing.js'
 ], function(config, utils, Chart, DataProcessing) {
 
     let data = new DataProcessing(config.EXTENSION_DATA_NAME);
@@ -200,7 +200,7 @@ requirejs([
             for (let i = 0; i < arr.length; i++) {
                 let tr = document.createElement('tr');
                 if (!arr[i][2]) {
-                    arr[i][2] = chrome.runtime.getURL('assets/defaultFavicon16.png');
+                    arr[i][2] = chrome.runtime.getURL('/assets/defaultFavicon16.png');
                 }
                 tr.innerHTML = `<td>${i + 1}</td><td><img src="${arr[i][2]}" height="16" width="16"></td></td><td>${arr[i][0]}</td><td>${DataProcessing.parseSecondsIntoTime(arr[i][1])}</td>`;
                 table.appendChild(tr);

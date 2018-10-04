@@ -1,5 +1,5 @@
-const utils = require('../../../js/utils');
-const config = require('../../../js/config');
+const utils = require('../../../src/utils');
+const config = require('../../../src/config');
 const sinon = require('sinon');
 const chrome = require('sinon-chrome');
 const chai = require('chai');

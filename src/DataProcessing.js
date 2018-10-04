@@ -3,14 +3,14 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([
-            '../config.js',
-            '../utils.js',
+            './config.js',
+            './utils.js',
             './Data.js'
         ], factory);
     } else if (typeof exports === 'object') {
         module.exports = factory(
-            require('../config.js'),
-            require('../utils.js'),
+            require('./config.js'),
+            require('./utils.js'),
             require('./Data.js')
         );
     } else {
