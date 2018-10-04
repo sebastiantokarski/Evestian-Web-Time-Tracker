@@ -1,7 +1,6 @@
-const utils = require('../../../src/utils');
-const config = require('../../../src/config');
-
-const Data = require('../../../src/Data');
+const utils = require(`${MAIN_DIR}/src/js/utils`);
+const config = require(`${MAIN_DIR}/src/js/config`);
+const Data = require(`${MAIN_DIR}/src/js/Data`);
 
 const chai = require('chai');
 const expect = chai.expect;

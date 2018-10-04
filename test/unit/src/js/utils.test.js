@@ -1,20 +1,11 @@
-const utils = require('../../../src/utils');
-const config = require('../../../src/config');
+const utils = require(`${MAIN_DIR}/src/js/utils`);
+const config = require(`${MAIN_DIR}/src/js/config`);
 const sinon = require('sinon');
-const chrome = require('sinon-chrome');
+
 const chai = require('chai');
-const mlog = require('mocha-logger');
 const expect = chai.expect;
 
 describe('utils.js', () => {
-
-    before(() => {
-        global.chrome = chrome;
-    });
-
-    after(() => {
-        delete global.chrome;
-    });
 
     describe('Date functions', ()  =>{
 
