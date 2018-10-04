@@ -350,7 +350,7 @@
                 })(),
                 labels: (function () {
                     pagesVisitedTodayArrayData = pagesVisitedTodayArrayData.map((page) => page[0]).slice(0, 10);
-                    pagesVisitedTodayArrayData[10] = 'Other';
+                    pagesVisitedTodayArrayData[pagesVisitedTodayArrayData.length] = 'Other';
                     return pagesVisitedTodayArrayData;
                 })()
             };
