@@ -205,15 +205,16 @@
         }
 
         getAllMinutes() {
-            return this.getAllStatsInGivenParentUnit(this.getAllHours());
+            return this.getAllStatsInGivenParentUnit(this.getAllHours(), true);
         }
 
         /**
          *
          * @param parentUnit
+         * @param isChildrenUnitNotObject
          * @returns {Array}
          */
-        getAllStatsInGivenParentUnit(parentUnit) {
+        getAllStatsInGivenParentUnit(parentUnit, isChildrenUnitNotObject) {
             let unit;
             let all = [];
 
@@ -221,7 +222,7 @@
                 unit = parentUnit[i][1];
 
                 for (let key in unit) {
-                    if (!unit.hasOwnProperty(key) || typeof unit[key] !== 'object') continue;
+                    if (!unit.hasOwnProperty(key) || (typeof unit[key] !== 'object' && isChildrenUnitNotObject) || key === config.ALL_TIME) continue;
 
                     all.push([
                         key,
@@ -234,13 +235,13 @@
         }
 
         /**
-         * Returns an array with pages visited in given period
-         * @param {string} methodName (getToday|getYesterday)
+         * Returns an array with pages visited in given period sorted descending
+         * @param {string} periodName (Today|Yesterday|Month|Year)
          * @param {string} [period]
          * @returns {Array}
          */
-        getPagesVisitedInGivenPeriod(methodName, period) {
-
+        getSortedPagesVisitedInGivenPeriod(periodName, period) {
+            let methodName = `get${periodName}Data`;
             let pagesArray = [];
             let data = this.data;
             for (let key in data) {
@@ -253,7 +254,7 @@
                     ]);
                 }
             }
-            return pagesArray;
+            return this.constructor.sortDescending(pagesArray, 1);
         }
 
         /**
@@ -283,7 +284,7 @@
             return this.constructor.convertSimpleObjectToArray(hoursMap);
         }
 
-        getTimeSpentInMinutes() {
+        getTimeSpentInMinutesToday() {
             let minutesMap = this.constructor.createSimpleMap(60, 0);
 
             for (let hostname in this.data) {
@@ -298,6 +299,28 @@
                             }
                         }
                     }
+                }
+            }
+
+            return this.constructor.convertSimpleObjectToArray(minutesMap);
+        }
+
+        getTimeSpentInMinutesGlobal() {
+            let minutesMap = this.constructor.createSimpleMap(60, 0);
+
+            for (let hostname in this.data) {
+                if (!this.data.hasOwnProperty(hostname) || !this.isThisHostnameData(hostname)) continue;
+
+                let hours = this.getAllHours(hostname);
+                for (let i = 0; i < hours.length; i++) {
+
+                }
+
+
+                for (let minute in hours) {
+                    if (!hours.hasOwnProperty(minute) || minute === config.ALL_TIME) continue;
+
+                    minutesMap[minute] += hours[minute];
                 }
             }
 
@@ -330,48 +353,52 @@
             return this.constructor.convertSimpleObjectToArray(daysOfTheWeekMap);
         }
 
+        /**
+         * After limit in the array, add all data and put it at the end of array with label 'Other'
+         * @param {Array} arrayData
+         * @param {number} limit
+         * @returns {{
+         * data: Array,
+         * labels: Array
+         * }}
+         */
+        addOtherData(arrayData, limit) {
+            let other = 0;
+            let result = {
+                data: [],
+                labels: []
+            };
+
+            for (let i = 0; i < arrayData.length; i++) {
+                if (i < limit - 1) {
+                    result.data.push(arrayData[i][1]);
+                    result.labels.push(arrayData[i][0]);
+                } else {
+                    if (result.labels.indexOf('Other') === -1) {
+                        result.labels.push('Other');
+                    }
+                    other += arrayData[i][1];
+                }
+            }
+            result.data[result.data.length] = other;
+
+            return result;
+        }
+
         proceedDataProcessing() {
             this.alltime = this.constructor.parseSecondsIntoTime(this.data[config.ALL_TIME]);
 
-            let pagesVisitedTodayArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getTodayData'), 1);
-            this.pagesVisitedToday = {
-                data: (function () {
-                    let arr = [];
-                    let other = 0;
-                    for (let i = 0; i < pagesVisitedTodayArrayData.length; i++) {
-                        if (i < 10) {
-                            arr.push(pagesVisitedTodayArrayData[i][1]);
-                        } else {
-                            other += pagesVisitedTodayArrayData[i][1];
-                        }
-                    }
-                    arr.push(other);
-                    return arr;
-                })(),
-                labels: (function () {
-                    pagesVisitedTodayArrayData = pagesVisitedTodayArrayData.map((page) => page[0]).slice(0, 10);
-                    pagesVisitedTodayArrayData[pagesVisitedTodayArrayData.length] = 'Other';
-                    return pagesVisitedTodayArrayData;
-                })()
-            };
+            let pagesVisitedTodayArrayData = this.getSortedPagesVisitedInGivenPeriod('Today');
+            this.pagesVisitedToday = this.addOtherData(pagesVisitedTodayArrayData, 10);
 
-            let pagesVisitedYesterdayArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getYesterdayData'), 1);
-            this.pagesVisitedYesterday = {
-                data: pagesVisitedYesterdayArrayData.map((page) => page[1]).slice(0, 10),
-                labels: pagesVisitedYesterdayArrayData.map((page) => page[0]).slice(0, 10)
-            };
+            let pagesVisitedYesterdayArrayData = this.getSortedPagesVisitedInGivenPeriod('Yesterday');
+            this.pagesVisitedYesterday = this.addOtherData(pagesVisitedYesterdayArrayData, 10);
 
-            let pagesVisitedThisMonthArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getMonthData'), 1);
-            this.pagesVisitedThisMonth = {
-                data: pagesVisitedThisMonthArrayData.map((page) => page[1]).slice(0, 10),
-                labels: pagesVisitedThisMonthArrayData.map((page) => page[0]).slice(0, 10)
-            };
+            let pagesVisitedThisMonthArrayData = this.getSortedPagesVisitedInGivenPeriod('Month');
+            this.pagesVisitedThisMonth = this.addOtherData(pagesVisitedThisMonthArrayData, 10);
 
-            let pagesVisitedLastMonthArrayData = this.constructor.sortDescending(this.getPagesVisitedInGivenPeriod('getMonthData', utils.getLastMonth()), 1);
-            this.pagesVisitedLastMonth = {
-                data: pagesVisitedLastMonthArrayData.map((page) => page[1]).slice(0, 10),
-                labels: pagesVisitedLastMonthArrayData.map((page) => page[0]).slice(0, 10)
-            };
+            let pagesVisitedLastMonthArrayData = this.getSortedPagesVisitedInGivenPeriod('Month', utils.getLastMonth());
+            this.pagesVisitedLastMonth = this.addOtherData(pagesVisitedLastMonthArrayData, 10);
 
             let timeSpentInHoursDataArray = this.getTimeSpentInHours();
             this.timeSpentInHours = {
@@ -390,11 +417,17 @@
                 labels: timeSpentInHoursTotalDataArray.map(hour => hour[0])
             };
 
-            let timeSpentInMinutesDataArray = this.getTimeSpentInMinutes();
+            let timeSpentInMinutesDataArray = this.getTimeSpentInMinutesToday();
             this.timeSpentInMinutes = {
                 data: timeSpentInMinutesDataArray.map(minute => minute[1]),
                 labels: timeSpentInMinutesDataArray.map(minute => minute[0])
             };
+
+            // let timeSpentInMinutesGlobalDataArray = this.getTimeSpentInMinutesGlobal();
+            // this.timeSpentInMinutesGlobal = {
+            //     data: timeSpentInMinutesGlobalDataArray.map(minute => minute[1]),
+            //     labels: timeSpentInMinutesGlobalDataArray.map(minute => minute[0])
+            // };
 
             let timeSpentEachDayOfTheWeekDataArray = this.getTimeSpentInDaysOfTheWeek();
             this.timeSpentEachDayOfTheWeek = {

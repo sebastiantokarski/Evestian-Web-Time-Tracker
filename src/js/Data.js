@@ -96,7 +96,7 @@
          * @returns {Object|null}
          */
         getYearData(hostname, year = utils.getCurrentYear()) {
-            return !!this.data[hostname] ? this.data[hostname][year] : null;
+            return this.data[hostname] ? this.data[hostname][year] : null;
         }
 
         /**

@@ -41,6 +41,10 @@ requirejs([
                         },
                         position: 'right'
                     }
+                },
+                centerText: {
+                    display: true,
+                    text: '22'
                 }
             });
 
@@ -132,11 +136,13 @@ requirejs([
                 type: 'line',
                 data: {
                     datasets: [{
+                        yAxisID: 'Today',
                         label:'Time in minutes Today',
                         data: data.timeSpentInHours.data,
                         borderColor: 'rgb(0, 102, 255)',
                         backgroundColor: 'rgb(77, 148, 255)'
                     }, {
+                        yAxisID: 'Global',
                         label:'Time in minutes Global',
                         data: data.timeSpentInHoursTotal.data,
                         borderColor: 'rgb(243, 26, 11)',
@@ -147,9 +153,24 @@ requirejs([
                 options: {
                     scales: {
                         yAxes: [{
+                            id: 'Today',
+                            position: 'left',
+                            type: 'linear',
                             ticks: {
                                 suggestedMin: 0,
                                 suggestedMax: 60
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Today in minutes'
+                            }
+                        }, {
+                            id: 'Global',
+                            position: 'right',
+                            type: 'linear',
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Total in minutes'
                             }
                         }]
                     }
