@@ -172,10 +172,6 @@
             return allYears;
         }
 
-        getAllQuarters() {
-            return this.getAllStatsInGivenParentUnit(this.getAllYears());
-        }
-
         getAllDaysOfTheWeek() {
             let allYears = this.getAllYears();
             let allDaysOfTheWeek = [];
@@ -358,6 +354,18 @@
             return this.constructor.convertSimpleObjectToArray(daysOfTheWeekMap);
         }
 
+        getTimeSpentInDaysOfTheWeekTotal() {
+            // @todo if this will launch at the beginning of new year, there will be a problem
+            const daysOfTheWeekData = this.getAllDaysOfTheWeek();
+            let daysOfTheWeekMap = this.constructor.createSimpleMap(7, 0, 1);
+
+            for (let i = 0; i < daysOfTheWeekData.length; i++) {
+                daysOfTheWeekMap[daysOfTheWeekData[i][0].match(/-(\d)/)[1]] += daysOfTheWeekData[i][1];
+            }
+
+            return this.constructor.convertSimpleObjectToArray(daysOfTheWeekMap);
+        }
+
         /**
          * After limit in the array, add all data and put it at the end of array with label 'Other'
          * @param {Array} arrayData
@@ -438,6 +446,12 @@
             this.timeSpentEachDayOfTheWeek = {
                 data: timeSpentEachDayOfTheWeekDataArray.map(dayOfTheWeek => Math.round(dayOfTheWeek[1] / 60)),
                 labels: timeSpentEachDayOfTheWeekDataArray.map(dayOfTheWeek => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0]))
+            };
+
+            let timeSpentEachDayOfTheWeekTotalDataArray = this.getTimeSpentInDaysOfTheWeekTotal();
+            this.timeSpentEachDayOfTheWeekTotal = {
+                data: timeSpentEachDayOfTheWeekTotalDataArray.map(dayOfTheWeek => Math.round(dayOfTheWeek[1] / 60)),
+                labels: timeSpentEachDayOfTheWeekTotalDataArray.map(dayOfTheWeek => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0]))
             };
         }
     };

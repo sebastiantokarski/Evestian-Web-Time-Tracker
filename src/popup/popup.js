@@ -181,12 +181,40 @@ requirejs([
                 type: 'line',
                 data: {
                     datasets: [{
+                        yAxisID: 'CurrentWeek',
                         label:'Time in minutes',
                         data: data.timeSpentEachDayOfTheWeek.data,
                         borderColor: 'rgb(0, 102, 255)',
                         backgroundColor: 'rgb(77, 148, 255)'
+                    }, {
+                        yAxisID: 'Global',
+                        label:'Time in minutes total',
+                        data: data.timeSpentEachDayOfTheWeekTotal.data,
+                        borderColor: 'rgb(243, 26, 11)',
+                        backgroundColor: 'rgb(249, 106, 95)'
                     }],
-                    labels: data.timeSpentEachDayOfTheWeek.labels
+                    labels: data.timeSpentEachDayOfTheWeekTotal.labels
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            id: 'CurrentWeek',
+                            position: 'left',
+                            type: 'linear',
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Today in minutes'
+                            }
+                        }, {
+                            id: 'Global',
+                            position: 'right',
+                            type: 'linear',
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Total in minutes'
+                            }
+                        }]
+                    }
                 }
             });
 
