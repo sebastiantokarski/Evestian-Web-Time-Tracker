@@ -103,7 +103,6 @@
 
         /**
          * Parse seconds into time in format 00d00h00m00s
-         * @todo if 00m then minutes do not appear
          * @param {number} seconds
          * @returns {string}
          */
@@ -121,22 +120,28 @@
             };
 
 
-            if (time.seconds > oneDay) {
+            if (time.seconds >= oneDay) {
                 time.days = Math.floor(time.seconds / oneDay);
                 time.seconds -= (time.days * oneDay);
                 time.days = time.days + 'd';
             }
 
-            if (time.seconds > oneHour) {
+            if (time.seconds >= oneHour) {
                 time.hours = Math.floor(time.seconds / oneHour);
                 time.seconds -= (time.hours * oneHour);
                 time.hours = time.days ? ('0' + time.hours).slice(-2) + 'h' : time.hours + 'h';
+                time.minutes = '00m';
+            } else if (time.days) {
+                time.hours = '00h';
+                time.minutes = '00m';
             }
 
-            if (time.seconds > oneMinute) {
+            if (time.seconds >= oneMinute) {
                 time.minutes = Math.floor(time.seconds / oneMinute);
                 time.seconds -= (time.minutes * oneMinute);
-                time.minutes = time.hours ? ('0' + time.minutes).slice(-2) + 'm' : time.minutes + 'm';
+                time.minutes = time.days || time.hours ? ('0' + time.minutes).slice(-2) + 'm' : time.minutes + 'm';
+            } else if (time.days || time.hours) {
+                time.minutes = '00m';
             }
 
             time.seconds = time.minutes ? ('0' + time.seconds).slice(-2) + 's' : time.seconds + 's';
