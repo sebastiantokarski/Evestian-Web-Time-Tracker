@@ -1,5 +1,4 @@
 # Evestian Web Time Tracker
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/604d1ae95c1e4f0482ee7b8202157217)](https://www.codacy.com/app/sebastiantokarski/Ewestian?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Evelenka/Ewestian&amp;utm_campaign=Badge_Grade)
-
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f501a6c7502e41639fdb09a34e4f8760)](https://www.codacy.com/app/sebastiantokarski/Evestian-Web-Time-Tracker?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Evelenka/Evestian-Web-Time-Tracker&amp;utm_campaign=Badge_Grade)
 
 Chrome extension
