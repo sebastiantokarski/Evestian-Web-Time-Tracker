@@ -306,6 +306,7 @@
             return this.constructor.convertSimpleObjectToArray(minutesMap);
         }
 
+        // @todo
         getTimeSpentInMinutesGlobal() {
             let minutesMap = this.constructor.createSimpleMap(60, 0);
 
@@ -313,9 +314,6 @@
                 if (!this.data.hasOwnProperty(hostname) || !this.isThisHostnameData(hostname)) continue;
 
                 let hours = this.getAllHours(hostname);
-                for (let i = 0; i < hours.length; i++) {
-
-                }
 
 
                 for (let minute in hours) {
@@ -415,8 +413,8 @@
 
             let timeSpentInHoursDataArray = this.getTimeSpentInHours();
             this.timeSpentInHours = {
-                data: timeSpentInHoursDataArray.map(hour => Math.round(hour[1] / 60)),
-                labels: timeSpentInHoursDataArray.map(hour => hour[0])
+                data: timeSpentInHoursDataArray.map((hour) => Math.round(hour[1] / 60)),
+                labels: timeSpentInHoursDataArray.map((hour) => hour[0])
             };
 
             let timeSpentInHoursTotalDataArray = this.getAllHours();
@@ -426,14 +424,14 @@
             });
             timeSpentInHoursTotalDataArray = this.constructor.convertSimpleObjectToArray(timeMap);
             this.timeSpentInHoursTotal = {
-                data: timeSpentInHoursTotalDataArray.map(hour => Math.round(hour[1] / 60)),
-                labels: timeSpentInHoursTotalDataArray.map(hour => hour[0])
+                data: timeSpentInHoursTotalDataArray.map((hour) => Math.round(hour[1] / 60)),
+                labels: timeSpentInHoursTotalDataArray.map((hour) => hour[0])
             };
 
             let timeSpentInMinutesDataArray = this.getTimeSpentInMinutesToday();
             this.timeSpentInMinutes = {
-                data: timeSpentInMinutesDataArray.map(minute => minute[1]),
-                labels: timeSpentInMinutesDataArray.map(minute => minute[0])
+                data: timeSpentInMinutesDataArray.map((minute) => minute[1]),
+                labels: timeSpentInMinutesDataArray.map((minute) => minute[0])
             };
 
             // let timeSpentInMinutesGlobalDataArray = this.getTimeSpentInMinutesGlobal();
