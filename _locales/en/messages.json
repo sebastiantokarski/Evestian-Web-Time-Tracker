@@ -1,6 +1,9 @@
 {
+    "full_name": {
+        "message": "Evestian Web Time Tracker"
+    },
     "short_name": {
-        "message": "Extension",
+        "message": "Evestian",
         "description": "The short name of the application, displayed in the web store."
     },
     "description": {

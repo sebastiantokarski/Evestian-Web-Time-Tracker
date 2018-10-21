@@ -4,10 +4,15 @@ requirejs([
     '../js/config.js',
     '../js/utils.js',
     '../../node_modules/chart.js/dist/Chart.bundle.js',
-    '../js/DataProcessing.js'
-], function(config, utils, Chart, DataProcessing) {
+    '../js/DataProcessing.js',
+    '../../node_modules/progressbar.js/dist/progressbar.js'
+], function(config, utils, Chart, DataProcessing, Progressbar) {
 
     let data = new DataProcessing(config.EXTENSION_DATA_NAME);
+    let todayProgress = new Progressbar.Line('.progressbar', {
+        color: 'black'
+    });
+    todayProgress.animate(1)
 
     function show() {
 

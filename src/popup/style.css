@@ -1,4 +1,32 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 .container {
     width: 500px;
     margin-bottom: 20px;
+}
+
+.header {
+    background-color: #933EC5;
+    padding: 3px;
+}
+
+.header__logo {
+    display: inline-block;
+}
+
+.header__title {
+    position: relative;
+    color: white;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 400;
+    top: -9px;
+    left: 1px;
+}
+
+.progressbar {
+    margin: 2px;
 }
