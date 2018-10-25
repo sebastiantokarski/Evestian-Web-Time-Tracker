@@ -12,7 +12,7 @@ requirejs([
     let todayProgress = new Progressbar.Line('.progressbar', {
         color: 'black'
     });
-    todayProgress.animate(1)
+    todayProgress.animate(1);
 
     function show() {
 

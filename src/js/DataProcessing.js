@@ -442,14 +442,14 @@
 
             let timeSpentEachDayOfTheWeekDataArray = this.getTimeSpentInDaysOfTheWeek();
             this.timeSpentEachDayOfTheWeek = {
-                data: timeSpentEachDayOfTheWeekDataArray.map(dayOfTheWeek => Math.round(dayOfTheWeek[1] / 60)),
-                labels: timeSpentEachDayOfTheWeekDataArray.map(dayOfTheWeek => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0]))
+                data: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) => Math.round(dayOfTheWeek[1] / 60)),
+                labels: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0]))
             };
 
             let timeSpentEachDayOfTheWeekTotalDataArray = this.getTimeSpentInDaysOfTheWeekTotal();
             this.timeSpentEachDayOfTheWeekTotal = {
-                data: timeSpentEachDayOfTheWeekTotalDataArray.map(dayOfTheWeek => Math.round(dayOfTheWeek[1] / 60)),
-                labels: timeSpentEachDayOfTheWeekTotalDataArray.map(dayOfTheWeek => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0]))
+                data: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) => Math.round(dayOfTheWeek[1] / 60)),
+                labels: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0]))
             };
         }
     };
