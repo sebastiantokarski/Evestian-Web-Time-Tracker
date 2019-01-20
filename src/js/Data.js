@@ -61,7 +61,7 @@
         checkDataSize() {
             chrome.storage.local.getBytesInUse(this.dataName, function (size) {
                 const totalSize = chrome.storage.local.QUOTA_BYTES;
-                utils.debugLog(`Used storage size in bytes: ${size}. Percentage: ${ (size / totalSize).toFixed(3) }%`);
+                utils.debugLog(`Used storage size in bytes: ${size}. Percentage: ${ (size / totalSize * 100).toFixed(2) }%`);
             });
         }
 
