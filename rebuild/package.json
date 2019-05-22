@@ -1,0 +1,27 @@
+{
+  "name": "evestian_web_time_tracker",
+  "version": "0.0.1",
+  "description": "Chrome Extension",
+  "main": "",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-minify-webpack-plugin": "^0.3.1",
+    "babel-preset-env": "^1.7.0",
+    "webpack": "^4.16.0",
+    "webpack-cli": "^3.3.2",
+    "webpack-stream": "^5.1.1"
+  },
+  "scripts": {
+    "dev": "webpack --mode development",
+    "prod": "webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Evelenka/Evestian-Web-Time-Tracker.git"
+  },
+  "author": "Ewelina Suska, Sebastian Tokarski",
+  "license": "ISC"
+}
