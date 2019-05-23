@@ -8,10 +8,14 @@
     "offline_enabled": true,
     "manifest_version": 2,
     "icons": { 
-        "16": "src/assets/icon16.png",
-        "32": "src/assets/icon32.png",
-        "48": "src/assets/icon48.png",
-        "128": "src/assets/icon128.png"
+        "16": "assets/icon16.png",
+        "32": "assets/icon32.png",
+        "48": "assets/icon48.png",
+        "128": "assets/icon128.png"
+    },
+    "background": {
+        "scripts": ["background/background.js"],
+        "persistent": false
     },
     "permissions": [
         "tabs",
@@ -21,13 +25,13 @@
     ],
     "browser_action": {
         "default_icon": {
-            "16": "src/assets/icon16.png",
-            "32": "src/assets/icon32.png",
-            "48": "src/assets/icon48.png",
-            "128": "src/assets/icon128.png"
+            "16": "assets/icon16.png",
+            "32": "assets/icon32.png",
+            "48": "assets/icon48.png",
+            "128": "assets/icon128.png"
         },
         "default_title": "Evestian Web Time Tracker",
-        "default_popup": "src/popup/popup.html"
+        "default_popup": "popup/popup.html"
     },
     "debug": true
 }

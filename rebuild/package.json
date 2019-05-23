@@ -6,17 +6,19 @@
   "dependencies": {},
   "devDependencies": {
     "@babel/polyfill": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
-    "babel-minify-webpack-plugin": "^0.3.1",
     "babel-preset-env": "^1.7.0",
+    "clean-webpack-plugin": "^2.0.2",
+    "copy-webpack-plugin": "^5.0.3",
     "webpack": "^4.16.0",
     "webpack-cli": "^3.3.2",
     "webpack-stream": "^5.1.1"
   },
   "scripts": {
-    "dev": "webpack --mode development",
-    "prod": "webpack --mode production"
+    "build": "webpack --env=dev",
+    "build:prod": "webpack --env=prod"
   },
   "repository": {
     "type": "git",
