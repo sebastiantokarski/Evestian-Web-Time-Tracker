@@ -1,5 +1,5 @@
 const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const SRC_DIR = path.resolve(__dirname, 'src');
@@ -37,7 +37,7 @@ module.exports = {
     },
     plugins: [
         new CleanWebpackPlugin(),
-        new CopyPlugin([{
+        new CopyWebpackPlugin([{
             from: 'manifest.json'
         }, {
             from: 'src/assets/',
@@ -45,6 +45,9 @@ module.exports = {
         }, {
             from: '_locales/',
             to: '_locales'
+        }, {
+            from: 'src/popup/popup.html',
+            to: 'popup'
         }])
     ],
 }
