@@ -18,22 +18,32 @@ module.exports = {
     mode: "development", 
     devtool: "source-map",
     module: {
-        rules: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: [["env", {
-                            targets: {
-                                browsers: ['> 1%']
-                            }
-                        }]]
-                    }
+        rules: [{
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: {
+                loader: 'babel-loader',
+                options: {
+                    presets: [["env", {
+                        targets: {
+                            browsers: ['> 1%']
+                        }
+                    }]]
                 }
             }
-        ]
+        }, {
+            test: /\.scss$/,
+            use: [{
+                loader: "style-loader"
+            }, {
+                loader: "css-loader"
+            }, {
+                loader: "sass-loader",
+                options: {
+                    sourceMap: true
+                }
+            }]
+        }]
     },
     plugins: [
         new CleanWebpackPlugin(),

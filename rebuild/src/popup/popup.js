@@ -4,6 +4,7 @@ import utils from '../js/utils';
 import DataProcessing from '../js/DataProcessing';
 import Chart from 'chart.js/dist/Chart.bundle.min.js';
 import Progressbar from 'progressbar.js/dist/progressbar.js';
+import './style.scss';
 
 let data = new DataProcessing(config.EXTENSION_DATA_NAME);
 let todayProgress = new Progressbar.Line('.progressbar', {
