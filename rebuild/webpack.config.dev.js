@@ -1,17 +1,18 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ChromeExtensionReloader = require('webpack-chrome-extension-reloader');
 
 const SRC_DIR = path.resolve(__dirname, 'src');
 const BUILD_DIR = path.resolve(__dirname, 'dev');
 
 module.exports = {
     entry: {
-        'background/background': path.resolve(__dirname, 'src/background/background.js'),
-        'popup/popup': path.resolve(__dirname, 'src/popup/popup.js')
+        'background': path.resolve(__dirname, 'src/background/background.js'),
+        'popup': path.resolve(__dirname, 'src/popup/popup.js')
     },
     output: {
-        filename: '[name].js',
+        filename: '[name]/[name].js',
         path: BUILD_DIR
     },
     watch: true,
@@ -46,7 +47,14 @@ module.exports = {
         }]
     },
     plugins: [
-        new CleanWebpackPlugin(),
+        new ChromeExtensionReloader(),
+        new CleanWebpackPlugin({
+            verbose: true,
+            cleanAfterEveryBuildPatterns: [
+                '!*/**/*',
+                '!manifest.json'
+            ]
+        }),
         new CopyWebpackPlugin([{
             from: 'manifest.json'
         }, {
