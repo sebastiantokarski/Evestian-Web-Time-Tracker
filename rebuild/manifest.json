@@ -14,7 +14,10 @@
         "128": "assets/icon128.png"
     },
     "background": {
-        "scripts": ["background/background.js"],
+        "scripts": [
+            "background/background.js",
+            "background/hot-reload.js"
+        ],
         "persistent": false
     },
     "permissions": [

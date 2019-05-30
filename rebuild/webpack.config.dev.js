@@ -1,7 +1,6 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ChromeExtensionReloader = require('webpack-chrome-extension-reloader');
 
 const SRC_DIR = path.resolve(__dirname, 'src');
 const BUILD_DIR = path.resolve(__dirname, 'dev');
@@ -47,7 +46,6 @@ module.exports = {
         }]
     },
     plugins: [
-        new ChromeExtensionReloader(),
         new CleanWebpackPlugin({
             verbose: true,
             cleanAfterEveryBuildPatterns: [
@@ -57,6 +55,9 @@ module.exports = {
         }),
         new CopyWebpackPlugin([{
             from: 'manifest.json'
+        }, {
+            from: 'src/background/hot-reload.js',
+            to: 'background'
         }, {
             from: 'src/assets/',
             to: 'assets'
