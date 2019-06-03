@@ -423,11 +423,11 @@ export default class DataProcessing extends Data {
         // };
 
         // @todo new year bug @line356
-        // let timeSpentEachDayOfTheWeekDataArray = this.getTimeSpentInDaysOfTheWeek();
-        // this.timeSpentEachDayOfTheWeek = {
-        //     data: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) => Math.round(dayOfTheWeek[1] / 60)),
-        //     labels: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0]))
-        // };
+        let timeSpentEachDayOfTheWeekDataArray = this.getTimeSpentInDaysOfTheWeek();
+        this.timeSpentEachDayOfTheWeek = {
+            data: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) => Math.round(dayOfTheWeek[1] / 60)),
+            labels: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0]))
+        };
 
         let timeSpentEachDayOfTheWeekTotalDataArray = this.getTimeSpentInDaysOfTheWeekTotal();
         this.timeSpentEachDayOfTheWeekTotal = {

@@ -236,9 +236,9 @@ function show() {
     }
 
     data.loadFromStorage().then(() => {
-        data.proceedDataProcessing();
-
         utils.debugLog('Generated data:', data);
+
+        data.proceedDataProcessing();
 
         document.getElementById('totalTime').textContent = data.alltime;
         document.getElementById('firstVisit').textContent = data.data[config.FIRST_VISIT];
