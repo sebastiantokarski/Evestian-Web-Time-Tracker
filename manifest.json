@@ -3,7 +3,7 @@
     "short_name": "__MSG_short_name__",
     "description": "__MSG_description__",
     "author": "Ewelina Suska, Sebastian Tokarski",
-    "version": "0.0.1",
+    "version": "0.0.9",
     "default_locale": "en",
     "offline_enabled": true,
     "manifest_version": 2,
@@ -14,7 +14,10 @@
         "128": "assets/icon128.png"
     },
     "background": {
-        "page": "src/background/background.html"
+        "scripts": [
+            "background/background.js"
+        ],
+        "persistent": false
     },
     "permissions": [
         "tabs",
@@ -30,11 +33,7 @@
             "128": "assets/icon128.png"
         },
         "default_title": "Evestian Web Time Tracker",
-        "default_popup": "src/popup/popup.html"
-    },
-    "options_ui": {
-      "page": "src/options/options.html",
-      "open_in_tab": false
+        "default_popup": "popup/popup.html"
     },
     "debug": true
 }

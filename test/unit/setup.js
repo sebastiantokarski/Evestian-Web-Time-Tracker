@@ -1,3 +1,13 @@
+
+// @todo add tests
+// "chai": "~4.1.2",
+// "jsdom": "~12.0.0",
+// "mocha": "~5.2.0",
+// "mocha-logger": "~1.0.6",
+// "sinon": "~6.3.2",
+// "sinon-chrome": "~2.3.2"
+// "test": "mocha --recursive"
+
 const { JSDOM } = require('jsdom');
 const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
 const { window } = jsdom;

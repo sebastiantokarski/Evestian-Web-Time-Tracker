@@ -1,23 +1,29 @@
-/* global chrome, requirejs */
+/* global chrome */
+import '@babel/polyfill';
+import config from '../js/config';
+import utils from '../js/utils';
+import Data from '../js/Data';
+import HotReload from './hot-reload';
 
-requirejs([
-    '../js/config.js',
-    '../js/utils.js',
-    '../js/Data.js'
-], (config, utils, Data) => {
+class Background {
+    constructor() {
+        this.currentState = chrome.idle.IdleState.ACTIVE;
 
-    // It can be active, idle or locked
-    let currentState = chrome.idle.IdleState.ACTIVE;
+        if (config.DEVELOPMENT_MODE) {
+            new HotReload();
+        }
 
-    let data = new Data(config.EXTENSION_DATA_NAME);
-    data.loadFromStorage();
+        let data = new Data(config.EXTENSION_DATA_NAME);
+        data.loadFromStorage();
+    }
+
 
     /**
      * Update badge on the extension icon
      * @param {Object} tab
      * @param {string} hostname
      */
-    function updateBadge(tab, hostname) {
+    updateBadge(tab, hostname) {
         let tabTime = 0;
 
         let timeInSeconds = data.getDayOfTheMonthData(hostname)[config.ALL_TIME];
@@ -46,7 +52,7 @@ requirejs([
      * @param {function} sendResponse
      * @returns {boolean}
      */
-    function onMessageCallback (request, sender, sendResponse) {
+    onMessageCallback (request, sender, sendResponse) {
 
         utils.debugLog('New message:',
             '\nDetails:', request,
@@ -67,7 +73,7 @@ requirejs([
     /**
      * Execute all extension listeners
      */
-    function executeListeners() {
+    executeListeners() {
         /**
          * Save data to storage if someone close browser window
          */
@@ -79,21 +85,21 @@ requirejs([
          * Listens whether the current state of the user has changed
          */
         chrome.idle.onStateChanged.addListener((state) => {
-            currentState = state;
-            utils.debugLog('onStateChanged:', currentState);
+            this.currentState = state;
+            utils.debugLog('onStateChanged:', this.currentState);
         });
 
 
         /**
          * Listens to all messages sent from chrome extension API e.g. from ../popup/popup.html
          */
-        chrome.runtime.onMessage.addListener(onMessageCallback);
+        chrome.runtime.onMessage.addListener(this.onMessageCallback);
     }
 
     /**
      * Execute all extension intervals
      */
-    function executeIntervals() {
+    executeIntervals() {
         let updateDataInterval = setInterval(() => {
             chrome.windows.getLastFocused({
                 populate: true
@@ -102,7 +108,7 @@ requirejs([
                 const hostname = utils.getFromUrl('hostname', tab.url);
 
                 if (tab && utils.isWindowActive(window) && !utils.isProtocolOnBlacklist(tab.url)
-                    && (utils.isStateActive(currentState) || utils.isSoundFromTab(tab))) {
+                    && (utils.isStateActive(this.currentState) || utils.isSoundFromTab(tab))) {
 
                     const details = data.updateDataFor(hostname, tab);
 
@@ -112,7 +118,7 @@ requirejs([
                                    '\nTab:', tab, 'Window:', window);
 
                     if (config.DISPLAY_BADGE) {
-                        updateBadge(tab, hostname);
+                        this.updateBadge(tab, hostname);
                     }
                 }
             });
@@ -123,35 +129,32 @@ requirejs([
         }, config.INTERVAL_UPDATE_MIN);
     }
 
-    /**
-     * Initialize all tasks, listeners, intervals etc.
-     */
-    function init() {
+    init() {
 
-        executeListeners();
+        this.executeListeners();
 
-        executeIntervals();
+        this.executeIntervals();
     }
-
-    init();
-
-});
-
-
-/* Auxilliary functions */
-
-function g() {
-    chrome.storage.local.get(null, function (e) {
-        console.log(e);
-    });
 }
 
-function c() {
-    chrome.storage.local.clear();
-}
+const background = new Background();
+background.init();
 
-function size() {
-    chrome.storage.local.getBytesInUse(null, function (e) {
-        console.log(e);
-    });
-}
+
+// /* Auxilliary functions */
+
+// function g() {
+//     chrome.storage.local.get(null, function (e) {
+//         console.log(e);
+//     });
+// }
+
+// function c() {
+//     chrome.storage.local.clear();
+// }
+
+// function size() {
+//     chrome.storage.local.getBytesInUse(null, function (e) {
+//         console.log(e);
+//     });
+// }

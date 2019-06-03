@@ -56,9 +56,6 @@ module.exports = {
         new CopyWebpackPlugin([{
             from: 'manifest.json'
         }, {
-            from: 'src/background/hot-reload.js',
-            to: 'background'
-        }, {
             from: 'src/assets/',
             to: 'assets'
         }, {

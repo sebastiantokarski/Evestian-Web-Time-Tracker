@@ -1,7 +1,9 @@
+import utils from '../js/utils';
+
 /**
  * HotReload allows to automatically refresh whole extension
  */
-class HotReload {
+export default class HotReload {
     constructor() {
         this.WATCH_INTERVAL_MS = HotReload.WATCH_INTERVAL_MS;
         this.HARD_RELOAD = HotReload.HARD_RELOAD;
@@ -20,7 +22,6 @@ class HotReload {
                 chrome.tabs.reload(tabs[0].id); 
             }
             chrome.runtime.reload();
-
         });
     }
 
@@ -51,7 +52,6 @@ class HotReload {
      * @returns {String}
      */
     async timestampForFilesInDirectory(dir) {
-        console.log(this.getFilesInDirectory(dir))
         let files = await this.getFilesInDirectory(dir);
 
         return files.map(file => `${file.name} ${file.lastModifiedDate}`).join();
@@ -77,10 +77,9 @@ class HotReload {
     init() {
         chrome.management.getSelf(self => {
             if (self.installType === 'development') {
+                utils.debugLog('HotReload - start watching for changes...');
                 chrome.runtime.getPackageDirectoryEntry(dir => this.watchForChanges(dir));
             }
         });
     }
 }
-
-new HotReload();
