@@ -25,6 +25,7 @@ function show() {
           labels: data.pagesVisitedToday.labels,
         },
         options: {
+          customTextInside: DataProcessing.parseSecondsIntoTime(data.pagesVisitedToday.data.reduce((a, b) => a + b, 0)),
           tooltips: {
             callbacks: {
               label(tooltipItem, chart) {
@@ -41,10 +42,6 @@ function show() {
             position: 'right'
           }
         },
-        centerText: {
-          display: true,
-          text: '22'
-        }
       });
 
       let yesterdayChart = new Chart(document.getElementById('myChartYesterday'), {
@@ -57,6 +54,7 @@ function show() {
           labels: data.pagesVisitedYesterday.labels
         },
         options: {
+          customTextInside: DataProcessing.parseSecondsIntoTime(data.pagesVisitedYesterday.data.reduce((a, b) => a + b, 0)),
           tooltips: {
             callbacks: {
               label(tooltipItem, chart) {
@@ -85,6 +83,7 @@ function show() {
           labels: data.pagesVisitedThisMonth.labels
         },
         options: {
+          customTextInside: DataProcessing.parseSecondsIntoTime(data.pagesVisitedThisMonth.data.reduce((a, b) => a + b, 0)),
           tooltips: {
             callbacks: {
               label(tooltipItem, chart) {
@@ -113,6 +112,7 @@ function show() {
               labels: data.pagesVisitedLastMonth.labels
           },
           options: {
+            customTextInside: DataProcessing.parseSecondsIntoTime(data.pagesVisitedLastMonth.data.reduce((a, b) => a + b, 0)),
               tooltips: {
                   callbacks: {
                       label(tooltipItem, chart) {
@@ -280,6 +280,26 @@ function show() {
 }
 
 chrome.runtime.sendMessage({event: 'openPopup'}, (response) => {
+  Chart.pluginService.register({
+    beforeDraw: function(chart) {
+      if (chart && chart.options && chart.options.customTextInside) {
+        const height = chart.chart.height;
+        const ctx = chart.chart.ctx;
+
+        ctx.restore();
+        ctx.font = "20px sans-serif";
+        ctx.textBaseline = "middle";
+
+        const text = chart.options.customTextInside;
+        const textX = Math.round((chart.chartArea.right - ctx.measureText(text).width) / 2);
+        const textY = height / 2;
+
+        ctx.fillText(text, textX, textY);
+        ctx.save();
+      }
+    }
+  });
+
   if (response) {
     if (document.readyState !== 'loading') {
       show();
