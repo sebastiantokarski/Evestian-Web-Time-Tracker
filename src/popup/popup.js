@@ -18,7 +18,7 @@ function show() {
           datasets: [{
             data: data.pagesVisitedToday.data,
             // @todo colors from favicos: https://stackoverflow.com/questions/2541481/get-average-color-of-image-via-javascript
-            backgroundColor: ['red', 'yellow', 'lime', 'cyan', 'blue', 'magenta', 'orange', 'pink', 'grey']
+            backgroundColor: data.pagesVisitedToday.colors
           }],
 
           // These labels appear in the legend and in the tooltips when hovering different arcs
@@ -49,7 +49,7 @@ function show() {
         data: {
           datasets: [{
             data: data.pagesVisitedYesterday.data,
-            backgroundColor: ['red', 'orange', 'purple', 'green', 'yellow', 'blue', 'brown', 'lime', 'pink']
+            backgroundColor: data.pagesVisitedYesterday.colors
           }],
           labels: data.pagesVisitedYesterday.labels
         },
@@ -78,7 +78,7 @@ function show() {
         data: {
           datasets: [{
             data: data.pagesVisitedThisMonth.data,
-            backgroundColor: ['red', 'orange', 'purple', 'green', 'yellow', 'blue', 'brown', 'lime', 'pink']
+            backgroundColor: data.pagesVisitedThisMonth.colors
           }],
           labels: data.pagesVisitedThisMonth.labels
         },
@@ -107,7 +107,7 @@ function show() {
           data: {
               datasets: [{
                   data: data.pagesVisitedLastMonth.data,
-                  backgroundColor: ['red', 'orange', 'purple', 'green', 'yellow', 'blue', 'brown', 'lime', 'pink']
+                  backgroundColor: data.pagesVisitedLastMonth.colors
               }],
               labels: data.pagesVisitedLastMonth.labels
           },
