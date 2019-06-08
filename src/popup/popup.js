@@ -5,6 +5,7 @@ import utils from '../js/utils';
 import DataProcessing from '../js/DataProcessing';
 import Chart from 'chart.js/dist/Chart.bundle.min.js';
 import './style.scss';
+import App from "./App.jsx";
 
 let data = new DataProcessing(config.EXTENSION_DATA_NAME);
 
