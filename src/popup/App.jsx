@@ -1,7 +1,9 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import ReactDOM from "react-dom";
+import Header from './components/Header.jsx';
+import '../scss/app.scss';
 
-class FormContainer extends Component {
+class App extends Component {
   constructor() {
     super();
     this.state = {
@@ -10,14 +12,14 @@ class FormContainer extends Component {
   }
   render() {
     return (
-      <div id="article-form">
-        Test
-      </div>
+      <Fragment>
+        <Header/>
+      </Fragment>
     );
   }
 }
 
 ReactDOM.render(
-  <FormContainer />,
+  <App />,
   document.getElementById('root')
 );
