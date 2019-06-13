@@ -6,14 +6,19 @@
   },
   "extends": [
     "eslint:recommended",
+    "plugin:react/recommended",
     "google"
   ],
   "parserOptions": {
     "ecmaVersion": 2019,
-    "sourceType": "module"
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
   },
   "plugins": [
-    "jsdoc"
+    "jsdoc",
+    "react"
   ],
   "rules": {
     "jsdoc/check-alignment": 1,
@@ -43,13 +48,29 @@
     "jsdoc/require-returns-type": 1,
     "jsdoc/valid-types": 1,
     "max-len": ["error", 90],
-    "newline-after-var": [ 2, "always" ]
+    "newline-after-var": [ 2, "always"],
+    "require-jsdoc" : 0
   },
   "settings": {
     "jsdoc": {
       "tagNamePreference": {
         "returns": "return"
       }
-    }
+    },
+    "react": {
+      "createClass": "createReactClass",
+      "pragma": "React",
+      "version": "detect",
+      "flowVersion": "0.53"
+    },
+    "propWrapperFunctions": [
+        "forbidExtraProps",
+        {"property": "freeze", "object": "Object"},
+        {"property": "myFavoriteWrapper"}
+    ],
+    "linkComponents": [
+      "Hyperlink",
+      {"name": "Link", "linkAttribute": "to"}
+    ]
   }
 }

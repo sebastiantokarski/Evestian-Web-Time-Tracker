@@ -1,4 +1,3 @@
-/* eslint-disable */
 import '@babel/polyfill';
 import config from '../js/config';
 import utils from '../js/utils';
@@ -18,10 +17,51 @@ class Popup {
     this.data = new DataProcessing(dataName);
   }
 
+  /**
+   * Set custom chart.js methods.
+   */
+  setCustomChartMethods() {
+    Chart.pluginService.register({
+      beforeDraw: function(chart) {
+        if (chart && chart.options && chart.options.customTextInside) {
+          const height = chart.chart.height;
+          const rightCorner = chart.chartArea.right;
+          const ctx = chart.chart.ctx;
+
+          ctx.restore();
+          ctx.font = '20px sans-serif';
+          ctx.textBaseline = 'middle';
+
+          const text = chart.options.customTextInside;
+          const textX = Math.round((rightCorner - ctx.measureText(text).width) / 2);
+          const textY = height / 2;
+
+          ctx.fillText(text, textX, textY);
+          ctx.save();
+        }
+      },
+    });
+  }
+
+  /**
+   * Initialize Popup.
+   *
+   * @return {undefined}
+   */
   async init() {
-    const waitForDataUpdate = await thenChrome.runtime.sendMessage({event: 'openPopup'});
+    // Wait for data update
+    await thenChrome.runtime.sendMessage({event: 'openPopup'});
 
     this.initOnDOMContentReady(this.show.bind(this));
+    this.setCustomChartMethods();
+  }
+
+  /**
+   * @param {string} id - Selector id.
+   * @return {HTMLElement}
+   */
+  getById(id) {
+    return document.getElementById(id);
   }
 
   /**
@@ -36,39 +76,59 @@ class Popup {
     }
   }
 
+  /**
+   * Shows all stats and charts in popup.
+   */
   show() {
     this.data.loadFromStorage().then(() => {
+      const firstVisitNode = document.getElementById('firstVisit');
+      const totalTimeNode = document.getElementById('totalTime');
+
       utils.debugLog('Generated data:', this.data);
 
       this.data.proceedDataProcessing();
 
-      document.getElementById('totalTime').textContent = this.data.alltime;
-      document.getElementById('firstVisit').textContent = this.data.data[config.FIRST_VISIT];
+      firstVisitNode.textContent = this.data.alltime;
+      totalTimeNode.textContent = this.data.data[config.FIRST_VISIT];
 
       this.generateCharts();
     });
 
+    /**
+     * @param {Array} arr
+     */
     function showResults(arr) {
       const table = document.createElement('table');
+      let tr;
+
       table.setAttribute('style', 'margin: auto; font-size: 16px');
       for (let i = 0; i < arr.length; i++) {
-        const tr = document.createElement('tr');
+        tr = document.createElement('tr');
         if (!arr[i][2]) {
           arr[i][2] = chrome.runtime.getURL('/assets/defaultFavicon16.png');
         }
-        tr.innerHTML = `<td>${i + 1}</td><td><img src="${arr[i][2]}" height="16" width="16"></td></td><td>${arr[i][0]}</td><td>${DataProcessing.parseSecondsIntoTime(arr[i][1])}</td>`;
+        tr.innerHTML = `
+          <td>${i + 1}</td>
+          <td><img src="${arr[i][2]}" height="16" width="16"></td>
+          </td><td>${arr[i][0]}</td>
+          <td>${DataProcessing.parseSecondsIntoTime(arr[i][1])}</td>
+        `;
         table.appendChild(tr);
       }
       document.querySelector('.container-table').appendChild(table);
     }
 
     chrome.storage.local.get(config.EXTENSION_DATA_NAME, (storage) => {
+      const arr = [];
       let data = null;
+
       if (storage[config.EXTENSION_DATA_NAME]) {
         data = storage[config.EXTENSION_DATA_NAME];
-        const arr = [];
+
         for (const key in data) {
-          if ({}.hasOwnProperty.call(data, key) && data[key] && data[key][config.FIRST_VISIT]) {
+          if ({}.hasOwnProperty.call(data, key)
+              && data[key]
+              && data[key][config.FIRST_VISIT]) {
             arr.push([
               key,
               data[key][config.ALL_TIME],
@@ -85,21 +145,29 @@ class Popup {
     });
   }
 
+  /**
+   * @param  {object} data
+   * @return {string}
+   */
+  parseTextInsideChart(data) {
+    return DataProcessing.parseSecondsIntoTime(data.data.reduce((a, b) => a + b, 0));
+  }
+
+  /**
+   * Generate all charts.
+   */
   generateCharts() {
-    this.todayChart = new Chart(document.getElementById('myChartToday'), {
+    this.todayChart = new Chart(this.getById('myChartToday'), {
       type: 'doughnut',
       data: {
         datasets: [{
           data: this.data.pagesVisitedToday.data,
-          // @todo colors from favicos: https://stackoverflow.com/questions/2541481/get-average-color-of-image-via-javascript
-          backgroundColor: this.data.pagesVisitedToday.colors
+          backgroundColor: this.data.pagesVisitedToday.colors,
         }],
-
-        // These labels appear in the legend and in the tooltips when hovering different arcs
         labels: this.data.pagesVisitedToday.labels,
       },
       options: {
-        customTextInside: DataProcessing.parseSecondsIntoTime(this.data.pagesVisitedToday.data.reduce((a, b) => a + b, 0)),
+        customTextInside: this.parseTextInsideChart(this.data.pagesVisitedToday),
         tooltips: {
           callbacks: {
             label(tooltipItem, chart) {
@@ -119,7 +187,7 @@ class Popup {
       },
     });
 
-    this.yesterdayChart = new Chart(document.getElementById('myChartYesterday'), {
+    this.yesterdayChart = new Chart(this.getById('myChartYesterday'), {
       type: 'doughnut',
       data: {
         datasets: [{
@@ -129,7 +197,7 @@ class Popup {
         labels: this.data.pagesVisitedYesterday.labels,
       },
       options: {
-        customTextInside: DataProcessing.parseSecondsIntoTime(this.data.pagesVisitedYesterday.data.reduce((a, b) => a + b, 0)),
+        customTextInside: this.parseTextInsideChart(this.data.pagesVisitedYesterday),
         tooltips: {
           callbacks: {
             label(tooltipItem, chart) {
@@ -149,7 +217,7 @@ class Popup {
       },
     });
 
-    this.monthChart = new Chart(document.getElementById('myChartMonth'), {
+    this.monthChart = new Chart(this.getById('myChartMonth'), {
       type: 'doughnut',
       data: {
         datasets: [{
@@ -159,7 +227,7 @@ class Popup {
         labels: this.data.pagesVisitedThisMonth.labels,
       },
       options: {
-        customTextInside: DataProcessing.parseSecondsIntoTime(this.data.pagesVisitedThisMonth.data.reduce((a, b) => a + b, 0)),
+        customTextInside: this.parseTextInsideChart(this.data.pagesVisitedThisMonth),
         tooltips: {
           callbacks: {
             label(tooltipItem, chart) {
@@ -179,7 +247,7 @@ class Popup {
       },
     });
 
-    this.lastMonthChart = new Chart(document.getElementById('myChartLastMonth'), {
+    this.lastMonthChart = new Chart(this.getById('myChartLastMonth'), {
       type: 'doughnut',
       data: {
         datasets: [{
@@ -189,7 +257,7 @@ class Popup {
         labels: this.data.pagesVisitedLastMonth.labels,
       },
       options: {
-        customTextInside: DataProcessing.parseSecondsIntoTime(this.data.pagesVisitedLastMonth.data.reduce((a, b) => a + b, 0)),
+        customTextInside: this.parseTextInsideChart(this.data.pagesVisitedLastMonth),
         tooltips: {
           callbacks: {
             label(tooltipItem, chart) {
@@ -209,7 +277,7 @@ class Popup {
       },
     });
 
-    this.myChartTimeTodayHours = new Chart(document.getElementById('myChartTimeTodayHours'), {
+    this.myChartTimeTodayHours = new Chart(this.getById('myChartTimeTodayHours'), {
       type: 'line',
       data: {
         datasets: [{
@@ -254,7 +322,7 @@ class Popup {
       },
     });
 
-    this.myChartTimDaysOfTheWeek = new Chart(document.getElementById('myChartTimDaysOfTheWeek'), {
+    this.myChartTimDaysOfTheWeek = new Chart(this.getById('myChartTimDaysOfTheWeek'), {
       type: 'line',
       data: {
         datasets: [{
@@ -295,7 +363,7 @@ class Popup {
       },
     });
 
-    this.myChartTimeTodayMinutes = new Chart(document.getElementById('myChartTimeTodayMinutes'), {
+    this.myChartTimeTodayMinutes = new Chart(this.getById('myChartTimeTodayMinutes'), {
       type: 'line',
       data: {
         datasets: [{

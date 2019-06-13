@@ -1,5 +1,5 @@
-import React, { Component, Fragment } from "react";
-import ReactDOM from "react-dom";
+import React, {Component, Fragment} from 'react';
+import ReactDOM from 'react-dom';
 import Header from './components/Header.jsx';
 import '../scss/app.scss';
 
@@ -7,7 +7,7 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      title: ""
+      title: '',
     };
   }
   render() {
@@ -20,6 +20,6 @@ class App extends Component {
 }
 
 ReactDOM.render(
-  <App />,
-  document.getElementById('root')
+    <App />,
+    document.getElementById('root')
 );

@@ -15,8 +15,6 @@ export default class Data {
   }
 
   /**
-   * Get dataName.
-   *
    * @return {string}
    */
   get dataName() {
@@ -24,8 +22,6 @@ export default class Data {
   }
 
   /**
-   * Set dataName.
-   *
    * @param {string} value
    */
   set dataName(value) {
