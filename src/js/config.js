@@ -1,5 +1,8 @@
-/* eslint-disable */
+/** Class representing main extension config */
 class Config {
+  /**
+   * Create an object with config properties.
+   */
   constructor() {
     this.ALL_TIME = '_';
     this.BLACKLIST_PROTOCOL = [

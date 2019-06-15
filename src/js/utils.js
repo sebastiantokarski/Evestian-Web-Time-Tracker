@@ -1,10 +1,11 @@
-/* eslint-disable */
 import config from './config';
 
+/** Class containing a set of tools useful in many modules. */
 class Utils {
   /**
-   * Get date with format dd-mm-yyyy
-   * @param {Date} [date=new Date()]
+   * Get date with format dd-mm-yyyy.
+   *
+   * @param  {Date} [date=new Date()]
    * @return {string}
    */
   getDateString(date = new Date()) {
@@ -16,7 +17,8 @@ class Utils {
   }
 
   /**
-   * Get yesterday date
+   * Get yesterday date.
+   *
    * @return {Date}
    */
   getYesterdayDate() {
@@ -27,7 +29,8 @@ class Utils {
   }
 
   /**
-   * Get the day yesterday
+   * Get the day yesterday.
+   *
    * @return {string}
    */
   getYesterdayDay() {
@@ -37,7 +40,8 @@ class Utils {
   }
 
   /**
-   * Get yesterday date
+   * Get yesterday date.
+   *
    * @return {string}
    */
   getLastMonth() {
@@ -51,7 +55,8 @@ class Utils {
   }
 
   /**
-   * Get last quarter
+   * Get last quarter.
+   *
    * @return {string}
    */
   getLastQuarter() {
@@ -65,7 +70,8 @@ class Utils {
   }
 
   /**
-   * Get current year
+   * Get current year.
+   *
    * @return {string}
    */
   getCurrentYear() {
@@ -73,7 +79,8 @@ class Utils {
   }
 
   /**
-   * Get current quarter
+   * Get current quarter.
+   *
    * @return {string}
    */
   getCurrentQuarter() {
@@ -81,7 +88,8 @@ class Utils {
   }
 
   /**
-   * Get current month
+   * Get current month.
+   *
    * @return {string}
    */
   getCurrentMonth() {
@@ -89,8 +97,9 @@ class Utils {
   }
 
   /**
-   * Get current week of the year
-   * @param {Date} date
+   * Get current week of the year.
+   *
+   * @param  {Date} date
    * @return {string}
    */
   getCurrentWeekOfTheYear(date = new Date()) {
@@ -104,13 +113,14 @@ class Utils {
   }
 
   /**
-   * Get current day of the week e.g monday is 1st, sunday is 7th
+   * Get current day of the week e.g monday is 1st, sunday is 7th.
+   *
    * @return {string}
    */
   getCurrentDayOfTheWeek() {
     let dayOfTheWeek = new Date().getDay();
 
-    // Sunday should be 7th day of the week
+    // Sunday should be 7th day of the week.
     if (dayOfTheWeek === 0) {
       dayOfTheWeek = 7;
     }
@@ -119,7 +129,8 @@ class Utils {
   }
 
   /**
-   * Get current week of the year and day of the week
+   * Get current week of the year and day of the week.
+   *
    * @return {string}
    */
   getCurrentWeekDetails() {
@@ -127,7 +138,8 @@ class Utils {
   }
 
   /**
-   * Get current day of the month
+   * Get current day of the month.
+   *
    * @return {string}
    */
   getCurrentDayOfTheMonth() {
@@ -135,18 +147,21 @@ class Utils {
   }
 
   /**
-   * Get current time with format hh:mm
+   * Get current time with format hh:mm.
+   *
    * @return {string}
    */
   getCurrentTime() {
     const date = new Date();
     const hour = ('0' + date.getHours()).slice(-2);
     const minute = ('0' + date.getMinutes()).slice(-2);
+
     return `${hour}:${minute}`;
   }
 
   /**
-   * Get current hour
+   * Get current hour.
+   *
    * @return {string}
    */
   getCurrentHour() {
@@ -154,7 +169,8 @@ class Utils {
   }
 
   /**
-   * Get current minute
+   * Get current minute.
+   *
    * @return {string}
    */
   getCurrentMinute() {
@@ -163,23 +179,28 @@ class Utils {
 
   /**
    * Get some properties from url such as protocol, pathname etc.
-   * @param {string} property
-   * @param {string} url
+   *
+   * @param  {string} property
+   * @param  {string} url
    * @return {string}
    */
   getFromUrl(property, url) {
     const a = document.createElement('a');
+
     a.href = url;
     return a[property];
   }
 
+  // eslint-disable-next-line jsdoc/require-description-complete-sentence
   /**
-   * Get active and focused tab
-   * @param {Object[]} tabs
-   * @return {Object|boolean} tab object or false
+   * Get active and focused tab.
+   *
+   * @param  {object[]} tabs
+   * @return {object|boolean} tab object or false
    */
   getActiveTab(tabs) {
     let i = 0;
+
     while (i < tabs.length && !tabs[i].active) {
       i++;
     }
@@ -191,26 +212,31 @@ class Utils {
   }
 
   /**
-   * Check if chrome window is active and focused
-   * @param {Object} window
+   * Check if chrome window is active and focused.
+   *
+   * @param  {object} window
    * @return {boolean}
    */
   isWindowActive(window) {
     return window && window.focused;
   }
 
+  // eslint-disable-next-line jsdoc/require-description-complete-sentence
   /**
-   * Is there any sound from the tab (video, player, music)
-   * @param {Object} tab
+   * Is there any sound from the tab (video, player, music).
+   *
+   * @param  {object} tab
    * @return {boolean}
    */
   isSoundFromTab(tab) {
     return tab && tab.audible;
   }
 
+  // eslint-disable-next-line jsdoc/require-description-complete-sentence
   /**
-   * Is current state active
-   * @param {string} state active, idle or locked
+   * Is current state active.
+   *
+   * @param  {string} state - active, idle or locked
    * @return {boolean}
    */
   isStateActive(state) {
@@ -221,8 +247,9 @@ class Utils {
   }
 
   /**
-   * Check if protocol from url is blacklisted
-   * @param {string} url
+   * Check if protocol from url is blacklisted.
+   *
+   * @param  {string} url
    * @return {boolean}
    */
   isProtocolOnBlacklist(url) {
@@ -230,13 +257,15 @@ class Utils {
   }
 
   /**
-   * Log to console if it is development mode
-   * @param {*} args
+   * Log to console if it is development mode.
+   *
+   * @param  {*} args
    * @return {undefined}
    */
   debugLog(...args) {
     if (config.DEVELOPMENT_MODE) {
       const fnArguments = [].slice.call(args);
+
       if (typeof fnArguments[0] === 'string') {
         fnArguments[0] = '%c' + fnArguments[0];
         fnArguments.splice(1, 0, 'color: #1E90FF');
@@ -247,11 +276,13 @@ class Utils {
     }
   }
 
+  // eslint-disable-next-line jsdoc/require-description-complete-sentence
   /**
-   * Add 1 to current number in a given property
-   * @param {Object} obj
-   * @param {string} property
-   * @return {Object} obj
+   * Add 1 to current number in a given property.
+   *
+   * @param  {object} obj
+   * @param  {string} property
+   * @return {object} obj
    */
   increment(obj, property) {
     if (!obj[property]) {

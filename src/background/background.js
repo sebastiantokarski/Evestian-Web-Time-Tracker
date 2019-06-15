@@ -1,11 +1,14 @@
-/* eslint-disable */
 import '@babel/polyfill';
 import config from '../js/config';
 import utils from '../js/utils';
 import Data from '../js/Data';
 import HotReload from './hot-reload';
 
+/** Class Background */
 class Background {
+  /**
+   * Constructor.
+   */
   constructor() {
     this.currentState = chrome.idle.IdleState.ACTIVE;
 
@@ -18,14 +21,15 @@ class Background {
   }
 
   /**
-   * Update badge on the extension icon
-   * @param {Object} tab
+   * Update badge on the extension icon.
+   *
+   * @param {object} tab
    * @param {string} hostname
    */
   updateBadge(tab, hostname) {
+    const timeInSeconds = this.data.getDayOfTheMonthData(hostname)[config.ALL_TIME];
     let tabTime = 0;
 
-    const timeInSeconds = this.data.getDayOfTheMonthData(hostname)[config.ALL_TIME];
     if (timeInSeconds < 60) {
       tabTime = timeInSeconds + 's';
     } else if (timeInSeconds < 60 * 100) {
@@ -44,11 +48,13 @@ class Background {
     });
   }
 
+  // eslint-disable-next-line jsdoc/require-description-complete-sentence
   /**
-   * Receives and processes messages sent by chrome extension API e.g. other files
-   * @param {Object} request
-   * @param {Object} sender
-   * @param {function} sendResponse
+   * Receives and processes messages sent by chrome extension API e.g. other files.
+   *
+   * @param  {object} request
+   * @param  {object} sender
+   * @param  {Function} sendResponse
    * @return {boolean}
    */
   onMessageCallback(request, sender, sendResponse) {
@@ -69,12 +75,12 @@ class Background {
         return true;
 
       default:
-        throw (`Message: ${request.event} not found`);
+        throw new Error(`Message: ${request.event} not found`);
     }
   }
 
   /**
-   * Execute all extension listeners
+   * Execute all extension listeners.
    */
   executeListeners() {
     /**
@@ -93,13 +99,14 @@ class Background {
     });
 
     /**
-     * Listens to all messages sent from chrome extension API e.g. from ../popup/popup.html
+     * Listens to all messages sent from chrome extension API
+     * e.g. from ../popup/popup.html.
      */
     chrome.runtime.onMessage.addListener(this.onMessageCallback);
   }
 
   /**
-   * Execute all extension intervals
+   * Execute all extension intervals.
    */
   executeIntervals() {
     this.updateDataInterval = setInterval(() => {
@@ -130,6 +137,9 @@ class Background {
     }, config.INTERVAL_UPDATE_MIN);
   }
 
+  /**
+   * Initialize Background.
+   */
   init() {
     this.executeListeners();
 
@@ -138,23 +148,5 @@ class Background {
 }
 
 const background = new Background();
+
 background.init();
-
-
-// /* Auxilliary functions */
-
-// function g() {
-//     chrome.storage.local.get(null, function (e) {
-//         console.log(e);
-//     });
-// }
-
-// function c() {
-//     chrome.storage.local.clear();
-// }
-
-// function size() {
-//     chrome.storage.local.getBytesInUse(null, function (e) {
-//         console.log(e);
-//     });
-// }
