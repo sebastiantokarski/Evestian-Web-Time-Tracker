@@ -62,6 +62,12 @@ class Background {
         sendResponse(true);
         return true;
 
+      case 'save':
+        this.data.data[request.hostname][request.key] = request.value;
+        this.data.saveInStorage();
+        sendResponse(true);
+        return true;
+
       default:
         throw (`Message: ${request.event} not found`);
     }
