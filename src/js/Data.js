@@ -37,9 +37,13 @@ export default class Data {
    * @param {object} data
    */
   saveInStorage(data = this.data) {
-    chrome.storage.local.set({[this.dataName]: data}, () => {
-      utils.debugLog(`Successfully saved in storage - ${this.dataName}:`, data);
-      this.checkDataSize();
+    chrome.storage.local.get(this.dataName, (storage) => {
+      const merged = {...storage[this.dataName], ...data};
+
+      chrome.storage.local.set({[this.dataName]: merged}, () => {
+        utils.debugLog(`Successfully saved in storage - ${this.dataName}:`, data);
+        this.checkDataSize();
+      });
     });
   }
 

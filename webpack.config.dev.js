@@ -7,6 +7,7 @@ const BUILD_DIR = path.resolve(__dirname, 'dev');
 
 module.exports = {
   entry: {
+    contentscript: path.resolve(__dirname, 'src/contentscript/contentscript.js'),
     background: path.resolve(__dirname, 'src/background/background.js'),
     popup: path.resolve(__dirname, 'src/popup/popup.js'),
   },

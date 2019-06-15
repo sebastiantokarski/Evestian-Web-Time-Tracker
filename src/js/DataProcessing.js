@@ -446,6 +446,7 @@ export default class DataProcessing extends Data {
    * @param {object} data
    */
   setLabelColors(data) {
+    console.log(data, this.data);
     this.labelsCache = this.labelsCache || {};
     this.colors = this.colors || [
       '#00ffff',
@@ -493,6 +494,11 @@ export default class DataProcessing extends Data {
     data.colors = [];
 
     for (let i = 0; i < data.labels.length; i++) {
+      if (this.data[data.labels[i]] && this.data[data.labels[i]][config.FAVICON_COLOR]) {
+        data.colors.push(this.data[data.labels[i]][config.FAVICON_COLOR]);
+        continue;
+      }
+
       if (data.labels[i] === 'Other') {
         data.colors.push('#c0c0c0');
         this.labelsCache.Other = '#c0c0c0';
