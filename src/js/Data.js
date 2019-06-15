@@ -1,12 +1,12 @@
-/* eslint-disable */
 import config from './config';
 import thenChrome from 'then-chrome';
 import utils from './utils';
 
+/** Class Data */
 export default class Data {
   /**
    * Creating new data based on the data in chrome storage API.
-   * If not exist, creates empty object
+   * If not exist, creates empty object.
    *
    * @param {string} dataName
    */
@@ -14,19 +14,27 @@ export default class Data {
     this.dataName = dataName;
   }
 
+  /**
+   * @return {string}
+   */
   get dataName() {
     return this._dataName;
   }
 
+  /**
+   * @param {string} value
+   */
   set dataName(value) {
     if (!value || typeof value !== 'string') {
-      throw ('dataName is required');
+      throw new Error('dataName is required');
     }
     this._dataName = value;
   }
 
   /**
-   * Updates data in chrome storage local API by overwriting
+   * Updates data in chrome storage local API by overwriting.
+   *
+   * @param {object} data
    */
   saveInStorage(data = this.data) {
     chrome.storage.local.set({[this.dataName]: data}, () => {
@@ -36,21 +44,27 @@ export default class Data {
   }
 
   /**
-   * Check how many bytes in currently used in storage
+   * Check how many bytes in currently used in storage.
    */
   checkDataSize() {
     chrome.storage.local.getBytesInUse(this.dataName, function(size) {
       const totalSize = chrome.storage.local.QUOTA_BYTES;
-      utils.debugLog(`Used storage size in bytes: ${size}. Percentage: ${ (size / totalSize * 100).toFixed(2) }%`);
+
+      utils.debugLog(`
+        Used storage size in bytes: ${size}.
+        Percentage: ${ (size / totalSize * 100).toFixed(2) }%`);
     });
   }
 
   /**
-   * Load extension data from chrome storage API
-   * If data does not exist, they are created
+   * Load extension data from chrome storage API.
+   * If data does not exist, they are created.
+   *
+   * @return {Promise}
    */
   loadFromStorage() {
     const self = this;
+
     return new Promise((resolve) => {
       thenChrome.storage.local.get(self.dataName)
           .then((data) => {
@@ -70,75 +84,91 @@ export default class Data {
   }
 
   /**
-   * Gets year data object for a given domain
-   * @param {string} hostname
-   * @param {string} [year = utils.getCurrentYear()]
-   * @return {Object|null}
+   * Gets year data object for a given domain.
+   *
+   * @param  {string} hostname
+   * @param  {string} [year=utils.getCurrentYear()]
+   * @return {object|null}
    */
   getYearData(hostname, year = utils.getCurrentYear()) {
     return this.data[hostname] ? this.data[hostname][year] : null;
   }
 
   /**
-   * Gets month data object for a given domain
-   * @param {string} hostname
-   * @param {string} [month = utils.getCurrentMonth()]
-   * @return {Object|null}
+   * Gets month data object for a given domain.
+   *
+   * @param  {string} hostname
+   * @param  {string} [month=utils.getCurrentMonth()]
+   * @return {object|null}
    */
   getMonthData(hostname, month = utils.getCurrentMonth()) {
-    return this.getYearData(hostname) ? this.getYearData(hostname)[month] : null;
+    const yearData = this.getYearData(hostname);
+
+    return yearData ? yearData[month] : null;
   }
 
   /**
-   * Gets day of the month data object for a given domain
-   * @param {string} hostname
-   * @param {string} [dayOfTheMonth = utils.getCurrentDayOfTheMonth()]
-   * @return {Object|null}
+   * Gets day of the month data object for a given domain.
+   *
+   * @param  {string} hostname
+   * @param  {string} [dayOfTheMonth=utils.getCurrentDayOfTheMonth()]
+   * @return {object|null}
    */
   getDayOfTheMonthData(hostname, dayOfTheMonth = utils.getCurrentDayOfTheMonth()) {
-    return this.getMonthData(hostname) ? this.getMonthData(hostname)[dayOfTheMonth] : null;
+    const monthData = this.getMonthData(hostname);
+
+    return monthData ? monthData[dayOfTheMonth] : null;
   }
 
   /**
-   * Gets hour data object for a given domain
-   * @param {string} hostname
-   * @param {string} [hour = utils.getCurrentHour()]
-   * @return {Object|null}
+   * Gets hour data object for a given domain.
+   *
+   * @param  {string} hostname
+   * @param  {string} [hour=utils.getCurrentHour()]
+   * @return {object|null}
    */
   getHourData(hostname, hour = utils.getCurrentHour()) {
-    return this.getDayOfTheMonthData(hostname) ? this.getDayOfTheMonthData(hostname)[hour] : null;
+    const dayOfTheWeekData = this.getDayOfTheMonthData(hostname);
+
+    return dayOfTheWeekData ? dayOfTheWeekData[hour] : null;
   }
 
   /**
-   * Gets week details (week of the year and day of the week) data object for a given domain
-   * @param {string} hostname
-   * @param {string} [weekDetails = utils.getCurrentWeekDetails()]
-   * @return {Object|null}
+   * Gets week details (week of the year and day of the week)
+   * data object for a given domain.
+   *
+   * @param  {string} hostname
+   * @param  {string} [weekDetails=utils.getCurrentWeekDetails()]
+   * @return {object|null}
    */
   getWeekDetailsData(hostname, weekDetails = utils.getCurrentWeekDetails()) {
-    return this.getYearData(hostname) ? this.getYearData(hostname)[config.WEEK_DETAILS][weekDetails] : null;
+    const yearData = this.getYearData(hostname);
+
+    return yearData ? yearData[config.WEEK_DETAILS][weekDetails] : null;
   }
 
   /**
-   * Gets today data object for a given domain
-   * @param {string} hostname
-   * @return {Object|null}
+   * Gets today data object for a given domain.
+   *
+   * @param  {string} hostname
+   * @return {object|null}
    */
   getTodayData(hostname) {
     return this.getDayOfTheMonthData(hostname);
   }
 
   /**
-   * Gets yesterday data object for a given domain
-   * @param {string} hostname
-   * @return {Object}
+   * Gets yesterday data object for a given domain.
+   *
+   * @param  {string} hostname
+   * @return {object}
    */
   getYesterdayData(hostname) {
     return this.getDayOfTheMonthData(hostname, utils.getYesterdayDay());
   }
 
   /**
-   * Creates initial data object
+   * Creates initial data object.
    */
   createEmptyDataObject() {
     this.data = {};
@@ -147,9 +177,10 @@ export default class Data {
   }
 
   /**
-   * Creates initial data object for given domain
+   * Creates initial data object for given domain.
+   *
    * @param {string} hostname
-   * @param {Object} dataObj
+   * @param {object} dataObj
    */
   createEmptyHostnameDataObject(hostname, dataObj) {
     this.data[hostname] = {
@@ -161,8 +192,9 @@ export default class Data {
   }
 
   /**
-   * Checks if given hostname is already stored in data
-   * @param {string} hostname
+   * Checks if given hostname is already stored in data.
+   *
+   * @param  {string} hostname
    * @return {boolean}
    */
   isPageAlreadyInData(hostname) {
@@ -170,7 +202,8 @@ export default class Data {
   }
 
   /**
-   * Returns a data storage template for one domain
+   * Returns a data storage template for one domain.
+   *
    * @return {{
    * currentYear: (string),
    * currentMonth: (string),
@@ -193,6 +226,7 @@ export default class Data {
       currentHour: utils.getCurrentHour(),
       currentMinute: utils.getCurrentMinute(),
     };
+
     dataObj.minuteObj = {
       [config.ALL_TIME]: 0,
       [dataObj.currentMinute]: 0,
@@ -217,11 +251,13 @@ export default class Data {
     return dataObj;
   }
 
+  /* eslint-disable max-len */
   /**
-   * Update extension storage with data
-   * @param {Object} tab
-   * @param {string} hostname
-   * @return {Object}
+   * Update extension storage with data.
+   *
+   * @param  {string} hostname
+   * @param  {object} tab
+   * @return {object}
    */
   updateDataFor(hostname, tab) {
     const dataObj = this.getDataObjectTemplate();
@@ -266,4 +302,5 @@ export default class Data {
       allTimeInSec: this.data[hostname][config.ALL_TIME],
     };
   }
+  /* eslint-enable max-len */
 }

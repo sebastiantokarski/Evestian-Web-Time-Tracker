@@ -1,10 +1,12 @@
-/* eslint-disable */
 import utils from '../js/utils';
 
 /**
  * HotReload allows to automatically refresh whole extension
  */
 export default class HotReload {
+  /**
+   * Constructor.
+   */
   constructor() {
     this.WATCH_INTERVAL_MS = HotReload.WATCH_INTERVAL_MS;
     this.HARD_RELOAD = HotReload.HARD_RELOAD;
@@ -12,14 +14,28 @@ export default class HotReload {
     this.init();
   }
 
+  /**
+   * Should also reload active browser tab.
+   *
+   * @return {boolean}
+   */
   static get HARD_RELOAD() {
     return false;
   }
 
+  /**
+   * Checking for changes interval delay.
+   *
+   * @return {number}
+   */
   static get WATCH_INTERVAL_MS() {
     return 1000;
   }
 
+  /**
+   * Reload whole extension. If HARD_RELOAD is true
+   * then reload also active browser tab.
+   */
   reload() {
     chrome.tabs.query({
       active: true,
@@ -33,8 +49,9 @@ export default class HotReload {
   }
 
   /**
-   * Get all files from extension directory
-   * @param   {Object} dir
+   * Get all files from extension directory.
+   *
+   * @param  {object} dir
    * @return {Promise}
    */
   getFilesInDirectory(dir) {
@@ -52,9 +69,10 @@ export default class HotReload {
   }
 
   /**
-   * Creates timestamp 'hash' with last modified date for every file in directory
-   * @param   {Object} dir
-   * @return {String}
+   * Creates timestamp 'hash' with last modified date for every file in directory.
+   *
+   * @param  {object} dir
+   * @return {string}
    */
   async timestampForFilesInDirectory(dir) {
     const files = await this.getFilesInDirectory(dir);
@@ -63,9 +81,10 @@ export default class HotReload {
   }
 
   /**
-   * Watching for changes in timestamps
-   * @param {Object} dir
-   * @param {String} [lastTimestamp]
+   * Watching for changes in timestamps.
+   *
+   * @param {object} dir
+   * @param {string} [lastTimestamp]
    */
   watchForChanges(dir, lastTimestamp) {
     this.timestampForFilesInDirectory(dir).then((timestamp) => {
@@ -77,6 +96,9 @@ export default class HotReload {
     });
   }
 
+  /**
+   * Initialize HotReload.
+   */
   init() {
     chrome.management.getSelf((self) => {
       if (self.installType === 'development') {
