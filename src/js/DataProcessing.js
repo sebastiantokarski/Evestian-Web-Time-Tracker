@@ -446,7 +446,6 @@ export default class DataProcessing extends Data {
    * @param {object} data
    */
   setLabelColors(data) {
-    console.log(data, this.data);
     this.labelsCache = this.labelsCache || {};
     this.colors = this.colors || [
       '#00ffff',
