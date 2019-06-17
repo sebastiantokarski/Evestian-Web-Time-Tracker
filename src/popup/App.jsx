@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import ReactDOM from 'react-dom';
 import Header from './components/Header.jsx';
-import '../scss/app.scss';
+import '../scss/popup.scss';
 
 class App extends Component {
   constructor() {

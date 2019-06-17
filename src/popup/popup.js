@@ -4,7 +4,6 @@ import utils from '../js/utils';
 import thenChrome from 'then-chrome';
 import DataProcessing from '../js/DataProcessing';
 import Chart from 'chart.js/dist/Chart.bundle.min.js';
-import './style.scss';
 // eslint-disable-next-line
 import App from "./App.jsx";
 
@@ -164,9 +163,14 @@ class Popup {
           data: this.data.pagesVisitedToday.data,
           backgroundColor: this.data.pagesVisitedToday.colors,
         }],
-        labels: this.data.pagesVisitedToday.labels,
+        labels: this.data.pagesVisitedToday.labels.map((label) => {
+          return label.length > 24 ? label.slice(0, 24) + '...' : label;
+        }),
       },
       options: {
+        cutoutPercentage: 60,
+        responsive: true,
+        maintainAspectRatio: false,
         customTextInside: this.parseTextInsideChart(this.data.pagesVisitedToday),
         tooltips: {
           callbacks: {
@@ -182,7 +186,7 @@ class Popup {
           labels: {
             usePointStyle: true,
           },
-          position: 'right',
+          position: 'bottom',
         },
       },
     });
