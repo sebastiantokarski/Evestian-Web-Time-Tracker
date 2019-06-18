@@ -446,7 +446,14 @@ export default class DataProcessing extends Data {
    * @param {object} data
    */
   setLabelColors(data) {
-    this.labelsCache = this.labelsCache || {};
+    this.labelsCache = this.labelsCache || {
+      'www.facebook.com': 'rgb(60, 90, 153)',
+      'www.youtube.com': 'rgb(252, 4, 4)',
+      'github.com': 'rgb(20, 20, 20)',
+      'mail.google.com': 'rgb(212, 70, 56)',
+      'www.google.com': 'rgb(52, 132, 240)',
+      'www.google.pl': 'rgb(52, 132, 240)',
+    };
     this.colors = this.colors || [
       '#00ffff',
       '#f0ffff',

@@ -23,7 +23,7 @@ class Popup {
     Chart.pluginService.register({
       beforeDraw: function(chart) {
         if (chart && chart.options && chart.options.customTextInside) {
-          const height = chart.chart.height;
+          const height = chart.chartArea.bottom;
           const rightCorner = chart.chartArea.right;
           const ctx = chart.chart.ctx;
 
@@ -97,10 +97,9 @@ class Popup {
      * @param {Array} arr
      */
     function showResults(arr) {
-      const table = document.createElement('table');
+      const table = document.querySelector('.result-table');
       let tr;
 
-      table.setAttribute('style', 'margin: auto; font-size: 16px');
       for (let i = 0; i < arr.length; i++) {
         tr = document.createElement('tr');
         if (!arr[i][2]) {
@@ -114,7 +113,6 @@ class Popup {
         `;
         table.appendChild(tr);
       }
-      document.querySelector('.container-table').appendChild(table);
     }
 
     chrome.storage.local.get(config.EXTENSION_DATA_NAME, (storage) => {
@@ -168,8 +166,7 @@ class Popup {
         }),
       },
       options: {
-        cutoutPercentage: 60,
-        responsive: true,
+        cutoutPercentage: 58,
         maintainAspectRatio: false,
         customTextInside: this.parseTextInsideChart(this.data.pagesVisitedToday),
         tooltips: {
@@ -201,6 +198,8 @@ class Popup {
         labels: this.data.pagesVisitedYesterday.labels,
       },
       options: {
+        cutoutPercentage: 58,
+        maintainAspectRatio: false,
         customTextInside: this.parseTextInsideChart(this.data.pagesVisitedYesterday),
         tooltips: {
           callbacks: {
@@ -216,7 +215,7 @@ class Popup {
           labels: {
             usePointStyle: true,
           },
-          position: 'right',
+          position: 'bottom',
         },
       },
     });
@@ -231,6 +230,8 @@ class Popup {
         labels: this.data.pagesVisitedThisMonth.labels,
       },
       options: {
+        cutoutPercentage: 58,
+        maintainAspectRatio: false,
         customTextInside: this.parseTextInsideChart(this.data.pagesVisitedThisMonth),
         tooltips: {
           callbacks: {
@@ -246,7 +247,7 @@ class Popup {
           labels: {
             usePointStyle: true,
           },
-          position: 'right',
+          position: 'bottom',
         },
       },
     });
@@ -261,6 +262,8 @@ class Popup {
         labels: this.data.pagesVisitedLastMonth.labels,
       },
       options: {
+        cutoutPercentage: 58,
+        maintainAspectRatio: false,
         customTextInside: this.parseTextInsideChart(this.data.pagesVisitedLastMonth),
         tooltips: {
           callbacks: {
@@ -276,7 +279,7 @@ class Popup {
           labels: {
             usePointStyle: true,
           },
-          position: 'right',
+          position: 'bottom',
         },
       },
     });

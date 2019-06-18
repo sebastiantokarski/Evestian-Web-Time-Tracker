@@ -2,8 +2,11 @@
 @import './common/@common';
 @import './components/@components';
 
-// @todo components/chart
-.chart-container {
-  height: 350px;
+.nav-tabs {
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
+.table td, .table th {
+  padding: .3rem .5rem;
+}
