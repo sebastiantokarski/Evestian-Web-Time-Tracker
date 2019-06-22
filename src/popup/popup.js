@@ -75,6 +75,30 @@ class Popup {
     }
   }
 
+  onChartHover(chartName, dataName, event, items) {
+    const chart = this[chartName];
+
+    if (event.layerY > chart.chartArea.bottom) {
+      return;
+    }
+
+    if (items.length) {
+      const itemIndex = items[0]._index;
+      const chartDataset = chart.data.datasets[0];
+      const text = DataProcessing.parseSecondsIntoTime(chartDataset.data[itemIndex]);
+
+      chart.options.customTextInside = text;
+      chart.update();
+    } else {
+      const customTextInside = this.parseTextInsideChart(this.data[dataName]);
+
+      if (chart.options.customTextInside !== customTextInside) {
+        chart.options.customTextInside = customTextInside;
+        chart.update();
+      }
+    }
+  }
+
   /**
    * Shows all stats and charts in popup.
    */
@@ -179,14 +203,41 @@ class Popup {
             },
           },
         },
+        hover: {
+          onHover: this.onChartHover.bind(this, 'todayChart', 'pagesVisitedToday'),
+        },
+        animation: {
+          animateScale: true,
+        },
         legend: {
           labels: {
             usePointStyle: true,
           },
           position: 'bottom',
+          onClick: function(event, legendItem) {
+            const legendIndex = legendItem.index;
+            const chart = this.chart;
+            let totalChartTime = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+            let meta;
+
+            for (let i = 0; i < chart.data.datasets.length; ++i) {
+              meta = chart.getDatasetMeta(i);
+              // toggle visibility of index if exists
+              if (meta.data[legendIndex]) {
+                meta.data[legendIndex].hidden = !meta.data[legendIndex].hidden;
+
+                meta.data.filter(item => item.hidden).map((item) => {
+                  totalChartTime -= chart.data.datasets[0].data[item._index];
+                });
+                chart.options.customTextInside = DataProcessing.parseSecondsIntoTime(totalChartTime);
+              }
+            }
+            chart.update();
+          },
         },
       },
     });
+
 
     this.yesterdayChart = new Chart(this.getById('myChartYesterday'), {
       type: 'doughnut',
@@ -210,6 +261,9 @@ class Popup {
               return `${labelText}: ${DataProcessing.parseSecondsIntoTime(seconds)}`;
             },
           },
+        },
+        hover: {
+          onHover: this.onChartHover.bind(this, 'yesterdayChart', 'pagesVisitedYesterday'),
         },
         legend: {
           labels: {
@@ -243,6 +297,9 @@ class Popup {
             },
           },
         },
+        hover: {
+          onHover: this.onChartHover.bind(this, 'monthChart', 'pagesVisitedThisMonth'),
+        },
         legend: {
           labels: {
             usePointStyle: true,
@@ -274,6 +331,9 @@ class Popup {
               return `${labelText}: ${DataProcessing.parseSecondsIntoTime(seconds)}`;
             },
           },
+        },
+        hover: {
+          onHover: this.onChartHover.bind(this, 'lastMonthChart', 'pagesVisitedLastMonth'),
         },
         legend: {
           labels: {
