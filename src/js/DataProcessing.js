@@ -153,7 +153,7 @@ export default class DataProcessing extends Data {
       const years = this.data[hostname];
 
       for (const year in years) {
-        if (!years.hasOwnProperty(year) || typeof years[year] !== 'object') continue;
+        if (!years.hasOwnProperty(year) || typeof years[year] !== 'object' || years[year] === null) continue;
 
         allYears.push([
           year,
@@ -176,15 +176,19 @@ export default class DataProcessing extends Data {
     let weekDetails;
 
     for (let i = 0; i < allYears.length; i++) {
-      weekDetails = allYears[i][1][config.WEEK_DETAILS];
+      try {
+        weekDetails = allYears[i][1][config.WEEK_DETAILS];
 
-      for (const key in weekDetails) {
-        if (!weekDetails.hasOwnProperty(key)) continue;
+        for (const key in weekDetails) {
+          if (!weekDetails.hasOwnProperty(key)) continue;
 
-        allDaysOfTheWeek.push([
-          key,
-          weekDetails[key],
-        ]);
+          allDaysOfTheWeek.push([
+            key,
+            weekDetails[key],
+          ]);
+        }
+      } catch (ex) {
+        utils.debugLog('Exception in getAllDaysOfTheWeek', ex, allYears[i])
       }
     }
 

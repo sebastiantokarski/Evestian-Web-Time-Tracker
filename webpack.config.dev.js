@@ -52,6 +52,10 @@ module.exports = {
           sourceMap: true,
         },
       }]
+    }, {
+      test: /\.css$/,
+      include: /node_modules/,
+      loaders: ['style-loader', 'css-loader'],
     }]
   },
   plugins: [
@@ -65,7 +69,7 @@ module.exports = {
     new CopyWebpackPlugin([{
       from: 'manifest.json',
     }, {
-      from: 'src/assets/',
+      from: 'assets/',
       to: 'assets',
     }, {
       from: '_locales/',

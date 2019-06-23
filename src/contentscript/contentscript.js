@@ -30,7 +30,7 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
 
   image.id = `${config.ID_PREFIX}img`;
   image.src = faviconUrl;
-  image.setAttribute('style', 'visibility: hidden;');
+  image.setAttribute('style', 'visibility: hidden; position: absolute;');
   image.onload = () => {
     script.id = `${config.ID_PREFIX}script`;
     /* eslint-disable max-len */
@@ -64,6 +64,7 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
         */
         var CanvasImage = function (image) {
           this.canvas  = document.createElement('canvas');
+          this.canvas.setAttribute('style', 'visibility: hidden; position: absolute;');
           this.context = this.canvas.getContext('2d');
 
           document.body.appendChild(this.canvas);
@@ -693,16 +694,23 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
           };
         })();
 
-        const colorThief = new ColorThief();
-        const image = document.getElementById('${config.ID_PREFIX}img');
-        const rgbColor = colorThief.getColor(image);
+        let rgbColor = null;
+
+        try {
+          const colorThief = new ColorThief();
+          const image = document.getElementById('${config.ID_PREFIX}img');
+
+          rgbColor = colorThief.getColor(image);
+        } catch (ex) {
+          console.warn('Cannot get color from image', ex);
+        }
 
         document.getElementById('${config.ID_PREFIX}message-handler').dataset.message = JSON.stringify({
           event: 'save',
           dataName: '${config.EXTENSION_DATA_NAME}',
           hostname: '${currHostname}',
           key: '${config.FAVICON_COLOR}',
-          value: 'rgb(' + rgbColor[0] + ', ' + rgbColor[1] + ', ' + rgbColor[2] + ')'
+          value: rgbColor ? 'rgb(' + rgbColor[0] + ', ' + rgbColor[1] + ', ' + rgbColor[2] + ')' : null
         });
 
       })();

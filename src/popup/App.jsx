@@ -6,6 +6,7 @@ import Doughnut from './components/Doughnut.jsx';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import Table from 'react-bootstrap/Table';
+import 'bootstrap/dist/css/bootstrap.css';
 import '../scss/popup.scss';
 
 class App extends Component {
@@ -19,7 +20,7 @@ class App extends Component {
     return (
       <Fragment>
         <Header/>
-        <Tabs defaultActiveKey="today" id="doughnuts-chart">
+        <Tabs defaultActiveKey="today" id="doughnuts-chart" className="nav-fill w-100">
           <Tab eventKey="today" title="Today">
             <Doughnut chartTitle="Today" chartName="myChartToday" />
           </Tab>

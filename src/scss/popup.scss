@@ -5,8 +5,29 @@
 .nav-tabs {
   flex-wrap: nowrap;
   white-space: nowrap;
+
+  .nav-link {
+    color: $primaryLightColor;
+    border-top: none;
+    border-bottom: none;
+    font-weight: bold;
+
+    &.active,
+    &:hover {
+      color: $primaryDarkColor;
+      border: 2px solid $primaryColor;
+      border-top: none;
+      border-bottom: none;
+    }
+  }
 }
 
 .table td, .table th {
   padding: .3rem .5rem;
+}
+
+.tab-pane {
+  border: 2px solid $primaryColor;
+  border-bottom: none;
+  padding: 1rem 0;
 }

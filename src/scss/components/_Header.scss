@@ -4,17 +4,14 @@
   &__main-row {
     display: flex;
     align-items: center;
-  }
-
-  &__logo {
-    display: inline-block;
-    margin: .5rem;
+    justify-content: space-between;
+    width: 100%;
+    padding: .5rem;
   }
 
   &__title {
     color: white;
-    display: inline-block;
-    font-size: 16px;
+    font-size: 1.1rem;
     font-weight: 400;
     margin: 0;
   }
