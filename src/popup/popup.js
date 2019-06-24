@@ -226,7 +226,7 @@ class Popup {
               if (meta.data[legendIndex]) {
                 meta.data[legendIndex].hidden = !meta.data[legendIndex].hidden;
 
-                meta.data.filter(item => item.hidden).map((item) => {
+                meta.data.filter((item) => item.hidden).map((item) => {
                   totalChartTime -= chart.data.datasets[0].data[item._index];
                 });
                 chart.options.customTextInside = DataProcessing.parseSecondsIntoTime(totalChartTime);

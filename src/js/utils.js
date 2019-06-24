@@ -266,7 +266,7 @@ class Utils {
     if (config.DEVELOPMENT_MODE) {
       const fnArguments = [].slice.call(args);
 
-      if (typeof fnArguments[0] === 'string') {
+      if (typeof fnArguments[0] === 'string' && fnArguments[0].indexOf('%c') == -1) {
         fnArguments[0] = '%c' + fnArguments[0];
         fnArguments.splice(1, 0, 'color: #1E90FF');
       }

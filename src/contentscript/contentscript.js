@@ -22,7 +22,11 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
   }
 
   if (currHostnameData[config.FAVICON_COLOR]) {
-    utils.debugLog('Favicon color exist:', currHostnameData[config.FAVICON_COLOR]);
+    const faviconColor = currHostnameData[config.FAVICON_COLOR];
+
+    utils.debugLog(`%cFavicon color ${faviconColor} %c  `,
+        'color: #1E90FF',
+        `background-color: ${faviconColor}`);
     return;
   }
 

@@ -22,4 +22,13 @@
     width: 100%;
     box-shadow: 0px 3px 5px 0px $primaryColor;
   }
+
+  &__settings {
+    width: 32px;
+    height: 32px;
+
+    &:hover {
+      animation: spin 1s ease-in-out;
+    }
+  }
 }
