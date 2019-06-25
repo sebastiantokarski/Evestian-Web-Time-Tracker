@@ -8,7 +8,7 @@ export default class Doughnut extends Component {
 
   render() {
     return (
-      <section className={`chart-doughnut--${this.props.chartName}`}>
+      <section className={`chart-doughnut__section`}>
         <div className="chart-doughnut__container">
           <canvas id={this.props.chartName}></canvas>
         </div>

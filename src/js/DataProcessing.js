@@ -535,24 +535,20 @@ export default class DataProcessing extends Data {
   proceedDataProcessing() {
     this.alltime = this.constructor.parseSecondsIntoTime(this.data[config.ALL_TIME]);
 
-    const pagesVisitedTodayArrayData = this.getSortedPagesVisitedInGivenPeriod('Today');
-
-    this.pagesVisitedToday = this.addOtherData(pagesVisitedTodayArrayData, 10);
+    this.pagesVisitedTodayArrayData = this.getSortedPagesVisitedInGivenPeriod('Today');
+    this.pagesVisitedToday = this.addOtherData(this.pagesVisitedTodayArrayData, 10);
     this.setLabelColors(this.pagesVisitedToday);
 
-    const pagesVisitedYesterdayArrayData = this.getSortedPagesVisitedInGivenPeriod('Yesterday');
-
-    this.pagesVisitedYesterday = this.addOtherData(pagesVisitedYesterdayArrayData, 10);
+    this.pagesVisitedYesterdayArrayData = this.getSortedPagesVisitedInGivenPeriod('Yesterday');
+    this.pagesVisitedYesterday = this.addOtherData(this.pagesVisitedYesterdayArrayData, 10);
     this.setLabelColors(this.pagesVisitedYesterday);
 
-    const pagesVisitedThisMonthArrayData = this.getSortedPagesVisitedInGivenPeriod('Month');
-
-    this.pagesVisitedThisMonth = this.addOtherData(pagesVisitedThisMonthArrayData, 10);
+    this.pagesVisitedThisMonthArrayData = this.getSortedPagesVisitedInGivenPeriod('Month');
+    this.pagesVisitedThisMonth = this.addOtherData(this.pagesVisitedThisMonthArrayData, 10);
     this.setLabelColors(this.pagesVisitedThisMonth);
 
-    const pagesVisitedLastMonthArrayData = this.getSortedPagesVisitedInGivenPeriod('Month', utils.getLastMonth());
-
-    this.pagesVisitedLastMonth = this.addOtherData(pagesVisitedLastMonthArrayData, 10);
+    this.pagesVisitedLastMonthArrayData = this.getSortedPagesVisitedInGivenPeriod('Month', utils.getLastMonth());
+    this.pagesVisitedLastMonth = this.addOtherData(this.pagesVisitedLastMonthArrayData, 10);
     this.setLabelColors(this.pagesVisitedLastMonth);
 
     const timeSpentInHoursDataArray = this.getTimeSpentInHours();

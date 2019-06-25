@@ -111,58 +111,11 @@ class Popup {
 
       this.data.proceedDataProcessing();
 
-      firstVisitNode.textContent = this.data.alltime;
-      totalTimeNode.textContent = this.data.data[config.FIRST_VISIT];
+      totalTimeNode.textContent = this.data.alltime;
+      firstVisitNode.textContent = this.data.data[config.FIRST_VISIT];
 
       this.generateCharts();
-    });
-
-    /**
-     * @param {Array} arr
-     */
-    function showResults(arr) {
-      const table = document.querySelector('.result-table');
-      let tr;
-
-      for (let i = 0; i < arr.length; i++) {
-        tr = document.createElement('tr');
-        if (!arr[i][2]) {
-          arr[i][2] = chrome.runtime.getURL('/assets/defaultFavicon16.png');
-        }
-        tr.innerHTML = `
-          <td>${i + 1}</td>
-          <td><img src="${arr[i][2]}" height="16" width="16"></td>
-          </td><td>${arr[i][0]}</td>
-          <td>${DataProcessing.parseSecondsIntoTime(arr[i][1])}</td>
-        `;
-        table.appendChild(tr);
-      }
-    }
-
-    chrome.storage.local.get(config.EXTENSION_DATA_NAME, (storage) => {
-      const arr = [];
-      let data = null;
-
-      if (storage[config.EXTENSION_DATA_NAME]) {
-        data = storage[config.EXTENSION_DATA_NAME];
-
-        for (const key in data) {
-          if ({}.hasOwnProperty.call(data, key)
-              && data[key]
-              && data[key][config.FIRST_VISIT]) {
-            arr.push([
-              key,
-              data[key][config.ALL_TIME],
-              data[key][config.FAVICON_URL],
-            ]);
-          }
-        }
-        arr.sort(function(a, b) {
-          return b[1] - a[1];
-        });
-
-        showResults(arr);
-      }
+      this.generateTables();
     });
   }
 
@@ -172,6 +125,44 @@ class Popup {
    */
   parseTextInsideChart(data) {
     return DataProcessing.parseSecondsIntoTime(data.data.reduce((a, b) => a + b, 0));
+  }
+
+  generateTables() {
+    const todayTable = document.querySelector('.myChartTodayTable');
+    const yesterdayTable = document.querySelector('.myChartYesterdayTable');
+    const thisMonthTable = document.querySelector('.myChartThisMonthTable');
+    const lastMonthTable = document.querySelector('.myChartLastMonthTable');
+
+    this.generateTable(todayTable, this.data.pagesVisitedTodayArrayData);
+    this.generateTable(yesterdayTable, this.data.pagesVisitedYesterdayArrayData);
+    this.generateTable(thisMonthTable, this.data.pagesVisitedThisMonthArrayData);
+    this.generateTable(lastMonthTable, this.data.pagesVisitedLastMonthArrayData);
+  }
+
+  generateTable(table, data) {
+    const defaultUrl = chrome.runtime.getURL('/assets/defaultFavicon16.png');
+    const tableInnerHTML = data.map((item, key) => {
+      return `
+        <tr>
+          <td>${key + 1}</td>
+          <td class="favImageCell" data-src="${item[2]}"></td>
+          <td>${item[0]}</td>
+          <td class="spentTimeCell">${DataProcessing.parseSecondsIntoTime(item[1])}</td>
+        </tr>
+      `;
+    }).join('');
+
+    table.innerHTML = tableInnerHTML;
+
+    [].map.call(table.querySelectorAll('.favImageCell'), (imageCell) => {
+      const image = document.createElement('img');
+
+      image.classList.add('favImage');
+      image.src = imageCell.dataset.src;
+      delete imageCell.dataset.src;
+      image.onerror = (ev) => ev.target.src = defaultUrl;
+      imageCell.appendChild(image);
+    });
   }
 
   /**
@@ -210,30 +201,7 @@ class Popup {
           animateScale: true,
         },
         legend: {
-          labels: {
-            usePointStyle: true,
-          },
-          position: 'bottom',
-          onClick: function(event, legendItem) {
-            const legendIndex = legendItem.index;
-            const chart = this.chart;
-            let totalChartTime = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-            let meta;
-
-            for (let i = 0; i < chart.data.datasets.length; ++i) {
-              meta = chart.getDatasetMeta(i);
-              // toggle visibility of index if exists
-              if (meta.data[legendIndex]) {
-                meta.data[legendIndex].hidden = !meta.data[legendIndex].hidden;
-
-                meta.data.filter((item) => item.hidden).map((item) => {
-                  totalChartTime -= chart.data.datasets[0].data[item._index];
-                });
-                chart.options.customTextInside = DataProcessing.parseSecondsIntoTime(totalChartTime);
-              }
-            }
-            chart.update();
-          },
+          display: false,
         },
       },
     });
@@ -266,10 +234,7 @@ class Popup {
           onHover: this.onChartHover.bind(this, 'yesterdayChart', 'pagesVisitedYesterday'),
         },
         legend: {
-          labels: {
-            usePointStyle: true,
-          },
-          position: 'bottom',
+          display: false,
         },
       },
     });
@@ -301,10 +266,7 @@ class Popup {
           onHover: this.onChartHover.bind(this, 'monthChart', 'pagesVisitedThisMonth'),
         },
         legend: {
-          labels: {
-            usePointStyle: true,
-          },
-          position: 'bottom',
+          display: false,
         },
       },
     });
@@ -336,10 +298,7 @@ class Popup {
           onHover: this.onChartHover.bind(this, 'lastMonthChart', 'pagesVisitedLastMonth'),
         },
         legend: {
-          labels: {
-            usePointStyle: true,
-          },
-          position: 'bottom',
+          display: false,
         },
       },
     });

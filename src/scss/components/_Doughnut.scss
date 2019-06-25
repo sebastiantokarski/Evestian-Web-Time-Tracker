@@ -1,5 +1,9 @@
 .chart-doughnut {
 
+  &__section {
+    margin-bottom: 1rem;
+  }
+
   &__title {
     text-align: center;
     font-size: 1.25rem;
@@ -7,6 +11,6 @@
   }
 
   &__container {
-    height: 350px;
+    height: 290px;
   }
 }
