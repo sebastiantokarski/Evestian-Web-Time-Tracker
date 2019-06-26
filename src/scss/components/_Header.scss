@@ -10,25 +10,70 @@
   }
 
   &__title {
+    position: relative;
+    left: 4rem;
     color: white;
     font-size: 1.1rem;
     font-weight: 400;
     margin: 0;
+    transition: all .3s ease-out;
+
+    &.opened-menu {
+      left: 0;
+    }
   }
 
   &__top-space {
     background-color: $primaryDarkColor;
-    height: 10px;
+    height: 4px;
     width: 100%;
-    box-shadow: 0px 3px 5px 0px $primaryColor;
+    box-shadow: 0px 3px 5px 0px $primaryDarkColor;
   }
 
-  &__settings {
-    width: 32px;
-    height: 32px;
-
-    &:hover {
-      animation: spin 1s ease-in-out;
+  &__menu {
+    &-trigger {
+      opacity: 1;
+      transition: opacity .3s ease-out;
     }
+
+    &-settings,
+    &-app-switch,
+    &-close {
+      opacity: 0;
+      transition: opacity .3s ease-out;
+    }
+
+    &-wrapper {
+      position: relative;
+      transition: all .3s ease-out;
+      left: 7.1rem;
+
+      &.opened {
+        left: 0;
+
+        .header__menu-trigger {
+          opacity: 0;
+        }
+
+        .header__menu-app-switch,
+        .header__menu-settings,
+        .header__menu-close {
+          opacity: 1;
+        }
+      }
+    }
+
+    &-settings {
+      &:hover {
+        animation: spin 1s ease-in-out;
+      }
+    }
+  }
+
+  .menu-svg {
+    width: 2rem;
+    height: 2rem;
+    margin-left: .3rem;
+    cursor: pointer;
   }
 }

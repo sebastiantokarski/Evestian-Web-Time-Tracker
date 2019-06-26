@@ -23,7 +23,7 @@ class Popup {
     Chart.pluginService.register({
       beforeDraw: function(chart) {
         if (chart && chart.options && chart.options.customTextInside) {
-          const height = chart.chartArea.bottom;
+          const bottomCorner = chart.chartArea.bottom;
           const rightCorner = chart.chartArea.right;
           const ctx = chart.chart.ctx;
 
@@ -31,12 +31,16 @@ class Popup {
           ctx.font = '20px sans-serif';
           ctx.textBaseline = 'middle';
 
-          const text = chart.options.customTextInside;
-          const textX = Math.round((rightCorner - ctx.measureText(text).width) / 2);
-          const textY = height / 2;
+          const texts = chart.options.customTextInside.split('\n');
 
-          ctx.fillText(text, textX, textY);
-          ctx.save();
+          for (let i = 0; i < texts.length; i++) {
+            const text = texts[i];
+            const textX = Math.round((rightCorner - ctx.measureText(text).width) / 2);
+            const textY = i == 0 ? bottomCorner / 2 : bottomCorner / 2 + (i * 22);
+
+            ctx.fillText(text, textX, textY);
+            ctx.save();
+          }
         }
       },
     });
@@ -85,9 +89,11 @@ class Popup {
     if (items.length) {
       const itemIndex = items[0]._index;
       const chartDataset = chart.data.datasets[0];
-      const text = DataProcessing.parseSecondsIntoTime(chartDataset.data[itemIndex]);
+      const itemDataInSeconds = chartDataset.data[itemIndex];
+      const text = DataProcessing.parseSecondsIntoTime(itemDataInSeconds);
+      const percentage = (itemDataInSeconds / this.data[dataName].data.reduce((a, b) => a + b, 0) * 100).toFixed(2);
 
-      chart.options.customTextInside = text;
+      chart.options.customTextInside = `${text}\n${percentage}%`;
       chart.update();
     } else {
       const customTextInside = this.parseTextInsideChart(this.data[dataName]);
