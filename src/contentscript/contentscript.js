@@ -710,7 +710,7 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
         }
 
         document.getElementById('${config.ID_PREFIX}message-handler').dataset.message = JSON.stringify({
-          event: 'save',
+          action: 'customSave',
           dataName: '${config.EXTENSION_DATA_NAME}',
           hostname: '${currHostname}',
           key: '${config.FAVICON_COLOR}',

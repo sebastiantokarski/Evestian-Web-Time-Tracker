@@ -18,6 +18,7 @@ class Background {
 
     this.data = new Data(config.EXTENSION_DATA_NAME);
     this.data.loadFromStorage();
+    window.data = this.data.data;
   }
 
   /**
@@ -62,20 +63,17 @@ class Background {
         '\nDetails:', request,
         '\nFrom:', sender);
 
-    switch (request.event) {
-      case 'openPopup':
-        this.data.saveInStorage();
-        sendResponse(true);
-        return true;
+    switch (request.action) {
+      // first save custom property, then go to case 'save'
+      case 'customSave':
+        this.data.data[request.hostname][request.key] = request.value;
 
       case 'save':
-        this.data.data[request.hostname][request.key] = request.value;
-        this.data.saveInStorage();
-        sendResponse(true);
+        this.data.saveInStorage(sendResponse);
         return true;
 
       default:
-        throw new Error(`Message: ${request.event} not found`);
+        throw new Error(`Message: ${request.action} not found`, request);
     }
   }
 

@@ -1,7 +1,6 @@
 import '@babel/polyfill';
 import config from '../js/config';
 import utils from '../js/utils';
-import thenChrome from 'then-chrome';
 import DataProcessing from '../js/DataProcessing';
 import Chart from 'chart.js/dist/Chart.bundle.min.js';
 // eslint-disable-next-line
@@ -13,7 +12,8 @@ class Popup {
    * @param {string} dataName
    */
   constructor(dataName) {
-    this.data = new DataProcessing(dataName);
+    this.dataFromBackground = chrome.extension.getBackgroundPage().data;
+    this.dataProcessing = new DataProcessing(dataName, this.dataFromBackground.data);
   }
 
   /**
@@ -52,9 +52,6 @@ class Popup {
    * @return {undefined}
    */
   async init() {
-    // Wait for data update
-    await thenChrome.runtime.sendMessage({event: 'openPopup'});
-
     this.initOnDOMContentReady(this.show.bind(this));
     this.setCustomChartMethods();
   }
@@ -91,12 +88,12 @@ class Popup {
       const chartDataset = chart.data.datasets[0];
       const itemDataInSeconds = chartDataset.data[itemIndex];
       const text = DataProcessing.parseSecondsIntoTime(itemDataInSeconds);
-      const percentage = (itemDataInSeconds / this.data[dataName].data.reduce((a, b) => a + b, 0) * 100).toFixed(2);
+      const percentage = (itemDataInSeconds / this.dataProcessing[dataName].data.reduce((a, b) => a + b, 0) * 100).toFixed(2);
 
       chart.options.customTextInside = `${text}\n${percentage}%`;
       chart.update();
     } else {
-      const customTextInside = this.parseTextInsideChart(this.data[dataName]);
+      const customTextInside = this.parseTextInsideChart(this.dataProcessing[dataName]);
 
       if (chart.options.customTextInside !== customTextInside) {
         chart.options.customTextInside = customTextInside;
@@ -109,20 +106,20 @@ class Popup {
    * Shows all stats and charts in popup.
    */
   show() {
-    this.data.loadFromStorage().then(() => {
-      const firstVisitNode = document.getElementById('firstVisit');
-      const totalTimeNode = document.getElementById('totalTime');
+    const totalDomainsNode = document.getElementById('totalDomains');
+    const totalTimeNode = document.getElementById('totalTime');
 
-      utils.debugLog('Generated data:', this.data);
+    utils.debugLog('Generated data:', this.dataProcessing);
 
-      this.data.proceedDataProcessing();
+    this.dataProcessing.processGeneralData();
+    this.dataProcessing.processFirstDoughnutData();
 
-      totalTimeNode.textContent = this.data.alltime;
-      firstVisitNode.textContent = this.data.data[config.FIRST_VISIT];
+    totalTimeNode.textContent = this.dataProcessing.alltime;
+    // @todo this -2 is so mysteroius
+    totalDomainsNode.textContent = Object.keys(this.dataProcessing.data).length - 2;
 
-      this.generateCharts();
-      this.generateTables();
-    });
+    this.generateFirstDoughnutChart();
+    this.generateTables();
   }
 
   /**
@@ -139,10 +136,10 @@ class Popup {
     const thisMonthTable = document.querySelector('.myChartThisMonthTable');
     const lastMonthTable = document.querySelector('.myChartLastMonthTable');
 
-    this.generateTable(todayTable, this.data.pagesVisitedTodayArrayData);
-    this.generateTable(yesterdayTable, this.data.pagesVisitedYesterdayArrayData);
-    this.generateTable(thisMonthTable, this.data.pagesVisitedThisMonthArrayData);
-    this.generateTable(lastMonthTable, this.data.pagesVisitedLastMonthArrayData);
+    this.generateTable(todayTable, this.dataProcessing.pagesVisitedTodayArrayData);
+    // this.generateTable(yesterdayTable, this.dataProcessing.pagesVisitedYesterdayArrayData);
+    // this.generateTable(thisMonthTable, this.dataProcessing.pagesVisitedThisMonthArrayData);
+    // this.generateTable(lastMonthTable, this.dataProcessing.pagesVisitedLastMonthArrayData);
   }
 
   generateTable(table, data) {
@@ -171,25 +168,22 @@ class Popup {
     });
   }
 
-  /**
-   * Generate all charts.
-   */
-  generateCharts() {
+  generateFirstDoughnutChart() {
     this.todayChart = new Chart(this.getById('myChartToday'), {
       type: 'doughnut',
       data: {
         datasets: [{
-          data: this.data.pagesVisitedToday.data,
-          backgroundColor: this.data.pagesVisitedToday.colors,
+          data: this.dataProcessing.pagesVisitedToday.data,
+          backgroundColor: this.dataProcessing.pagesVisitedToday.colors,
         }],
-        labels: this.data.pagesVisitedToday.labels.map((label) => {
+        labels: this.dataProcessing.pagesVisitedToday.labels.map((label) => {
           return label.length > 24 ? label.slice(0, 24) + '...' : label;
         }),
       },
       options: {
         cutoutPercentage: 58,
         maintainAspectRatio: false,
-        customTextInside: this.parseTextInsideChart(this.data.pagesVisitedToday),
+        customTextInside: this.parseTextInsideChart(this.dataProcessing.pagesVisitedToday),
         tooltips: {
           callbacks: {
             label(tooltipItem, chart) {
@@ -211,21 +205,22 @@ class Popup {
         },
       },
     });
+  }
 
-
+  generateDoughnutsCharts() {
     this.yesterdayChart = new Chart(this.getById('myChartYesterday'), {
       type: 'doughnut',
       data: {
         datasets: [{
-          data: this.data.pagesVisitedYesterday.data,
-          backgroundColor: this.data.pagesVisitedYesterday.colors,
+          data: this.dataProcessing.pagesVisitedYesterday.data,
+          backgroundColor: this.dataProcessing.pagesVisitedYesterday.colors,
         }],
-        labels: this.data.pagesVisitedYesterday.labels,
+        labels: this.dataProcessing.pagesVisitedYesterday.labels,
       },
       options: {
         cutoutPercentage: 58,
         maintainAspectRatio: false,
-        customTextInside: this.parseTextInsideChart(this.data.pagesVisitedYesterday),
+        customTextInside: this.parseTextInsideChart(this.dataProcessing.pagesVisitedYesterday),
         tooltips: {
           callbacks: {
             label(tooltipItem, chart) {
@@ -249,15 +244,15 @@ class Popup {
       type: 'doughnut',
       data: {
         datasets: [{
-          data: this.data.pagesVisitedThisMonth.data,
-          backgroundColor: this.data.pagesVisitedThisMonth.colors,
+          data: this.dataProcessing.pagesVisitedThisMonth.data,
+          backgroundColor: this.dataProcessing.pagesVisitedThisMonth.colors,
         }],
-        labels: this.data.pagesVisitedThisMonth.labels,
+        labels: this.dataProcessing.pagesVisitedThisMonth.labels,
       },
       options: {
         cutoutPercentage: 58,
         maintainAspectRatio: false,
-        customTextInside: this.parseTextInsideChart(this.data.pagesVisitedThisMonth),
+        customTextInside: this.parseTextInsideChart(this.dataProcessing.pagesVisitedThisMonth),
         tooltips: {
           callbacks: {
             label(tooltipItem, chart) {
@@ -281,15 +276,15 @@ class Popup {
       type: 'doughnut',
       data: {
         datasets: [{
-          data: this.data.pagesVisitedLastMonth.data,
-          backgroundColor: this.data.pagesVisitedLastMonth.colors,
+          data: this.dataProcessing.pagesVisitedLastMonth.data,
+          backgroundColor: this.dataProcessing.pagesVisitedLastMonth.colors,
         }],
-        labels: this.data.pagesVisitedLastMonth.labels,
+        labels: this.dataProcessing.pagesVisitedLastMonth.labels,
       },
       options: {
         cutoutPercentage: 58,
         maintainAspectRatio: false,
-        customTextInside: this.parseTextInsideChart(this.data.pagesVisitedLastMonth),
+        customTextInside: this.parseTextInsideChart(this.dataProcessing.pagesVisitedLastMonth),
         tooltips: {
           callbacks: {
             label(tooltipItem, chart) {
@@ -308,24 +303,29 @@ class Popup {
         },
       },
     });
+  }
 
+  /**
+   * Generate all charts.
+   */
+  generateCharts() {
     this.myChartTimeTodayHours = new Chart(this.getById('myChartTimeTodayHours'), {
       type: 'line',
       data: {
         datasets: [{
           yAxisID: 'Today',
           label: 'Time in minutes Today',
-          data: this.data.timeSpentInHours.data,
+          data: this.dataProcessing.timeSpentInHours.data,
           borderColor: 'rgb(0, 102, 255)',
           backgroundColor: 'rgb(77, 148, 255)',
         }, {
           yAxisID: 'Global',
           label: 'Time in minutes Global',
-          data: this.data.timeSpentInHoursTotal.data,
+          data: this.dataProcessing.timeSpentInHoursTotal.data,
           borderColor: 'rgb(243, 26, 11)',
           backgroundColor: 'rgb(249, 106, 95)',
         }],
-        labels: this.data.timeSpentInHoursTotal.labels,
+        labels: this.dataProcessing.timeSpentInHoursTotal.labels,
       },
       options: {
         scales: {
@@ -360,17 +360,17 @@ class Popup {
         datasets: [{
           yAxisID: 'CurrentWeek',
           label: 'Time in minutes',
-          data: this.data.timeSpentEachDayOfTheWeek.data,
+          data: this.dataProcessing.timeSpentEachDayOfTheWeek.data,
           borderColor: 'rgb(0, 102, 255)',
           backgroundColor: 'rgb(77, 148, 255)',
         }, {
           yAxisID: 'Global',
           label: 'Time in minutes total',
-          data: this.data.timeSpentEachDayOfTheWeekTotal.data,
+          data: this.dataProcessing.timeSpentEachDayOfTheWeekTotal.data,
           borderColor: 'rgb(243, 26, 11)',
           backgroundColor: 'rgb(249, 106, 95)',
         }],
-        labels: this.data.timeSpentEachDayOfTheWeekTotal.labels,
+        labels: this.dataProcessing.timeSpentEachDayOfTheWeekTotal.labels,
       },
       options: {
         scales: {
@@ -400,11 +400,11 @@ class Popup {
       data: {
         datasets: [{
           label: 'Time in seconds',
-          data: this.data.timeSpentInMinutes.data,
+          data: this.dataProcessing.timeSpentInMinutes.data,
           borderColor: 'rgb(0, 102, 255)',
           backgroundColor: 'rgb(77, 148, 255)',
         }],
-        labels: this.data.timeSpentInMinutes.labels,
+        labels: this.dataProcessing.timeSpentInMinutes.labels,
       },
     });
   }

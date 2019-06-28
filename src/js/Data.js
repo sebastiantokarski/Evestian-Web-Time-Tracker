@@ -34,17 +34,28 @@ export default class Data {
   /**
    * Updates data in chrome storage local API by overwriting.
    *
-   * @param {object} data
+   * @param {Function} [sendResponse]
+   * @return {boolean}
    */
-  saveInStorage(data = this.data) {
-    chrome.storage.local.get(this.dataName, (storage) => {
-      const merged = {...storage[this.dataName], ...data};
+  async saveInStorage(sendResponse) {
+    const getStoragePromise = thenChrome.storage.local.get(this.dataName);
+    let currentStorage;
 
-      chrome.storage.local.set({[this.dataName]: merged}, () => {
-        utils.debugLog(`Successfully saved in storage - ${this.dataName}:`, data);
-        this.checkDataSize();
-      });
+    await getStoragePromise.then((storage) => currentStorage = storage[this.dataName]);
+
+    const merged = {...currentStorage, ...this.data};
+    const setStoragePromise = thenChrome.storage.local.set({[this.dataName]: merged});
+
+    await setStoragePromise.then(() => {
+      utils.debugLog(`Successfully saved in storage - ${this.dataName}:`, this.data);
+      this.checkDataSize();
     });
+
+    if (typeof sendResponse === 'function') {
+      sendResponse(true);
+    }
+
+    return true;
   }
 
   /**
@@ -53,10 +64,9 @@ export default class Data {
   checkDataSize() {
     chrome.storage.local.getBytesInUse(this.dataName, function(size) {
       const totalSize = chrome.storage.local.QUOTA_BYTES;
+      const percentage = (size / totalSize * 100).toFixed(2);
 
-      utils.debugLog(`
-        Used storage size in bytes: ${size}.
-        Percentage: ${ (size / totalSize * 100).toFixed(2) }%`);
+      utils.debugLog(`Used storage size in bytes: ${size}. Percentage: ${percentage}%`);
     });
   }
 

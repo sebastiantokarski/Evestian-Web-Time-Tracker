@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 
-export default class Footer extends Component {
+export default class LineChart extends Component {
   constructor() {
     super();
   }
@@ -16,3 +17,8 @@ export default class Footer extends Component {
     );
   }
 }
+
+LineChart.propTypes = {
+  chartTitle: PropTypes.string,
+  chartName: PropTypes.string,
+};

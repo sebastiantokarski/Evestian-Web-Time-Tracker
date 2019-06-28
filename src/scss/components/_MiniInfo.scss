@@ -1,0 +1,44 @@
+$arrowsSize: .7rem;
+
+.mini-info {
+  &__section {
+    background: $primaryLightColor;
+    border: 1px solid $borderColor;
+    border-radius: 0 0 15px 15px;
+    border-top: none;
+  }
+
+  &__wrapper {
+    text-align: center;
+    padding: 0 0 .2rem;
+  }
+
+  &__content {
+    position: relative;
+    font-size: .8rem;
+    font-weight: 500;
+    color: white;
+
+    &:before,
+    &:after {
+      content: '';
+      position: absolute;
+      top: calc(50% - .25rem);
+      background-size: $arrowsSize $arrowsSize;
+      background-repeat: no-repeat;
+      height: $arrowsSize;
+      width: $arrowsSize;
+    }
+
+    &:after {
+      right: -1rem;
+      background-image: url('../../assets/rightArrow.svg');
+
+    }
+
+    &:before {
+      left: -1rem;
+      background-image: url('../../assets/leftArrow.svg');
+    }
+  }
+}

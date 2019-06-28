@@ -47,9 +47,10 @@
     "jsdoc/require-returns-description": 0,
     "jsdoc/require-returns-type": 1,
     "jsdoc/valid-types": 1,
-    "max-len": ["error", 90],
+    "max-len": ["error", 100],
     "newline-after-var": [ 2, "always"],
-    "require-jsdoc" : 0
+    "require-jsdoc" : 0,
+    "no-fallthrough": 0
   },
   "settings": {
     "jsdoc": {

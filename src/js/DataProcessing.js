@@ -8,9 +8,14 @@ export default class DataProcessing extends Data {
    * Constructor same as in Data class.
    *
    * @param {string} dataName
+   * @param {object} [data]
    */
-  constructor(dataName) {
+  constructor(dataName, data) {
     super(dataName);
+
+    if (data) {
+      this.data = data;
+    }
   }
 
   /**
@@ -510,16 +515,17 @@ export default class DataProcessing extends Data {
   }
 
   /* eslint-disable max-len */
-  /**
-   * Data processing, calculations for charts etc.
-   */
-  proceedDataProcessing() {
+  processGeneralData() {
     this.alltime = this.constructor.parseSecondsIntoTime(this.data[config.ALL_TIME]);
+  }
 
+  processFirstDoughnutData() {
     this.pagesVisitedTodayArrayData = this.getSortedPagesVisitedInGivenPeriod('Today');
     this.pagesVisitedToday = this.addOtherData(this.pagesVisitedTodayArrayData, 10);
     this.setLabelColors(this.pagesVisitedToday);
+  }
 
+  processDoughnutsData() {
     this.pagesVisitedYesterdayArrayData = this.getSortedPagesVisitedInGivenPeriod('Yesterday');
     this.pagesVisitedYesterday = this.addOtherData(this.pagesVisitedYesterdayArrayData, 10);
     this.setLabelColors(this.pagesVisitedYesterday);
@@ -531,7 +537,12 @@ export default class DataProcessing extends Data {
     this.pagesVisitedLastMonthArrayData = this.getSortedPagesVisitedInGivenPeriod('Month', utils.getLastMonth());
     this.pagesVisitedLastMonth = this.addOtherData(this.pagesVisitedLastMonthArrayData, 10);
     this.setLabelColors(this.pagesVisitedLastMonth);
+  }
 
+  /**
+   * Data processing, calculations for charts etc.
+   */
+  proceedDataProcessing() {
     const timeSpentInHoursDataArray = this.getTimeSpentInHours();
 
     this.timeSpentInHours = {
@@ -558,13 +569,13 @@ export default class DataProcessing extends Data {
       labels: timeSpentInMinutesDataArray.map((minute) => minute[0]),
     };
 
-    // let timeSpentInMinutesGlobalDataArray = this.getTimeSpentInMinutesGlobal();
-    // this.timeSpentInMinutesGlobal = {
-    //     data: timeSpentInMinutesGlobalDataArray.map(minute => minute[1]),
-    //     labels: timeSpentInMinutesGlobalDataArray.map(minute => minute[0])
-    // };
+    // // let timeSpentInMinutesGlobalDataArray = this.getTimeSpentInMinutesGlobal();
+    // // this.timeSpentInMinutesGlobal = {
+    // //     data: timeSpentInMinutesGlobalDataArray.map(minute => minute[1]),
+    // //     labels: timeSpentInMinutesGlobalDataArray.map(minute => minute[0])
+    // // };
 
-    // @todo new year bug @line356
+    // // @todo new year bug @line356
     const timeSpentEachDayOfTheWeekDataArray = this.getTimeSpentInDaysOfTheWeek();
 
     this.timeSpentEachDayOfTheWeek = {

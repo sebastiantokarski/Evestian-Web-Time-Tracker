@@ -21,7 +21,7 @@ export default class MessageHandler {
 
         utils.debugLog('Handler observer:', messageName, messageValue);
 
-        if (messageValue.event === 'save') {
+        if (messageValue.action === 'save') {
           chrome.runtime.sendMessage(messageValue, (response) => {
             utils.debugLog(response);
           });

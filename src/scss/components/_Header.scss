@@ -1,7 +1,18 @@
+$iconSize: 2rem;
+$iconSizeOpenMenu: 1.8rem;
+
 .header {
-  background-color: $primaryColor;
+  background: $primaryColor radial-gradient($primaryDarkColor, $primaryColor);
+
+  &-svg {
+    width: $iconSizeOpenMenu;
+    height: $iconSizeOpenMenu;
+    margin-left: .3rem;
+    cursor: pointer;
+  }
 
   &__main-row {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -9,36 +20,43 @@
     padding: .5rem;
   }
 
+  &__logo {
+    position: absolute;
+    width: $iconSize;
+    transition: all .3s ease-out;
+
+    &.opened-menu {
+      width: 1.8rem;
+    }
+  }
+
   &__title {
     position: relative;
-    left: 4rem;
+    left: 5.4rem;
     color: white;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 400;
     margin: 0;
     transition: all .3s ease-out;
 
     &.opened-menu {
-      left: 0;
+      left: 2.5rem;
+      font-size: 1rem;
     }
-  }
-
-  &__top-space {
-    background-color: $primaryDarkColor;
-    height: 4px;
-    width: 100%;
-    box-shadow: 0px 3px 5px 0px $primaryDarkColor;
   }
 
   &__menu {
     &-trigger {
+      width: $iconSize;
+      height: $iconSize;
       opacity: 1;
       transition: opacity .3s ease-out;
     }
 
     &-settings,
     &-app-switch,
-    &-close {
+    &-close,
+    &-info {
       opacity: 0;
       transition: opacity .3s ease-out;
     }
@@ -46,7 +64,7 @@
     &-wrapper {
       position: relative;
       transition: all .3s ease-out;
-      left: 7.1rem;
+      left: 8.3rem;
 
       &.opened {
         left: 0;
@@ -57,7 +75,8 @@
 
         .header__menu-app-switch,
         .header__menu-settings,
-        .header__menu-close {
+        .header__menu-close,
+        .header__menu-info {
           opacity: 1;
         }
       }
@@ -68,12 +87,5 @@
         animation: spin 1s ease-in-out;
       }
     }
-  }
-
-  .menu-svg {
-    width: 2rem;
-    height: 2rem;
-    margin-left: .3rem;
-    cursor: pointer;
   }
 }
