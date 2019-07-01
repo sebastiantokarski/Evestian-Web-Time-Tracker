@@ -9,7 +9,9 @@ export default class Header extends Component {
   }
 
   toggleMenu(ev) {
-    const btn = ev.target;
+    ev.preventDefault();
+
+    const btn = ev.target.parentNode;
     const menuWrapper = btn.parentNode;
     const headerTitle = menuWrapper.previousElementSibling;
     const headerLogo = headerTitle.previousElementSibling;
@@ -29,22 +31,25 @@ export default class Header extends Component {
               <h1 className="header__title">Evestian Web Time Tracker</h1>
               <div className="header__menu-wrapper">
 
-                <img className="header__menu-trigger header-svg"
-                  src={ `${this.assets}menuWhite.svg` }
-                  onClick={(ev) => this.toggleMenu(ev)}/>
+                <a href="#" className="header__menu-trigger" onClick={(ev) => this.toggleMenu(ev)} title="Menu">
+                  <img className="header-svg" src={ `${this.assets}menuWhite.svg` }/>
+                </a>
 
-                <img className="header__menu-settings header-svg"
-                  src={ `${this.assets}settings.svg` }/>
+                <a href="#" className="header__menu-settings" title="Settings">
+                  <img className="header-svg" src={ `${this.assets}settings.svg` }/>
+                </a>
 
-                <img className="header__menu-app-switch header-svg"
-                  src={ `${this.assets}powerWhite.svg` }/>
+                <a href="#" className="header__app-switch" title="Turn off">
+                  <img className="header-svg" src={ `${this.assets}powerWhite.svg` }/>
+                </a>
 
-                <img className="header__menu-info header-svg"
-                  src={ `${this.assets}infoWhite.svg` }/>
+                <a href="#" className="header__menu-info" title="How it works">
+                  <img className="header-svg" src={ `${this.assets}infoWhite.svg` }/>
+                </a>
 
-                <img className="header__menu-close header-svg"
-                  src={ `${this.assets}closeWhite.svg` }
-                  onClick={(ev) => this.toggleMenu(ev)}/>
+                <a href="#" className="header__menu-close" onClick={(ev) => this.toggleMenu(ev)} title="Close menu">
+                  <img className="header-svg" src={ `${this.assets}closeWhite.svg` }/>
+                </a>
 
               </div>
             </div>

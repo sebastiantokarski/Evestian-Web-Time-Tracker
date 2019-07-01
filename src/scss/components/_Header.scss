@@ -8,7 +8,6 @@ $iconSizeOpenMenu: 1.8rem;
     width: $iconSizeOpenMenu;
     height: $iconSizeOpenMenu;
     margin-left: .3rem;
-    cursor: pointer;
   }
 
   &__main-row {
@@ -82,7 +81,7 @@ $iconSizeOpenMenu: 1.8rem;
       }
     }
 
-    &-settings {
+    &-settings .header-svg {
       &:hover {
         animation: spin 1s ease-in-out;
       }
