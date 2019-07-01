@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {Doughnut} from 'react-chartjs-2';
+import {Chart, Doughnut} from 'react-chartjs-2';
 import config from '../../js/config';
 import DataProcessing from '../../js/DataProcessing';
 
@@ -8,16 +8,12 @@ export default class DoughnutChart extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { chart: null };
+    this.chartInstance = null;
 
-    this.dataProcessing = new DataProcessing(config.EXTENSION_DATA_NAME)
+    this.dataProcessing = new DataProcessing(config.EXTENSION_DATA_NAME);
 
     this.dataProcessing.processFirstDoughnutData();
   }
-
-  getInitialState() {
-    return { chart: null };
-}
 
   componentWillMount() {
     Chart.pluginService.register({
@@ -50,8 +46,8 @@ export default class DoughnutChart extends Component {
     return DataProcessing.parseSecondsIntoTime(data.data.reduce((a, b) => a + b, 0));
   }
 
-  onChartHover(chartName, dataName, event, items) {
-    const chart = this[chartName];
+  onChartHover(dataName, event, items) {
+    const chart = this.chartInstance.chartInstance;
 
     if (event.layerY > chart.chartArea.bottom) {
       return;
@@ -81,19 +77,19 @@ export default class DoughnutChart extends Component {
       <section className={`chart-doughnut__section`}>
         <div className="chart-doughnut__container">
           <Doughnut
-            ref={(reference) => { console.log(this, reference); this.chartReference = reference } }
+            ref={(ref) => this.chartInstance = ref }
             data={ {
               datasets: [{
-                data: this.dataProcessing.pagesVisitedToday.data,
-                backgroundColor: this.dataProcessing.pagesVisitedToday.colors,
+                data: this.dataProcessing[this.props.chartDataName].data,
+                backgroundColor: this.dataProcessing[this.props.chartDataName].colors,
               }],
-              labels: this.dataProcessing.pagesVisitedToday.labels.map((label) => {
+              labels: this.dataProcessing[this.props.chartDataName].labels.map((label) => {
                 return label.length > 24 ? label.slice(0, 24) + '...' : label;
-              })
+              }),
             } } options = {{
               cutoutPercentage: 58,
               maintainAspectRatio: false,
-              customTextInside: this.parseTextInsideChart(this.dataProcessing.pagesVisitedToday),
+              customTextInside: this.parseTextInsideChart(this.dataProcessing[this.props.chartDataName]),
               tooltips: {
                 callbacks: {
                   label(tooltipItem, chart) {
@@ -105,15 +101,15 @@ export default class DoughnutChart extends Component {
                 },
               },
               hover: {
-                onHover: this.onChartHover('todayChart', 'pagesVisitedToday'),
+                onHover: this.onChartHover.bind(this, this.props.chartDataName),
               },
               animation: {
                 animateScale: true,
               },
               legend: {
                 display: false,
-              }
-          } } />
+              },
+            } } />
         </div>
       </section>
     ) : null;
@@ -121,7 +117,8 @@ export default class DoughnutChart extends Component {
 }
 
 Doughnut.propTypes = {
-  chartTitle: PropTypes.string,
+  chartDataName: PropTypes.string,
   chartName: PropTypes.string,
+  renderOnLoad: PropTypes.bool,
 };
 

@@ -78,6 +78,10 @@ $iconSizeOpenMenu: 1.8rem;
         .header__menu-info {
           opacity: 1;
         }
+
+        .header__menu-settings .header-svg {
+          animation: spin .5s ease-in-out;
+        }
       }
     }
 
