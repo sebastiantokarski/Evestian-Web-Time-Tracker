@@ -15,6 +15,8 @@ export default class DataProcessing extends Data {
 
     if (data) {
       this.data = data;
+    } else {
+      this.data = chrome.extension.getBackgroundPage().data.data;
     }
   }
 
@@ -516,7 +518,10 @@ export default class DataProcessing extends Data {
 
   /* eslint-disable max-len */
   processGeneralData() {
-    this.alltime = this.constructor.parseSecondsIntoTime(this.data[config.ALL_TIME]);
+    this.totalTime = this.constructor.parseSecondsIntoTime(this.data[config.ALL_TIME]);
+    this.firstVisit = this.data[config.FIRST_VISIT];
+    // @todo this -2 is so mysterious
+    this.totalDomains = Object.keys(this.data).length - 2;
   }
 
   processFirstDoughnutData() {
