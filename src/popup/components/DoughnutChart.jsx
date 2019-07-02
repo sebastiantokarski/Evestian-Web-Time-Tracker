@@ -1,15 +1,24 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {Chart, Doughnut} from 'react-chartjs-2';
+import { Chart, Doughnut } from 'react-chartjs-2';
 import DataProcessing from '../../js/DataProcessing';
 
 export default class DoughnutChart extends Component {
   constructor(props) {
     super(props);
+
     this.chartInstance = null;
   }
 
-  componentWillMount() {
+  setChartDefaults() {
+    Chart.defaults.global.maintainAspectRatio = false;
+    Chart.defaults.global.tooltips.enabled = false;
+    Chart.defaults.global.legend.display = false;
+    Chart.defaults.doughnut.animation.animateScale = true;
+    Chart.defaults.doughnut.cutoutPercentage = 58;
+  }
+
+  registerChartPlugin() {
     Chart.pluginService.register({
       beforeDraw: function(chart) {
         if (chart && chart.options && chart.options.customTextInside) {
@@ -26,7 +35,8 @@ export default class DoughnutChart extends Component {
           for (let i = 0; i < texts.length; i++) {
             const text = texts[i];
             const textX = Math.round((rightCorner - ctx.measureText(text).width) / 2);
-            const textY = i == 0 ? bottomCorner / 2 : bottomCorner / 2 + (i * 22);
+            const lineHeight = texts.length > 1 ? 11 : 0;
+            const textY = i == 0 ? (bottomCorner / 2) - lineHeight : bottomCorner / 2 + (i * 22);
 
             ctx.fillText(text, textX, textY);
             ctx.save();
@@ -36,8 +46,8 @@ export default class DoughnutChart extends Component {
     });
   }
 
-  parseTextInsideChart(data) {
-    return DataProcessing.parseSecondsIntoTime(data.data.reduce((a, b) => a + b, 0));
+  parseArrayOfSecondsToTimeString(array) {
+    return DataProcessing.parseSecondsIntoTime(DataProcessing.sum(array));
   }
 
   onChartHover(chartData, event, items) {
@@ -52,12 +62,12 @@ export default class DoughnutChart extends Component {
       const chartDataset = chart.data.datasets[0];
       const itemDataInSeconds = chartDataset.data[itemIndex];
       const text = DataProcessing.parseSecondsIntoTime(itemDataInSeconds);
-      const percentage = (itemDataInSeconds / chartData.data.reduce((a, b) => a + b, 0) * 100).toFixed(2);
+      const percentage = (itemDataInSeconds / DataProcessing.sum(chartData.data) * 100).toFixed(2);
 
       chart.options.customTextInside = `${text}\n${percentage}%`;
       chart.update();
     } else {
-      const customTextInside = this.parseTextInsideChart(chartData);
+      const customTextInside = this.parseArrayOfSecondsToTimeString(chartData.data);
 
       if (chart.options.customTextInside !== customTextInside) {
         chart.options.customTextInside = customTextInside;
@@ -66,8 +76,17 @@ export default class DoughnutChart extends Component {
     }
   }
 
+  componentWillMount() {
+    this.setChartDefaults();
+    this.registerChartPlugin();
+  }
+
   render() {
-    return this.props.renderOnLoad ? (
+    if (!this.props.renderOnLoad) {
+      return null;
+    }
+
+    return (
       <section className={`chart-doughnut__section`}>
         <div className="chart-doughnut__container">
           <Doughnut
@@ -77,42 +96,21 @@ export default class DoughnutChart extends Component {
                 data: this.props.chartData.data,
                 backgroundColor: this.props.chartData.colors,
               }],
-              labels: this.props.chartData.labels.map((label) => {
-                return label.length > 24 ? label.slice(0, 24) + '...' : label;
-              }),
-            } } options = {{
-              cutoutPercentage: 58,
-              maintainAspectRatio: false,
-              customTextInside: this.parseTextInsideChart(this.props.chartData),
-              tooltips: {
-                callbacks: {
-                  label(tooltipItem, chart) {
-                    const seconds = chart.datasets[0].data[tooltipItem.index];
-                    const labelText = chart.labels[tooltipItem.index];
-
-                    return `${labelText}: ${DataProcessing.parseSecondsIntoTime(seconds)}`;
-                  },
-                },
-              },
+            } }
+            options = {{
+              customTextInside: this.parseArrayOfSecondsToTimeString(this.props.chartData.data),
               hover: {
                 onHover: this.onChartHover.bind(this, this.props.chartData),
-              },
-              animation: {
-                animateScale: true,
-              },
-              legend: {
-                display: false,
               },
             } } />
         </div>
       </section>
-    ) : null;
+    );
   }
 }
 
-Doughnut.propTypes = {
+DoughnutChart.propTypes = {
   chartData: PropTypes.object,
   chartName: PropTypes.string,
   renderOnLoad: PropTypes.bool,
 };
-

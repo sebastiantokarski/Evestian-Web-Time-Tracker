@@ -144,6 +144,10 @@ export default class DataProcessing extends Data {
     return `${time.days}${time.hours}${time.minutes}${time.seconds}`;
   }
 
+  static sum(array) {
+    return array.reduce((a, b) => a + b, 0);
+  }
+
   /**
    * Gets all years object from data.
    *
