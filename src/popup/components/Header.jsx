@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 
 export default class Header extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.assets = '../../assets/';
     this.toggleMenu = this.toggleMenu.bind(this);

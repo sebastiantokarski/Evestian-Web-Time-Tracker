@@ -3,8 +3,8 @@ import config from '../../js/config';
 import DataProcessing from '../../js/DataProcessing';
 
 export default class MiniInfo extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
   }
 
   renderMiniInfo() {

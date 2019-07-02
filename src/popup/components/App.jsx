@@ -7,8 +7,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import '../../scss/popup.scss';
 
 export default class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
   }
   render() {
     return (

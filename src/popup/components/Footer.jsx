@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 
 export default class Footer extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.flaticonUrl = 'https://www.flaticon.com';
     this.flaticonAuthorUrl = `${this.flaticonUrl}/authors/smashicons`;

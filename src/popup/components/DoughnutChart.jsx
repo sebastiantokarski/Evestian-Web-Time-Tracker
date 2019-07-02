@@ -1,18 +1,12 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Chart, Doughnut} from 'react-chartjs-2';
-import config from '../../js/config';
 import DataProcessing from '../../js/DataProcessing';
 
 export default class DoughnutChart extends Component {
   constructor(props) {
     super(props);
-
     this.chartInstance = null;
-
-    this.dataProcessing = new DataProcessing(config.EXTENSION_DATA_NAME);
-
-    this.dataProcessing.processFirstDoughnutData();
   }
 
   componentWillMount() {
@@ -46,7 +40,7 @@ export default class DoughnutChart extends Component {
     return DataProcessing.parseSecondsIntoTime(data.data.reduce((a, b) => a + b, 0));
   }
 
-  onChartHover(dataName, event, items) {
+  onChartHover(chartData, event, items) {
     const chart = this.chartInstance.chartInstance;
 
     if (event.layerY > chart.chartArea.bottom) {
@@ -58,12 +52,12 @@ export default class DoughnutChart extends Component {
       const chartDataset = chart.data.datasets[0];
       const itemDataInSeconds = chartDataset.data[itemIndex];
       const text = DataProcessing.parseSecondsIntoTime(itemDataInSeconds);
-      const percentage = (itemDataInSeconds / this.dataProcessing[dataName].data.reduce((a, b) => a + b, 0) * 100).toFixed(2);
+      const percentage = (itemDataInSeconds / chartData.data.reduce((a, b) => a + b, 0) * 100).toFixed(2);
 
       chart.options.customTextInside = `${text}\n${percentage}%`;
       chart.update();
     } else {
-      const customTextInside = this.parseTextInsideChart(this.dataProcessing[dataName]);
+      const customTextInside = this.parseTextInsideChart(chartData);
 
       if (chart.options.customTextInside !== customTextInside) {
         chart.options.customTextInside = customTextInside;
@@ -80,16 +74,16 @@ export default class DoughnutChart extends Component {
             ref={(ref) => this.chartInstance = ref }
             data={ {
               datasets: [{
-                data: this.dataProcessing[this.props.chartDataName].data,
-                backgroundColor: this.dataProcessing[this.props.chartDataName].colors,
+                data: this.props.chartData.data,
+                backgroundColor: this.props.chartData.colors,
               }],
-              labels: this.dataProcessing[this.props.chartDataName].labels.map((label) => {
+              labels: this.props.chartData.labels.map((label) => {
                 return label.length > 24 ? label.slice(0, 24) + '...' : label;
               }),
             } } options = {{
               cutoutPercentage: 58,
               maintainAspectRatio: false,
-              customTextInside: this.parseTextInsideChart(this.dataProcessing[this.props.chartDataName]),
+              customTextInside: this.parseTextInsideChart(this.props.chartData),
               tooltips: {
                 callbacks: {
                   label(tooltipItem, chart) {
@@ -101,7 +95,7 @@ export default class DoughnutChart extends Component {
                 },
               },
               hover: {
-                onHover: this.onChartHover.bind(this, this.props.chartDataName),
+                onHover: this.onChartHover.bind(this, this.props.chartData),
               },
               animation: {
                 animateScale: true,
@@ -117,7 +111,7 @@ export default class DoughnutChart extends Component {
 }
 
 Doughnut.propTypes = {
-  chartDataName: PropTypes.string,
+  chartData: PropTypes.object,
   chartName: PropTypes.string,
   renderOnLoad: PropTypes.bool,
 };
