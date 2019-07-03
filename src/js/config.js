@@ -14,6 +14,7 @@ class Config {
     this.COUNT_ONLY_ACTIVE_STATE = true;
     this.DEVELOPMENT_MODE = chrome.runtime.getManifest().debug;
     this.DISPLAY_BADGE = true;
+    this.ENABLED = true;
     this.EXTENSION_DATA_NAME = 'dataOfAllVisitedPages';
     this.FAVICON_COLOR = '_fc';
     this.FAVICON_URL = '_fu';

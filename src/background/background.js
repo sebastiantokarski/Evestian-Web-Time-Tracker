@@ -72,6 +72,22 @@ class Background {
         this.data.saveInStorage(sendResponse);
         return true;
 
+      case 'enable':
+        config.ENABLED = true;
+        chrome.storage.local.set({ enabled: true });
+        chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16.png') });
+        this.executeIntervals();
+        return true;
+
+      case 'disable':
+        config.ENABLED = false;
+        chrome.storage.local.set({ enabled: false });
+        chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16Disabled.png') });
+        chrome.browserAction.setBadgeText({ text: '' });
+        clearInterval(this.updateDataInterval);
+        clearInterval(this.updateStorageInterval);
+        return true;
+
       default:
         throw new Error(`Message: ${request.action} not found`, request);
     }
@@ -100,47 +116,53 @@ class Background {
      * Listens to all messages sent from chrome extension API
      * e.g. from ../popup/popup.html.
      */
-    chrome.runtime.onMessage.addListener(this.onMessageCallback);
+    chrome.runtime.onMessage.addListener(this.onMessageCallback.bind(this));
+  }
+
+  updateDataCallback() {
+    chrome.windows.getLastFocused({
+      populate: true,
+    }, (window) => {
+      const tab = utils.getActiveTab(window.tabs);
+      const hostname = utils.getFromUrl('hostname', tab.url);
+
+      if (tab && utils.isWindowActive(window) && !utils.isProtocolOnBlacklist(tab.url)
+        && (utils.isStateActive(this.currentState) || utils.isSoundFromTab(tab))) {
+        const details = this.data.updateDataFor(hostname, tab);
+
+        utils.debugLog('Active tab:', hostname,
+            '\nToday in seconds:', details.todayInSec,
+            '\nAll time in seconds:', details.allTimeInSec,
+            '\nTab:', tab, 'Window:', window);
+
+        if (config.DISPLAY_BADGE) {
+          this.updateBadge(tab, hostname);
+        }
+      }
+    });
+  }
+
+  updateStorageCallback() {
+    this.data.saveInStorage();
   }
 
   /**
    * Execute all extension intervals.
    */
   executeIntervals() {
-    this.updateDataInterval = setInterval(() => {
-      chrome.windows.getLastFocused({
-        populate: true,
-      }, (window) => {
-        const tab = utils.getActiveTab(window.tabs);
-        const hostname = utils.getFromUrl('hostname', tab.url);
-
-        if (tab && utils.isWindowActive(window) && !utils.isProtocolOnBlacklist(tab.url)
-          && (utils.isStateActive(this.currentState) || utils.isSoundFromTab(tab))) {
-          const details = this.data.updateDataFor(hostname, tab);
-
-          utils.debugLog('Active tab:', hostname,
-              '\nToday in seconds:', details.todayInSec,
-              '\nAll time in seconds:', details.allTimeInSec,
-              '\nTab:', tab, 'Window:', window);
-
-          if (config.DISPLAY_BADGE) {
-            this.updateBadge(tab, hostname);
-          }
-        }
-      });
-    }, config.INTERVAL_UPDATE_S);
-
-    this.updateStorageInterval = setInterval(() => {
-      this.data.saveInStorage();
-    }, config.INTERVAL_UPDATE_MIN);
+    this.updateDataInterval = setInterval(this.updateDataCallback, config.INTERVAL_UPDATE_S);
+    this.updateStorageInterval = setInterval(this.updateStorageCallback, config.INTERVAL_UPDATE_MIN);
   }
 
   /**
    * Initialize Background.
    */
   init() {
-    this.executeListeners();
+    if (!config.ENABLED) {
+      return;
+    }
 
+    this.executeListeners();
     this.executeIntervals();
   }
 }

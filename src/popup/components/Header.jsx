@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Popup from 'reactjs-popup';
+import MessageHandler from '../../js/MessageHandler';
+import thenChrome from 'then-chrome';
 
 export default class Header extends Component {
   constructor(props) {
@@ -11,6 +13,19 @@ export default class Header extends Component {
     this.menuWrapper = React.createRef();
     this.headerTitle = React.createRef();
     this.headerLogo = React.createRef();
+  }
+
+  async switchExtension(ev) {
+    ev.preventDefault();
+
+    const storageOption = await thenChrome.storage.local.get('enabled');
+    let action = 'enable';
+
+    if (storageOption.enabled) {
+      action = 'disable';
+    }
+
+    MessageHandler.sendMessage({ action });
   }
 
   toggleMenu(ev) {
@@ -49,7 +64,10 @@ export default class Header extends Component {
                   <div>Extension Settings</div>
                 </Popup>
 
-                <a href="#" className="header__app-switch" title="Turn off">
+                <a href="#"
+                  className="header__app-switch"
+                  title="Turn off"
+                  onClick={(ev) => this.switchExtension(ev)}>
                   <img className="header-svg" src={ `${this.assets}powerWhite.svg` }/>
                 </a>
 
