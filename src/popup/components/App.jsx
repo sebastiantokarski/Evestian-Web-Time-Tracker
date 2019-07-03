@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react';
+import React, { Component, Fragment } from 'react';
 import Header from './Header.jsx';
 import MiniInfo from './MiniInfo.jsx';
 import MainTabs from './MainTabs.jsx';

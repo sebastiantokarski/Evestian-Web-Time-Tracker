@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import config from '../../js/config';
 import DataProcessing from '../../js/DataProcessing';
 
@@ -14,7 +14,9 @@ export default class MiniInfo extends Component {
 
     return (
       <span className="mini-info__content">
-        You spent { dataProcessing.totalTime } on { dataProcessing.totalDomains } sites since { dataProcessing.firstVisit }
+        You spent { dataProcessing.totalTime + ' '}
+        on { dataProcessing.totalDomains + ' '}
+        sites since { dataProcessing.firstVisit }
       </span>
     );
   }

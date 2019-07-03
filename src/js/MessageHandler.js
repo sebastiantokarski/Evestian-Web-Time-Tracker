@@ -27,7 +27,7 @@ export default class MessageHandler {
       });
     });
 
-    this.handlerObserver.observe(this.handler, {attributes: true});
+    this.handlerObserver.observe(this.handler, { attributes: true });
   }
 
   init() {
