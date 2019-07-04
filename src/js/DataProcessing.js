@@ -548,10 +548,7 @@ export default class DataProcessing extends Data {
     this.setLabelColors(this.pagesVisitedLastMonth);
   }
 
-  /**
-   * Data processing, calculations for charts etc.
-   */
-  proceedDataProcessing() {
+  processLinesChartsData() {
     const timeSpentInHoursDataArray = this.getTimeSpentInHours();
 
     this.timeSpentInHours = {
@@ -570,7 +567,13 @@ export default class DataProcessing extends Data {
       data: timeSpentInHoursTotalDataArray.map((hour) => Math.round(hour[1] / 60)),
       labels: timeSpentInHoursTotalDataArray.map((hour) => hour[0]),
     };
+  }
 
+  /**
+   * @deprecated
+   * Data processing, calculations for charts etc.
+   */
+  proceedDataProcessing() {
     const timeSpentInMinutesDataArray = this.getTimeSpentInMinutesToday();
 
     this.timeSpentInMinutes = {

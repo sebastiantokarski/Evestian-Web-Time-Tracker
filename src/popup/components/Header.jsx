@@ -65,7 +65,7 @@ export default class Header extends Component {
                 </Popup>
 
                 <a href="#"
-                  className="header__app-switch"
+                  className="header__menu-app-switch"
                   title="Turn off"
                   onClick={(ev) => this.switchExtension(ev)}>
                   <img className="header-svg" src={ `${this.assets}powerWhite.svg` }/>

@@ -75,6 +75,7 @@ class Background {
       case 'enable':
         config.ENABLED = true;
         chrome.storage.local.set({ enabled: true });
+        // @todo show badge
         chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16.png') });
         this.executeIntervals();
         return true;
@@ -83,7 +84,29 @@ class Background {
         config.ENABLED = false;
         chrome.storage.local.set({ enabled: false });
         chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16Disabled.png') });
-        chrome.browserAction.setBadgeText({ text: '' });
+
+        // Disable badge in current active tab
+        chrome.windows.getLastFocused({
+          populate: true,
+        }, (window) => {
+          const tab = utils.getActiveTab(window.tabs);
+
+          chrome.browserAction.setBadgeText({
+            tabId: tab.id,
+            text: '',
+          });
+        });
+
+        // Disable badge in tabs activated in future
+        chrome.tabs.onActivated.addListener(function(activeInfo) {
+          if (!config.ENABLED) {
+            chrome.browserAction.setBadgeText({
+              tabId: activeInfo.id,
+              text: '',
+            });
+          }
+        });
+
         clearInterval(this.updateDataInterval);
         clearInterval(this.updateStorageInterval);
         return true;
@@ -91,6 +114,17 @@ class Background {
       default:
         throw new Error(`Message: ${request.action} not found`, request);
     }
+  }
+
+  onInstalledCallback() {
+    utils.debugLog('onInstalled event');
+
+    // @todo better config saving
+    chrome.storage.local.set({ enabled: true });
+  }
+
+  onUpdatedCallback(currVersion) {
+    utils.debugLog('onUpdated event. Current version:', currVersion);
   }
 
   /**
@@ -117,6 +151,19 @@ class Background {
      * e.g. from ../popup/popup.html.
      */
     chrome.runtime.onMessage.addListener(this.onMessageCallback.bind(this));
+
+    /**
+     *  Check whether new version is installed or extension was updated
+     */
+    chrome.runtime.onInstalled.addListener((details) => {
+      if (details.reason === 'install') {
+        this.onInstalledCallback();
+      } else if (details.reason === 'update') {
+        const currVersion = chrome.runtime.getManifest().version;
+
+        this.onUpdatedCallback(currVersion);
+      }
+    });
   }
 
   updateDataCallback() {
@@ -150,14 +197,15 @@ class Background {
    * Execute all extension intervals.
    */
   executeIntervals() {
-    this.updateDataInterval = setInterval(this.updateDataCallback, config.INTERVAL_UPDATE_S);
-    this.updateStorageInterval = setInterval(this.updateStorageCallback, config.INTERVAL_UPDATE_MIN);
+    this.updateDataInterval = setInterval(this.updateDataCallback.bind(this), config.INTERVAL_UPDATE_S);
+    this.updateStorageInterval = setInterval(this.updateStorageCallback.bind(this), config.INTERVAL_UPDATE_MIN);
   }
 
   /**
    * Initialize Background.
    */
   init() {
+    // @todo config should be loaded from storage
     if (!config.ENABLED) {
       return;
     }

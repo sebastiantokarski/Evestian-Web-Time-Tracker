@@ -11,6 +11,7 @@ export default class DoughnutChart extends Component {
   }
 
   setChartDefaults() {
+    // @todo default should work only in component or doughnut type
     Chart.defaults.global.maintainAspectRatio = false;
     Chart.defaults.global.tooltips.enabled = false;
     Chart.defaults.global.legend.display = false;

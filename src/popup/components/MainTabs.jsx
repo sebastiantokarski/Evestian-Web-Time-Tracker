@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import DoughnutChart from './DoughnutChart.jsx';
+import LineChart from './LineChart.jsx';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import Table from './Table.jsx';
@@ -14,12 +15,13 @@ export default class MainTabs extends Component {
 
     this.dataProcessing.processFirstDoughnutData();
     this.dataProcessing.processDoughnutsData();
+    this.dataProcessing.processLinesChartsData();
   }
 
   render() {
     return (
       <div className="main-tabs__section">
-        <Tabs defaultActiveKey="today" id="doughnuts-chart" className="nav-fill w-100">
+        <Tabs defaultActiveKey="today" id="doughnuts-chart" >
           <Tab eventKey="today" title="Today">
             <DoughnutChart chartName="myChartToday"
               renderOnLoad
@@ -51,6 +53,12 @@ export default class MainTabs extends Component {
             <Table className="myChartLastMonthTable"
               tableData={ this.dataProcessing.pagesVisitedLastMonthArrayData }
               striped />
+          </Tab>
+          <Tab eventKey="more" title="More">
+            <LineChart
+              chartTitle="Time spent each hour"
+              chartData1={ this.dataProcessing.timeSpentInHours }
+              chartData2={ this.dataProcessing.timeSpentInHoursTotal } />
           </Tab>
         </Tabs>
       </div>

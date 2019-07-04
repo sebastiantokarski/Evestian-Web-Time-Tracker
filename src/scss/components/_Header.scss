@@ -7,7 +7,6 @@ $iconSizeOpenMenu: 1.8rem;
   &-svg {
     width: $iconSizeOpenMenu;
     height: $iconSizeOpenMenu;
-    margin-left: .3rem;
   }
 
   &__main-row {
@@ -45,7 +44,7 @@ $iconSizeOpenMenu: 1.8rem;
   }
 
   &__menu {
-    &-trigger {
+    &-trigger .header-svg {
       width: $iconSize;
       height: $iconSize;
       opacity: 1;
@@ -56,6 +55,7 @@ $iconSizeOpenMenu: 1.8rem;
     &-app-switch,
     &-close,
     &-info {
+      margin-left: .3rem;
       opacity: 0;
       transition: opacity .3s ease-out;
     }
