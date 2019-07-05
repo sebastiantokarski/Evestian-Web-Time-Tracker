@@ -50,7 +50,8 @@
     "max-len": ["error", 100],
     "newline-after-var": [ 2, "always"],
     "require-jsdoc" : 0,
-    "no-fallthrough": 0
+    "no-fallthrough": 0,
+    "object-curly-spacing": [2, "always"]
   },
   "settings": {
     "jsdoc": {

@@ -15,6 +15,8 @@ export default class DataProcessing extends Data {
 
     if (data) {
       this.data = data;
+    } else {
+      this.data = chrome.extension.getBackgroundPage().data.data;
     }
   }
 
@@ -140,6 +142,10 @@ export default class DataProcessing extends Data {
       : time.seconds + 's';
 
     return `${time.days}${time.hours}${time.minutes}${time.seconds}`;
+  }
+
+  static sum(array) {
+    return array.reduce((a, b) => a + b, 0);
   }
 
   /**
@@ -516,7 +522,10 @@ export default class DataProcessing extends Data {
 
   /* eslint-disable max-len */
   processGeneralData() {
-    this.alltime = this.constructor.parseSecondsIntoTime(this.data[config.ALL_TIME]);
+    this.totalTime = this.constructor.parseSecondsIntoTime(this.data[config.ALL_TIME]);
+    this.firstVisit = this.data[config.FIRST_VISIT];
+    // @todo this -2 is so mysterious
+    this.totalDomains = Object.keys(this.data).length - 2;
   }
 
   processFirstDoughnutData() {
@@ -539,10 +548,7 @@ export default class DataProcessing extends Data {
     this.setLabelColors(this.pagesVisitedLastMonth);
   }
 
-  /**
-   * Data processing, calculations for charts etc.
-   */
-  proceedDataProcessing() {
+  processLinesChartsData() {
     const timeSpentInHoursDataArray = this.getTimeSpentInHours();
 
     this.timeSpentInHours = {
@@ -562,18 +568,6 @@ export default class DataProcessing extends Data {
       labels: timeSpentInHoursTotalDataArray.map((hour) => hour[0]),
     };
 
-    const timeSpentInMinutesDataArray = this.getTimeSpentInMinutesToday();
-
-    this.timeSpentInMinutes = {
-      data: timeSpentInMinutesDataArray.map((minute) => minute[1]),
-      labels: timeSpentInMinutesDataArray.map((minute) => minute[0]),
-    };
-
-    // // let timeSpentInMinutesGlobalDataArray = this.getTimeSpentInMinutesGlobal();
-    // // this.timeSpentInMinutesGlobal = {
-    // //     data: timeSpentInMinutesGlobalDataArray.map(minute => minute[1]),
-    // //     labels: timeSpentInMinutesGlobalDataArray.map(minute => minute[0])
-    // // };
 
     // // @todo new year bug @line356
     const timeSpentEachDayOfTheWeekDataArray = this.getTimeSpentInDaysOfTheWeek();
@@ -589,6 +583,25 @@ export default class DataProcessing extends Data {
       data: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) => Math.round(dayOfTheWeek[1] / 60)),
       labels: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0])),
     };
+  }
+
+  /**
+   * @deprecated
+   * Data processing, calculations for charts etc.
+   */
+  proceedDataProcessing() {
+    const timeSpentInMinutesDataArray = this.getTimeSpentInMinutesToday();
+
+    this.timeSpentInMinutes = {
+      data: timeSpentInMinutesDataArray.map((minute) => minute[1]),
+      labels: timeSpentInMinutesDataArray.map((minute) => minute[0]),
+    };
+
+    // // let timeSpentInMinutesGlobalDataArray = this.getTimeSpentInMinutesGlobal();
+    // // this.timeSpentInMinutesGlobal = {
+    // //     data: timeSpentInMinutesGlobalDataArray.map(minute => minute[1]),
+    // //     labels: timeSpentInMinutesGlobalDataArray.map(minute => minute[0])
+    // // };
   }
   /* eslint-enable max-len */
 }

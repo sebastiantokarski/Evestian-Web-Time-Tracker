@@ -43,8 +43,8 @@ export default class Data {
 
     await getStoragePromise.then((storage) => currentStorage = storage[this.dataName]);
 
-    const merged = {...currentStorage, ...this.data};
-    const setStoragePromise = thenChrome.storage.local.set({[this.dataName]: merged});
+    const merged = { ...currentStorage, ...this.data };
+    const setStoragePromise = thenChrome.storage.local.set({ [this.dataName]: merged });
 
     await setStoragePromise.then(() => {
       utils.debugLog(`Successfully saved in storage - ${this.dataName}:`, this.data);

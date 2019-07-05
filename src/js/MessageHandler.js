@@ -6,6 +6,10 @@ export default class MessageHandler {
     this.init();
   }
 
+  static sendMessage(messageValue, callback) {
+    chrome.runtime.sendMessage(messageValue, callback);
+  }
+
   addHandlerHTMLElement() {
     this.handler = document.createElement('div');
 
@@ -21,13 +25,13 @@ export default class MessageHandler {
 
         utils.debugLog('Handler observer:', messageName, messageValue);
 
-        chrome.runtime.sendMessage(messageValue, (response) => {
+        this.constructor.sendMessage(messageValue, (response) => {
           utils.debugLog(response);
         });
       });
     });
 
-    this.handlerObserver.observe(this.handler, {attributes: true});
+    this.handlerObserver.observe(this.handler, { attributes: true });
   }
 
   init() {

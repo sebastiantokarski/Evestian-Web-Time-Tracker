@@ -7,7 +7,6 @@ $iconSizeOpenMenu: 1.8rem;
   &-svg {
     width: $iconSizeOpenMenu;
     height: $iconSizeOpenMenu;
-    margin-left: .3rem;
   }
 
   &__main-row {
@@ -46,23 +45,27 @@ $iconSizeOpenMenu: 1.8rem;
 
   &__menu {
     &-trigger {
-      width: $iconSize;
-      height: $iconSize;
       opacity: 1;
       transition: opacity .3s ease-out;
+    }
+
+    &-trigger .header-svg {
+      width: $iconSize;
+      height: $iconSize;
     }
 
     &-settings,
     &-app-switch,
     &-close,
     &-info {
+      margin-left: .3rem;
       opacity: 0;
-      transition: opacity .3s ease-out;
+      transition: opacity .3s ease-in-out;
     }
 
     &-wrapper {
       position: relative;
-      transition: all .3s ease-out;
+      transition: all .3s ease-in-out;
       left: 8.3rem;
 
       &.opened {
@@ -78,6 +81,10 @@ $iconSizeOpenMenu: 1.8rem;
         .header__menu-info {
           opacity: 1;
         }
+
+        .header__menu-settings .header-svg {
+          animation: spin .5s ease-in-out;
+        }
       }
     }
 
@@ -86,5 +93,17 @@ $iconSizeOpenMenu: 1.8rem;
         animation: spin 1s ease-in-out;
       }
     }
+  }
+
+  .menu-item.header__menu-trigger {
+    display: inline-block;
+    width: $iconSize;
+    height: $iconSize;
+  }
+
+  .menu-item {
+    display: inline-block;
+    width: $iconSizeOpenMenu;
+    height: $iconSizeOpenMenu;
   }
 }
