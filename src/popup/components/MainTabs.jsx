@@ -59,6 +59,10 @@ export default class MainTabs extends Component {
               chartTitle="Time spent each hour"
               chartData1={ this.dataProcessing.timeSpentInHours }
               chartData2={ this.dataProcessing.timeSpentInHoursTotal } />
+            <LineChart
+              chartTitle="Time spent each day of the week"
+              chartData1={ this.dataProcessing.timeSpentEachDayOfTheWeek }
+              chartData2={ this.dataProcessing.timeSpentEachDayOfTheWeekTotal } />
           </Tab>
         </Tabs>
       </div>

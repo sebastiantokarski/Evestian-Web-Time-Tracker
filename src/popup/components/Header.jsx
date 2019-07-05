@@ -7,23 +7,19 @@ export default class Header extends Component {
   constructor(props) {
     super(props);
 
-    this.assets = '../../assets/';
-    this.toggleMenu = this.toggleMenu.bind(this);
+    this.state = {
+      openedMenu: false,
+    };
 
-    this.menuWrapper = React.createRef();
-    this.headerTitle = React.createRef();
-    this.headerLogo = React.createRef();
+    this.assetsDir = '../../assets/';
+    this.toggleMenu = this.toggleMenu.bind(this);
   }
 
   async switchExtension(ev) {
     ev.preventDefault();
 
     const storageOption = await thenChrome.storage.local.get('enabled');
-    let action = 'enable';
-
-    if (storageOption.enabled) {
-      action = 'disable';
-    }
+    const action = storageOption.enabled ? 'enable' : 'disable';
 
     MessageHandler.sendMessage({ action });
   }
@@ -31,9 +27,7 @@ export default class Header extends Component {
   toggleMenu(ev) {
     ev.preventDefault();
 
-    this.menuWrapper.current.classList.toggle('opened');
-    this.headerTitle.current.classList.toggle('opened-menu');
-    this.headerLogo.current.classList.toggle('opened-menu');
+    this.setState({ openedMenu: !this.state.openedMenu });
   }
 
   render() {
@@ -42,38 +36,38 @@ export default class Header extends Component {
         <div className="container">
           <div className="row">
             <div className="header__main-row">
-              <img className="header__logo"
-                src={ `${this.assets}logoWhite.svg`}
-                ref={ this.headerLogo }/>
-              <h1 className="header__title"
-                ref={ this.headerTitle }>Evestian Web Time Tracker</h1>
-              <div className="header__menu-wrapper"
-                ref={ this.menuWrapper }>
+              <img
+                className={ `header__logo${this.state.openedMenu ? ' opened-menu' : ''}` }
+                src={ `${this.assetsDir}logoWhite.svg`} />
+              <h1 className={ `header__title${this.state.openedMenu ? ' opened-menu' : ''}` }>
+                Evestian Web Time Tracker
+              </h1>
+              <div className={ `header__menu-wrapper${this.state.openedMenu ? ' opened' : ''}` }>
 
-                <a href="#" className="header__menu-trigger"
+                <a href="#" className="header__menu-trigger menu-item"
                   onClick={(ev) => this.toggleMenu(ev)}
                   title="Menu">
-                  <img className="header-svg" src={ `${this.assets}menuWhite.svg` }/>
+                  <img className="header-svg" src={ `${this.assetsDir}menuWhite.svg` }/>
                 </a>
 
                 <Popup trigger={
-                  <a href="#" className="header__menu-settings" title="Settings">
-                    <img className="header-svg" src={ `${this.assets}settings.svg` }/>
+                  <a href="#" className="header__menu-settings menu-item" title="Settings">
+                    <img className="header-svg" src={ `${this.assetsDir}settings.svg` }/>
                   </a>
                 } modal>
                   <div>Extension Settings</div>
                 </Popup>
 
                 <a href="#"
-                  className="header__menu-app-switch"
+                  className="header__menu-app-switch menu-item"
                   title="Turn off"
                   onClick={(ev) => this.switchExtension(ev)}>
-                  <img className="header-svg" src={ `${this.assets}powerWhite.svg` }/>
+                  <img className="header-svg" src={ `${this.assetsDir}powerWhite.svg` }/>
                 </a>
 
                 <Popup trigger={
-                  <a href="#" className="header__menu-info" title="How it works">
-                    <img className="header-svg" src={ `${this.assets}infoWhite.svg` }/>
+                  <a href="#" className="header__menu-info menu-item" title="How it works">
+                    <img className="header-svg" src={ `${this.assetsDir}infoWhite.svg` }/>
                   </a>
                 } modal>
                   <div className="container">
@@ -81,15 +75,18 @@ export default class Header extends Component {
                       <h5>How it works</h5>
                     </div>
                     <div className="text-center">
-                      <p>blabla</p>
+                      <p>
+                        Rozszerzenie liczy każdą spędzoną sekunde na każdej stronie.
+                        Statystyki liczone są per domena. Żadne dane nie są wysyłane na zewnątrz.
+                      </p>
                     </div>
                   </div>
                 </Popup>
 
-                <a href="#" className="header__menu-close"
+                <a href="#" className="header__menu-close menu-item"
                   onClick={(ev) => this.toggleMenu(ev)}
                   title="Close menu">
-                  <img className="header-svg" src={ `${this.assets}closeWhite.svg` }/>
+                  <img className="header-svg" src={ `${this.assetsDir}closeWhite.svg` }/>
                 </a>
 
               </div>

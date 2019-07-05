@@ -44,11 +44,14 @@ $iconSizeOpenMenu: 1.8rem;
   }
 
   &__menu {
+    &-trigger {
+      opacity: 1;
+      transition: opacity .3s ease-out;
+    }
+
     &-trigger .header-svg {
       width: $iconSize;
       height: $iconSize;
-      opacity: 1;
-      transition: opacity .3s ease-out;
     }
 
     &-settings,
@@ -57,12 +60,12 @@ $iconSizeOpenMenu: 1.8rem;
     &-info {
       margin-left: .3rem;
       opacity: 0;
-      transition: opacity .3s ease-out;
+      transition: opacity .3s ease-in-out;
     }
 
     &-wrapper {
       position: relative;
-      transition: all .3s ease-out;
+      transition: all .3s ease-in-out;
       left: 8.3rem;
 
       &.opened {
@@ -90,5 +93,17 @@ $iconSizeOpenMenu: 1.8rem;
         animation: spin 1s ease-in-out;
       }
     }
+  }
+
+  .menu-item.header__menu-trigger {
+    display: inline-block;
+    width: $iconSize;
+    height: $iconSize;
+  }
+
+  .menu-item {
+    display: inline-block;
+    width: $iconSizeOpenMenu;
+    height: $iconSizeOpenMenu;
   }
 }

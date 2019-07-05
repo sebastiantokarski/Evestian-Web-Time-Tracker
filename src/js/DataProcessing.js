@@ -567,6 +567,22 @@ export default class DataProcessing extends Data {
       data: timeSpentInHoursTotalDataArray.map((hour) => Math.round(hour[1] / 60)),
       labels: timeSpentInHoursTotalDataArray.map((hour) => hour[0]),
     };
+
+
+    // // @todo new year bug @line356
+    const timeSpentEachDayOfTheWeekDataArray = this.getTimeSpentInDaysOfTheWeek();
+
+    this.timeSpentEachDayOfTheWeek = {
+      data: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) => Math.round(dayOfTheWeek[1] / 60)),
+      labels: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0])),
+    };
+
+    const timeSpentEachDayOfTheWeekTotalDataArray = this.getTimeSpentInDaysOfTheWeekTotal();
+
+    this.timeSpentEachDayOfTheWeekTotal = {
+      data: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) => Math.round(dayOfTheWeek[1] / 60)),
+      labels: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0])),
+    };
   }
 
   /**
@@ -586,21 +602,6 @@ export default class DataProcessing extends Data {
     // //     data: timeSpentInMinutesGlobalDataArray.map(minute => minute[1]),
     // //     labels: timeSpentInMinutesGlobalDataArray.map(minute => minute[0])
     // // };
-
-    // // @todo new year bug @line356
-    const timeSpentEachDayOfTheWeekDataArray = this.getTimeSpentInDaysOfTheWeek();
-
-    this.timeSpentEachDayOfTheWeek = {
-      data: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) => Math.round(dayOfTheWeek[1] / 60)),
-      labels: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0])),
-    };
-
-    const timeSpentEachDayOfTheWeekTotalDataArray = this.getTimeSpentInDaysOfTheWeekTotal();
-
-    this.timeSpentEachDayOfTheWeekTotal = {
-      data: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) => Math.round(dayOfTheWeek[1] / 60)),
-      labels: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0])),
-    };
   }
   /* eslint-enable max-len */
 }

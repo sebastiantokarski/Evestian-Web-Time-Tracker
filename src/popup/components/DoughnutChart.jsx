@@ -10,15 +10,6 @@ export default class DoughnutChart extends Component {
     this.chartInstance = null;
   }
 
-  setChartDefaults() {
-    // @todo default should work only in component or doughnut type
-    Chart.defaults.global.maintainAspectRatio = false;
-    Chart.defaults.global.tooltips.enabled = false;
-    Chart.defaults.global.legend.display = false;
-    Chart.defaults.doughnut.animation.animateScale = true;
-    Chart.defaults.doughnut.cutoutPercentage = 58;
-  }
-
   registerChartPlugin() {
     Chart.pluginService.register({
       beforeDraw: function(chart) {
@@ -78,7 +69,6 @@ export default class DoughnutChart extends Component {
   }
 
   componentWillMount() {
-    this.setChartDefaults();
     this.registerChartPlugin();
   }
 
@@ -87,23 +77,37 @@ export default class DoughnutChart extends Component {
       return null;
     }
 
+    const chartOptions = {
+      maintainAspectRatio: false,
+      cutoutPercentage: 58,
+      customTextInside: this.parseArrayOfSecondsToTimeString(this.props.chartData.data),
+      tooltips: {
+        enabled: false,
+      },
+      legend: {
+        display: false,
+      },
+      animation: {
+        animateScale: true,
+      },
+      hover: {
+        onHover: this.onChartHover.bind(this, this.props.chartData),
+      },
+    };
+    const chartData = {
+      datasets: [{
+        data: this.props.chartData.data,
+        backgroundColor: this.props.chartData.colors,
+      }],
+    };
+
     return (
       <section className={`chart-doughnut__section`}>
         <div className="chart-doughnut__container">
           <Doughnut
-            ref={(ref) => this.chartInstance = ref }
-            data={ {
-              datasets: [{
-                data: this.props.chartData.data,
-                backgroundColor: this.props.chartData.colors,
-              }],
-            } }
-            options = {{
-              customTextInside: this.parseArrayOfSecondsToTimeString(this.props.chartData.data),
-              hover: {
-                onHover: this.onChartHover.bind(this, this.props.chartData),
-              },
-            } } />
+            ref={ (ref) => this.chartInstance = ref }
+            data={ chartData }
+            options={ chartOptions } />
         </div>
       </section>
     );

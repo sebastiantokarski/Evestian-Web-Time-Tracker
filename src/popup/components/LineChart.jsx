@@ -30,7 +30,6 @@ export default class LineChart extends Component {
               labels: this.props.chartData2.labels,
             } }
             options={ {
-              maintainAspectRatio: true,
               scales: {
                 yAxes: [{
                   id: 'Today',
@@ -54,8 +53,7 @@ export default class LineChart extends Component {
                   },
                 }],
               },
-            } }
-            height={ 200 }/>
+            } } />
         </div>
       </section>
     );
