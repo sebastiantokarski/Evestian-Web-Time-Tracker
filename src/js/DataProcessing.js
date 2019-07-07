@@ -1,9 +1,9 @@
 import config from './config';
 import utils from './utils';
-import Data from './Data';
+import DataManagement from './DataManagement';
 
 /** Class DataProcessing */
-export default class DataProcessing extends Data {
+export default class DataProcessing extends DataManagement {
   /**
    * Constructor same as in Data class.
    *
@@ -16,7 +16,7 @@ export default class DataProcessing extends Data {
     if (data) {
       this.data = data;
     } else {
-      this.data = chrome.extension.getBackgroundPage().data.data;
+      this.data = chrome.extension.getBackgroundPage().background.dataManagement.data;
     }
   }
 

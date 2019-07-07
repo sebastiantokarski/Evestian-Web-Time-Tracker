@@ -3,7 +3,7 @@ import thenChrome from 'then-chrome';
 import utils from './utils';
 
 /** Class Data */
-export default class Data {
+export default class DataManagement {
   /**
    * Creating new data based on the data in chrome storage API.
    * If not exist, creates empty object.

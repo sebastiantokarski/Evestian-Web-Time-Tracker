@@ -1,7 +1,8 @@
 import '@babel/polyfill';
 import config from '../js/config';
+import settings from '../js/settings';
 import utils from '../js/utils';
-import Data from '../js/Data';
+import DataManagement from '../js/DataManagement';
 import HotReload from './hot-reload';
 
 /** Class Background */
@@ -16,9 +17,34 @@ class Background {
       this._hotReload = new HotReload();
     }
 
-    this.data = new Data(config.EXTENSION_DATA_NAME);
-    this.data.loadFromStorage();
-    window.data = this.data.data;
+    this.dataManagement = new DataManagement(config.EXTENSION_DATA_NAME);
+    this.dataManagement.loadFromStorage();
+  }
+
+  /**
+   * Check if protocol from url is blacklisted.
+   *
+   * @param  {string} url
+   * @return {boolean}
+   */
+  isProtocolOnBlacklist(url) {
+    const blacklistProtocol = settings.BLACKLIST_PROTOCOL;
+
+    return blacklistProtocol.indexOf(utils.getFromUrl('protocol', url)) !== -1;
+  }
+
+  // eslint-disable-next-line jsdoc/require-description-complete-sentence
+  /**
+   * Is current state active.
+   *
+   * @param  {string} state - active, idle or locked
+   * @return {boolean}
+   */
+  isStateActive(state) {
+    if (settings.COUNTY_ONLY_ACTIVE_STATE) {
+      return chrome.idle.IdleState.ACTIVE === state;
+    }
+    return true;
   }
 
   /**
@@ -28,7 +54,7 @@ class Background {
    * @param {string} hostname
    */
   updateBadge(tab, hostname) {
-    const timeInSeconds = this.data.getDayOfTheMonthData(hostname)[config.ALL_TIME];
+    const timeInSeconds = this.dataManagement.getDayOfTheMonthData(hostname)[config.ALL_TIME];
     let tabTime = 0;
 
     if (timeInSeconds < 60) {
@@ -66,23 +92,21 @@ class Background {
     switch (request.action) {
       // first save custom property, then go to case 'save'
       case 'customSave':
-        this.data.data[request.hostname][request.key] = request.value;
+        this.dataManagement.data[request.hostname][request.key] = request.value;
 
       case 'save':
-        this.data.saveInStorage(sendResponse);
+        this.dataManagement.saveInStorage(sendResponse);
         return true;
 
       case 'enable':
-        config.ENABLED = true;
-        chrome.storage.local.set({ enabled: true });
+        settings.setSetting('IS_ENABLED', true);
         // @todo show badge
         chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16.png') });
         this.executeIntervals();
         return true;
 
       case 'disable':
-        config.ENABLED = false;
-        chrome.storage.local.set({ enabled: false });
+        settings.setSetting('IS_ENABLED', false);
         chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16Disabled.png') });
 
         // Disable badge in current active tab
@@ -135,7 +159,7 @@ class Background {
      * Save data to storage if someone close browser window
      */
     chrome.windows.onRemoved.addListener(() => {
-      this.data.saveInStorage();
+      this.dataManagement.saveInStorage();
     });
 
     /**
@@ -173,9 +197,9 @@ class Background {
       const tab = utils.getActiveTab(window.tabs);
       const hostname = utils.getFromUrl('hostname', tab.url);
 
-      if (tab && utils.isWindowActive(window) && !utils.isProtocolOnBlacklist(tab.url)
-        && (utils.isStateActive(this.currentState) || utils.isSoundFromTab(tab))) {
-        const details = this.data.updateDataFor(hostname, tab);
+      if (tab && utils.isWindowActive(window) && !this.isProtocolOnBlacklist(tab.url)
+        && (this.isStateActive(this.currentState) || utils.isSoundFromTab(tab))) {
+        const details = this.dataManagement.updateDataFor(hostname, tab);
 
         utils.debugLog('Active tab:', hostname,
             '\nToday in seconds:', details.todayInSec,
@@ -190,7 +214,7 @@ class Background {
   }
 
   updateStorageCallback() {
-    this.data.saveInStorage();
+    this.dataManagement.saveInStorage();
   }
 
   /**
@@ -204,9 +228,10 @@ class Background {
   /**
    * Initialize Background.
    */
-  init() {
-    // @todo config should be loaded from storage
-    if (!config.ENABLED) {
+  async init() {
+    await settings.load();
+
+    if (!settings.IS_ENABLED) {
       return;
     }
 
@@ -214,7 +239,6 @@ class Background {
     this.executeIntervals();
   }
 }
-
-const background = new Background();
+const background = window.background = new Background();
 
 background.init();

@@ -1,20 +1,15 @@
-/** Class representing main extension config */
+/**
+ * Class representing main extension config
+ * Properties are noeditable
+ * */
 class Config {
   /**
    * Create an object with config properties.
    */
   constructor() {
     this.ALL_TIME = '_';
-    this.BLACKLIST_PROTOCOL = [
-      'chrome:',
-      'chrome-extension:',
-      'vivaldi:',
-      'file:',
-    ];
-    this.COUNT_ONLY_ACTIVE_STATE = true;
     this.DEVELOPMENT_MODE = chrome.runtime.getManifest().debug;
     this.DISPLAY_BADGE = true;
-    this.ENABLED = true;
     this.EXTENSION_DATA_NAME = 'dataOfAllVisitedPages';
     this.FAVICON_COLOR = '_fc';
     this.FAVICON_URL = '_fu';

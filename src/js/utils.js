@@ -232,30 +232,6 @@ class Utils {
     return tab && tab.audible;
   }
 
-  // eslint-disable-next-line jsdoc/require-description-complete-sentence
-  /**
-   * Is current state active.
-   *
-   * @param  {string} state - active, idle or locked
-   * @return {boolean}
-   */
-  isStateActive(state) {
-    if (config.COUNT_ONLY_ACTIVE_STATE) {
-      return chrome.idle.IdleState.ACTIVE === state;
-    }
-    return true;
-  }
-
-  /**
-   * Check if protocol from url is blacklisted.
-   *
-   * @param  {string} url
-   * @return {boolean}
-   */
-  isProtocolOnBlacklist(url) {
-    return config.BLACKLIST_PROTOCOL.indexOf(this.getFromUrl('protocol', url)) !== -1;
-  }
-
   /**
    * Log to console if it is development mode.
    *

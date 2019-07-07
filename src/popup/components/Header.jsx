@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Popup from 'reactjs-popup';
 import MessageHandler from '../../js/MessageHandler';
-import thenChrome from 'then-chrome';
+import settings from '../../js/settings';
 
 export default class Header extends Component {
   constructor(props) {
@@ -9,17 +9,31 @@ export default class Header extends Component {
 
     this.state = {
       openedMenu: false,
+      isAppEnabled: true,
     };
 
     this.assetsDir = '../../assets/';
     this.toggleMenu = this.toggleMenu.bind(this);
   }
 
+  async isAppEnabled() {
+    await settings.load();
+
+    const isEnabled = settings.IS_ENABLED;
+
+    this.setState({ isAppEnabled: isEnabled });
+
+    return isEnabled;
+  }
+
   async switchExtension(ev) {
     ev.preventDefault();
 
-    const storageOption = await thenChrome.storage.local.get('enabled');
-    const action = storageOption.enabled ? 'enable' : 'disable';
+    this.setState({ isAppEnabled: !this.state.isAppEnabled });
+
+    const action = this.state.isAppEnabled ? 'disable' : 'enable';
+
+    settings.setSetting('IS_ENABLED', this.state.isAppEnabled);
 
     MessageHandler.sendMessage({ action });
   }
@@ -28,6 +42,10 @@ export default class Header extends Component {
     ev.preventDefault();
 
     this.setState({ openedMenu: !this.state.openedMenu });
+  }
+
+  componentWillMount() {
+    this.isAppEnabled();
   }
 
   render() {
@@ -60,7 +78,7 @@ export default class Header extends Component {
 
                 <a href="#"
                   className="header__menu-app-switch menu-item"
-                  title="Turn off"
+                  title={ this.state.isAppEnabled ? 'Turn off' : 'Turn on' }
                   onClick={(ev) => this.switchExtension(ev)}>
                   <img className="header-svg" src={ `${this.assetsDir}powerWhite.svg` }/>
                 </a>
