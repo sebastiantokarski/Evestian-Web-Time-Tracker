@@ -11,6 +11,7 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
   const image = document.createElement('img');
   const script = document.createElement('script');
 
+  // @todo Here a new one data object for hostname should be created
   if (!currHostnameData) {
     utils.debugLog('Data not found for', location.hostname);
     return;

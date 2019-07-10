@@ -3,7 +3,7 @@ $arrowsSize: .7rem;
 .mini-info {
   &__section {
     background: $primaryLightColor;
-    border: 1px solid $borderColor;
+    border: 1px solid $borderPrimaryColor;
     border-radius: 0 0 15px 15px;
     border-top: none;
   }

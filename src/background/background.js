@@ -99,14 +99,14 @@ class Background {
         return true;
 
       case 'enable':
-        settings.setSetting('IS_ENABLED', true);
+        settings.set('IS_ENABLED', true);
         // @todo show badge
         chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16.png') });
         this.executeIntervals();
         return true;
 
       case 'disable':
-        settings.setSetting('IS_ENABLED', false);
+        settings.set('IS_ENABLED', false);
         chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16Disabled.png') });
 
         // Disable badge in current active tab
@@ -221,12 +221,18 @@ class Background {
    * Execute all extension intervals.
    */
   executeIntervals() {
-    this.updateDataInterval = setInterval(this.updateDataCallback.bind(this), config.INTERVAL_UPDATE_S);
-    this.updateStorageInterval = setInterval(this.updateStorageCallback.bind(this), config.INTERVAL_UPDATE_MIN);
+    this.updateDataInterval = setInterval(
+        this.updateDataCallback.bind(this), config.INTERVAL_UPDATE_S
+    );
+    this.updateStorageInterval = setInterval(
+        this.updateStorageCallback.bind(this), config.INTERVAL_UPDATE_MIN
+    );
   }
 
   /**
    * Initialize Background.
+   *
+   * @return {undefined}
    */
   async init() {
     await settings.load();

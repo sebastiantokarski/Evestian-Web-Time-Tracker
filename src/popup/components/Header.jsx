@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import Popup from 'reactjs-popup';
 import MessageHandler from '../../js/MessageHandler';
 import settings from '../../js/settings';
+import Modal from './Modal.jsx';
+import Settings from './Settings.jsx';
 
 export default class Header extends Component {
   constructor(props) {
@@ -10,20 +11,18 @@ export default class Header extends Component {
     this.state = {
       openedMenu: false,
       isAppEnabled: true,
+      settings: null,
     };
 
     this.assetsDir = '../../assets/';
     this.toggleMenu = this.toggleMenu.bind(this);
   }
 
-  async isAppEnabled() {
+  async getSettings() {
     await settings.load();
 
-    const isEnabled = settings.IS_ENABLED;
-
-    this.setState({ isAppEnabled: isEnabled });
-
-    return isEnabled;
+    this.setState({ isAppEnabled: settings.IS_ENABLED });
+    this.setState({ settings: settings.getAll() });
   }
 
   async switchExtension(ev) {
@@ -33,7 +32,7 @@ export default class Header extends Component {
 
     const action = this.state.isAppEnabled ? 'disable' : 'enable';
 
-    settings.setSetting('IS_ENABLED', this.state.isAppEnabled);
+    settings.set('IS_ENABLED', this.state.isAppEnabled);
 
     MessageHandler.sendMessage({ action });
   }
@@ -45,7 +44,7 @@ export default class Header extends Component {
   }
 
   componentWillMount() {
-    this.isAppEnabled();
+    this.getSettings();
   }
 
   render() {
@@ -68,13 +67,13 @@ export default class Header extends Component {
                   <img className="header-svg" src={ `${this.assetsDir}menuWhite.svg` }/>
                 </a>
 
-                <Popup trigger={
+                <Modal trigger={
                   <a href="#" className="header__menu-settings menu-item" title="Settings">
                     <img className="header-svg" src={ `${this.assetsDir}settings.svg` }/>
                   </a>
-                } modal>
-                  <div>Extension Settings</div>
-                </Popup>
+                } title="Settings">
+                  <Settings/>
+                </Modal>
 
                 <a href="#"
                   className="header__menu-app-switch menu-item"
@@ -83,24 +82,16 @@ export default class Header extends Component {
                   <img className="header-svg" src={ `${this.assetsDir}powerWhite.svg` }/>
                 </a>
 
-                <Popup trigger={
+                <Modal trigger={
                   <a href="#" className="header__menu-info menu-item" title="How it works">
                     <img className="header-svg" src={ `${this.assetsDir}infoWhite.svg` }/>
                   </a>
-                } modal>
-                  <div className="container">
-                    <div className="text-center">
-                      <h5>How it works</h5>
-                    </div>
-                    <div className="text-center">
-                      <p>
-                        Rozszerzenie liczy każdą spędzoną sekunde na każdej stronie.
-                        Statystyki liczone są per domena. Żadne dane nie są wysyłane na zewnątrz.
-                      </p>
-                    </div>
-                  </div>
-                </Popup>
-
+                } title="How it works">
+                  <p>
+                    Rozszerzenie liczy każdą spędzoną sekunde na każdej stronie.
+                    Statystyki liczone są per domena. Żadne dane nie są wysyłane na zewnątrz.
+                  </p>
+                </Modal>
                 <a href="#" className="header__menu-close menu-item"
                   onClick={(ev) => this.toggleMenu(ev)}
                   title="Close menu">
