@@ -11,11 +11,23 @@ export default class MainTabs extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      hoveredChartItem: null,
+    };
+
     this.dataProcessing = new DataProcessing(config.EXTENSION_DATA_NAME);
 
     this.dataProcessing.processFirstDoughnutData();
     this.dataProcessing.processDoughnutsData();
     this.dataProcessing.processLinesChartsData();
+
+    this.handleChartHover = this.handleChartHover.bind(this);
+  }
+
+  handleChartHover(item) {
+    this.setState({
+      hoveredChartItem: item,
+    });
   }
 
   render() {
@@ -23,35 +35,50 @@ export default class MainTabs extends Component {
       <div className="main-tabs__section">
         <Tabs defaultActiveKey="today" id="doughnuts-chart" >
           <Tab eventKey="today" title="Today">
-            <DoughnutChart chartName="myChartToday"
+            <DoughnutChart
+              chartName="myChartToday"
               renderOnLoad
-              chartData={ this.dataProcessing.pagesVisitedToday } />
-            <Table className="myChartTodayTable"
+              chartData={ this.dataProcessing.pagesVisitedToday }
+              handleChartHover={ this.handleChartHover } />
+            <Table
+              className="myChartTodayTable"
               tableData={ this.dataProcessing.pagesVisitedTodayArrayData }
+              hoveredChartItem={ this.state.hoveredChartItem }
               striped />
           </Tab>
           <Tab eventKey="yesterday" title="Yesterday">
-            <DoughnutChart chartName="myChartYesterday"
+            <DoughnutChart
+              chartName="myChartYesterday"
               renderOnLoad
-              chartData={ this.dataProcessing.pagesVisitedYesterday } />
-            <Table className="myChartYesterdayTable"
+              chartData={ this.dataProcessing.pagesVisitedYesterday }
+              handleChartHover={ this.handleChartHover } />
+            <Table
+              className="myChartYesterdayTable"
               tableData={ this.dataProcessing.pagesVisitedYesterdayArrayData }
+              hoveredChartItem={ this.state.hoveredChartItem }
               striped />
           </Tab>
           <Tab eventKey="thisMonth" title="This Month">
-            <DoughnutChart chartName="myChartMonth"
+            <DoughnutChart
+              chartName="myChartMonth"
               renderOnLoad
-              chartData={ this.dataProcessing.pagesVisitedThisMonth } />
-            <Table className="myChartThisMonthTable"
+              chartData={ this.dataProcessing.pagesVisitedThisMonth }
+              handleChartHover={ this.handleChartHover } />
+            <Table
+              className="myChartThisMonthTable"
               tableData={ this.dataProcessing.pagesVisitedThisMonthArrayData }
+              hoveredChartItem={ this.state.hoveredChartItem }
               striped />
           </Tab>
           <Tab eventKey="lastMonth" title="Last Month">
             <DoughnutChart chartName="myChartLastMonth"
               renderOnLoad
-              chartData={ this.dataProcessing.pagesVisitedLastMonth } />
-            <Table className="myChartLastMonthTable"
+              chartData={ this.dataProcessing.pagesVisitedLastMonth }
+              handleChartHover={ this.handleChartHover } />
+            <Table
+              className="myChartLastMonthTable"
               tableData={ this.dataProcessing.pagesVisitedLastMonthArrayData }
+              hoveredChartItem={ this.state.hoveredChartItem }
               striped />
           </Tab>
           <Tab eventKey="more" title="More">

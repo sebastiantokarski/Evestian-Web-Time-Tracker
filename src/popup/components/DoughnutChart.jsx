@@ -41,7 +41,7 @@ export default class DoughnutChart extends Component {
   parseArrayOfSecondsToTimeString(array) {
     return DataProcessing.parseSecondsIntoTime(DataProcessing.sum(array));
   }
-
+  // @todo There should be event like mousover, hover is dispatch much more times
   onChartHover(chartData, event, items) {
     const chart = this.chartInstance.chartInstance;
 
@@ -55,6 +55,8 @@ export default class DoughnutChart extends Component {
       const itemDataInSeconds = chartDataset.data[itemIndex];
       const text = DataProcessing.parseSecondsIntoTime(itemDataInSeconds);
       const percentage = (itemDataInSeconds / DataProcessing.sum(chartData.data) * 100).toFixed(2);
+
+      this.props.handleChartHover(this.props.chartData.labels[itemIndex])
 
       chart.options.customTextInside = `${text}\n${percentage}%`;
       chart.update();

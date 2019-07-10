@@ -26,7 +26,7 @@ export default class Table extends Component {
 
   renderTableBody() {
     return this.props.tableData.map((item, index) => {
-      return <tr key={index + 1}>
+      return <tr key={index + 1} className={ this.props.hoveredChartItem === item[0] ? 'active' : '' }>
         <td>{ index + 1 }</td>
         <td>
           <LazyLoadImage className="favImage"
