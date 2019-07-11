@@ -18,18 +18,17 @@ export default class DoughnutChart extends Component {
           const bottomCorner = chart.chartArea.bottom;
           const rightCorner = chart.chartArea.right;
           const ctx = chart.chart.ctx;
+          const texts = chart.options.customTextInside.split('\n');
+          const fontSize = texts.length === 1 ? 24 : 20;
 
           ctx.restore();
-          ctx.font = '20px sans-serif';
+          ctx.font = `${fontSize}px Roboto sans-serif`;
           ctx.textBaseline = 'middle';
-
-          const texts = chart.options.customTextInside.split('\n');
 
           for (let i = 0; i < texts.length; i++) {
             const text = texts[i];
             const textX = Math.round((rightCorner - ctx.measureText(text).width) / 2);
-            const lineHeight = texts.length > 1 ? 11 : 0;
-            const textY = i == 0 ? (bottomCorner / 2) - lineHeight : bottomCorner / 2 + (i * 22);
+            const textY = bottomCorner / 2 + ((i + 1) * 24) - ((texts.length + 1) * 12);
 
             ctx.fillText(text, textX, textY);
             ctx.save();
@@ -64,7 +63,7 @@ export default class DoughnutChart extends Component {
       const percentage = (itemDataInSeconds / DataProcessing.sum(chartData.data) * 100).toFixed(2);
 
       hoveredItemName = this.props.chartData.labels[hoveredItemIndex];
-      customTextInside = `${text}\n${percentage}%`;
+      customTextInside = `${text}\n${hoveredItemName.replace(/(.{17})..+/, '$1...')}\n${percentage}%`;
     } else {
       customTextInside = this.parseArrayOfSecondsToTimeString(chartData.data);
     }

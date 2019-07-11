@@ -33,7 +33,7 @@ export default class Table extends Component {
             <LazyLoadImage className="favImage"
               src={ item[2] }
               ref={(reference) => this.imagesList.push(reference)}/></td>
-          <td>{ item[0].length > 30 ? item[0].substring(0, 30) + '...' : item[0] }</td>
+          <td><span>{ item[0].replace(/(.{30})..+/, '$1...') }</span></td>
           <td className="spentTimeCell">{ DataProcessing.parseSecondsIntoTime(item[1]) }</td>
         </tr>
       );
@@ -52,5 +52,5 @@ export default class Table extends Component {
 Table.propTypes = {
   striped: PropTypes.bool,
   tableData: PropTypes.array,
-  hoveredChartItem: PropTypes.oneOfType([null, PropTypes.string]),
+  hoveredChartItem: PropTypes.oneOfType([PropTypes.string]),
 };
