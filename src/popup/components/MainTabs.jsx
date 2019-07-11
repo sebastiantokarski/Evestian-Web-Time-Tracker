@@ -17,6 +17,7 @@ export default class MainTabs extends Component {
 
     this.dataProcessing = new DataProcessing(config.EXTENSION_DATA_NAME);
 
+    // @todo If there are many data (percentage?), then eg proccess only first doughnut data
     this.dataProcessing.processFirstDoughnutData();
     this.dataProcessing.processDoughnutsData();
     this.dataProcessing.processLinesChartsData();
@@ -70,14 +71,14 @@ export default class MainTabs extends Component {
               hoveredChartItem={ this.state.hoveredChartItem }
               striped />
           </Tab>
-          <Tab eventKey="lastMonth" title="Last Month">
-            <DoughnutChart chartName="myChartLastMonth"
+          <Tab eventKey="myChartAllTime" title="All Time">
+            <DoughnutChart chartName="myChartAllTime"
               renderOnLoad
-              chartData={ this.dataProcessing.pagesVisitedLastMonth }
+              chartData={ this.dataProcessing.pagesVisitedAllTime }
               handleChartHover={ this.handleChartHover } />
             <Table
               className="myChartLastMonthTable"
-              tableData={ this.dataProcessing.pagesVisitedLastMonthArrayData }
+              tableData={ this.dataProcessing.pagesVisitedAllTimeArrayData }
               hoveredChartItem={ this.state.hoveredChartItem }
               striped />
           </Tab>

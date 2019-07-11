@@ -26,15 +26,17 @@ export default class Table extends Component {
 
   renderTableBody() {
     return this.props.tableData.map((item, index) => {
-      return <tr key={index + 1} className={ this.props.hoveredChartItem === item[0] ? 'active' : '' }>
-        <td>{ index + 1 }</td>
-        <td>
-          <LazyLoadImage className="favImage"
-            src={ item[2] }
-            ref={(reference) => this.imagesList.push(reference)}/></td>
-        <td>{ item[0] }</td>
-        <td className="spentTimeCell">{ DataProcessing.parseSecondsIntoTime(item[1]) }</td>
-      </tr>;
+      return (
+        <tr key={index + 1} className={ this.props.hoveredChartItem === item[0] ? 'active' : '' }>
+          <td>{ index + 1 }</td>
+          <td>
+            <LazyLoadImage className="favImage"
+              src={ item[2] }
+              ref={(reference) => this.imagesList.push(reference)}/></td>
+          <td>{ item[0].length > 30 ? item[0].substring(0, 30) + '...' : item[0] }</td>
+          <td className="spentTimeCell">{ DataProcessing.parseSecondsIntoTime(item[1]) }</td>
+        </tr>
+      );
     });
   }
 
@@ -50,4 +52,5 @@ export default class Table extends Component {
 Table.propTypes = {
   striped: PropTypes.bool,
   tableData: PropTypes.array,
+  hoveredChartItem: PropTypes.oneOfType([null, PropTypes.string]),
 };

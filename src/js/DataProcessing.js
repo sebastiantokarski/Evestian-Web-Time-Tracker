@@ -543,9 +543,9 @@ export default class DataProcessing extends DataManagement {
     this.pagesVisitedThisMonth = this.addOtherData(this.pagesVisitedThisMonthArrayData, 10);
     this.setLabelColors(this.pagesVisitedThisMonth);
 
-    this.pagesVisitedLastMonthArrayData = this.getSortedPagesVisitedInGivenPeriod('Month', utils.getLastMonth());
-    this.pagesVisitedLastMonth = this.addOtherData(this.pagesVisitedLastMonthArrayData, 10);
-    this.setLabelColors(this.pagesVisitedLastMonth);
+    this.pagesVisitedAllTimeArrayData = this.getSortedPagesVisitedInGivenPeriod('Year');
+    this.pagesVisitedAllTime = this.addOtherData(this.pagesVisitedAllTimeArrayData, 10);
+    this.setLabelColors(this.pagesVisitedAllTime);
   }
 
   processLinesChartsData() {

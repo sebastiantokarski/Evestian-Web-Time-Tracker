@@ -8,6 +8,7 @@ export default class DoughnutChart extends Component {
     super(props);
 
     this.chartInstance = null;
+    this.lastHoveredItemIndex = null;
   }
 
   registerChartPlugin() {
@@ -41,33 +42,38 @@ export default class DoughnutChart extends Component {
   parseArrayOfSecondsToTimeString(array) {
     return DataProcessing.parseSecondsIntoTime(DataProcessing.sum(array));
   }
-  // @todo There should be event like mousover, hover is dispatch much more times
+
   onChartHover(chartData, event, items) {
     const chart = this.chartInstance.chartInstance;
+    const hoveredItemIndex = items.length ? items[0]._index : null;
+    const shouldProceed = () => {
+      return hoveredItemIndex !== this.lastHoveredItemIndex;
+    };
 
-    if (event.layerY > chart.chartArea.bottom) {
+    if (!shouldProceed()) {
       return;
     }
 
-    if (items.length) {
-      const itemIndex = items[0]._index;
+    let hoveredItemName = null;
+    let customTextInside = null;
+
+    if (hoveredItemIndex !== null) {
       const chartDataset = chart.data.datasets[0];
-      const itemDataInSeconds = chartDataset.data[itemIndex];
+      const itemDataInSeconds = chartDataset.data[hoveredItemIndex];
       const text = DataProcessing.parseSecondsIntoTime(itemDataInSeconds);
       const percentage = (itemDataInSeconds / DataProcessing.sum(chartData.data) * 100).toFixed(2);
 
-      this.props.handleChartHover(this.props.chartData.labels[itemIndex])
-
-      chart.options.customTextInside = `${text}\n${percentage}%`;
-      chart.update();
+      hoveredItemName = this.props.chartData.labels[hoveredItemIndex];
+      customTextInside = `${text}\n${percentage}%`;
     } else {
-      const customTextInside = this.parseArrayOfSecondsToTimeString(chartData.data);
-
-      if (chart.options.customTextInside !== customTextInside) {
-        chart.options.customTextInside = customTextInside;
-        chart.update();
-      }
+      customTextInside = this.parseArrayOfSecondsToTimeString(chartData.data);
     }
+
+    this.lastHoveredItemIndex = hoveredItemIndex;
+    this.props.handleChartHover(hoveredItemName);
+
+    chart.options.customTextInside = customTextInside;
+    chart.update();
   }
 
   componentWillMount() {
@@ -120,4 +126,5 @@ DoughnutChart.propTypes = {
   chartData: PropTypes.object,
   chartName: PropTypes.string,
   renderOnLoad: PropTypes.bool,
+  handleChartHover: PropTypes.func,
 };

@@ -308,6 +308,7 @@ export default class DataManagement {
     utils.increment(this.getHourData(hostname, dataObj.currentHour), dataObj.currentMinute);
 
     // Update other data
+    // @todo update fav url only if tab.favIconUrl != null|undefined
     this.data[hostname][config.FAVICON_URL] = tab.favIconUrl;
     this.data[hostname][config.LAST_VISIT] = utils.getDateString();
 
