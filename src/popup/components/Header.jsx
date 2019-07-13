@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import MessageHandler from '../../js/MessageHandler';
 import settings from '../../js/settings';
 import Modal from './Modal.jsx';
 import Settings from './Settings.jsx';
@@ -16,10 +15,13 @@ export default class Header extends Component {
 
     this.assetsDir = '../../assets/';
     this.toggleMenu = this.toggleMenu.bind(this);
+
+    // @todo Some part of "onChangedListeners" are the same in many modules
+    settings.setOnChangedListener(this.onChangesSettingsHeader, this);
   }
 
   async getSettings() {
-    await settings.load();
+    await settings.init();
 
     this.setState({ isAppEnabled: settings.IS_ENABLED });
     this.setState({ settings: settings.getAll() });
@@ -28,19 +30,31 @@ export default class Header extends Component {
   async switchExtension(ev) {
     ev.preventDefault();
 
-    this.setState({ isAppEnabled: !this.state.isAppEnabled });
+    const isAppEnabled = !this.state.isAppEnabled;
 
-    const action = this.state.isAppEnabled ? 'disable' : 'enable';
+    this.setState({ isAppEnabled });
 
-    settings.set('IS_ENABLED', this.state.isAppEnabled);
-
-    MessageHandler.sendMessage({ action });
+    settings.set('IS_ENABLED', isAppEnabled);
   }
 
   toggleMenu(ev) {
     ev.preventDefault();
 
     this.setState({ openedMenu: !this.state.openedMenu });
+  }
+
+  onChangesSettingsHeader(changes, area) {
+    const settingsChanges = changes[settings.name];
+
+    if (settingsChanges && settings.area === area) {
+      const oldValue = settingsChanges.oldValue.IS_ENABLED;
+      const newValue = settingsChanges.newValue.IS_ENABLED;
+      const areDifferente = oldValue !== newValue;
+
+      if (areDifferente && newValue !== this.state.isAppEnabled) {
+        this.setState({ isAppEnabled: newValue });
+      }
+    }
   }
 
   componentWillMount() {

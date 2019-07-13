@@ -37,6 +37,8 @@ class Background {
   /**
    * Is current state active.
    *
+   * @todo There should be also check mouserover event (can be blur and mouseover in one time)
+   *
    * @param  {string} state - active, idle or locked
    * @return {boolean}
    */
@@ -98,43 +100,6 @@ class Background {
         this.dataManagement.saveInStorage(sendResponse);
         return true;
 
-      case 'enable':
-        settings.set('IS_ENABLED', true);
-        // @todo show badge
-        chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16.png') });
-        this.executeIntervals();
-        return true;
-
-      case 'disable':
-        settings.set('IS_ENABLED', false);
-        chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16Disabled.png') });
-
-        // Disable badge in current active tab
-        chrome.windows.getLastFocused({
-          populate: true,
-        }, (window) => {
-          const tab = utils.getActiveTab(window.tabs);
-
-          chrome.browserAction.setBadgeText({
-            tabId: tab.id,
-            text: '',
-          });
-        });
-
-        // Disable badge in tabs activated in future
-        chrome.tabs.onActivated.addListener(function(activeInfo) {
-          if (!config.ENABLED) {
-            chrome.browserAction.setBadgeText({
-              tabId: activeInfo.id,
-              text: '',
-            });
-          }
-        });
-
-        clearInterval(this.updateDataInterval);
-        clearInterval(this.updateStorageInterval);
-        return true;
-
       default:
         throw new Error(`Message: ${request.action} not found`, request);
     }
@@ -143,13 +108,70 @@ class Background {
   onInstalledCallback() {
     utils.debugLog('onInstalled event');
 
-    // @todo better config saving
-    chrome.storage.local.set({ enabled: true });
+    // @todo Check if it works ok
+    settings.save();
   }
 
   onUpdatedCallback(currVersion) {
     utils.debugLog('onUpdated event. Current version:', currVersion);
   }
+
+  onEnableExtension() {
+    chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16.png') });
+    this.executeIntervals();
+  }
+
+  onDisableExtension() {
+    chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16Disabled.png') });
+
+    // Disable badge in current active tab
+    chrome.windows.getLastFocused({
+      populate: true,
+    }, (window) => {
+      const tab = utils.getActiveTab(window.tabs);
+
+      chrome.browserAction.setBadgeText({
+        tabId: tab.id,
+        text: '',
+      });
+    });
+
+    // Disable badge in tabs activated in future
+    chrome.tabs.onActivated.addListener(function(activeInfo) {
+      if (!config.ENABLED) {
+        chrome.browserAction.setBadgeText({
+          tabId: activeInfo.id,
+          text: '',
+        });
+      }
+    });
+
+    clearInterval(this.updateDataInterval);
+    clearInterval(this.updateStorageInterval);
+  }
+
+  onChangedInBackground(changes, area) {
+    const settingsChanges = changes[settings.name];
+
+    if (settingsChanges && settings.area === area) {
+      const oldValue = settingsChanges.oldValue.IS_ENABLED;
+      const newValue = settingsChanges.newValue.IS_ENABLED;
+      const areDifferente = oldValue !== newValue;
+
+      if (areDifferente) {
+        switch (newValue) {
+          case true:
+            this.onEnableExtension();
+            break;
+
+          case false:
+            this.onDisableExtension();
+            break;
+        }
+      }
+    }
+  }
+
 
   /**
    * Execute all extension listeners.
@@ -188,6 +210,8 @@ class Background {
         this.onUpdatedCallback(currVersion);
       }
     });
+
+    settings.setOnChangedListener(this.onChangedInBackground, this);
   }
 
   updateDataCallback() {
@@ -235,7 +259,7 @@ class Background {
    * @return {undefined}
    */
   async init() {
-    await settings.load();
+    await settings.init();
 
     if (!settings.IS_ENABLED) {
       return;

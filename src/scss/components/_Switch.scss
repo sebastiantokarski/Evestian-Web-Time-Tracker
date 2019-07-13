@@ -1,0 +1,40 @@
+.switch {
+  display: inline-block;
+  position: relative;
+  height: 1rem;
+  width: 2rem;
+  margin: 0;
+
+  input {
+    display: none;
+
+    &:checked + .slider {
+      background-color: $primaryColor;
+
+      &:before {
+        transform: translateX(.93rem);
+      }
+    }
+  }
+
+  .slider {
+    width: 100%;
+    height: 100%;
+    background-color: $disabledColor;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: .2s;
+
+    &:before {
+      content: ' ';
+      position: absolute;
+      height: .8rem;
+      width: .8rem;
+      background-color: white;
+      border-radius: 50%;
+      top: .12rem;
+      left: .1rem;
+      transition: transform .2s ease-in-out;
+    }
+  }
+}
