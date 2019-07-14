@@ -7,6 +7,7 @@ export default class Table extends Component {
   constructor(props) {
     super(props);
 
+    // @todo chrome://favicon :)
     this.defaultFavUrl = chrome.runtime.getURL('/assets/defaultFavicon16.png');
     this.imagesList = [];
   }

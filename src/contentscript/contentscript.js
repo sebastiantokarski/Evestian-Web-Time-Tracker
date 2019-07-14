@@ -2,6 +2,13 @@ import config from '../js/config';
 import utils from '../js/utils';
 import MessageHandler from '../js/MessageHandler';
 
+/**
+ * @todo saving image in extension directory
+ *
+ * @todo Maybe API
+ * @link https://www.google.com/s2/favicons?domain=google.com
+ */
+
 new MessageHandler();
 
 chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {

@@ -107,9 +107,6 @@ class Background {
 
   onInstalledCallback() {
     utils.debugLog('onInstalled event');
-
-    // @todo Check if it works ok
-    settings.save();
   }
 
   onUpdatedCallback(currVersion) {
@@ -153,7 +150,7 @@ class Background {
   onChangedInBackground(changes, area) {
     const settingsChanges = changes[settings.name];
 
-    if (settingsChanges && settings.area === area) {
+    if (settingsChanges && settings.area === area && settingsChanges.oldValue) {
       const oldValue = settingsChanges.oldValue.IS_ENABLED;
       const newValue = settingsChanges.newValue.IS_ENABLED;
       const areDifferente = oldValue !== newValue;
@@ -253,6 +250,13 @@ class Background {
     );
   }
 
+  onFirstStartup() {
+    if (!localStorage.getItem(config.FIRST_STARTUP)) {
+      localStorage.setItem(config.FIRST_STARTUP, true);
+      settings.save();
+    }
+  }
+
   /**
    * Initialize Background.
    *
@@ -260,6 +264,9 @@ class Background {
    */
   async init() {
     await settings.init();
+
+    // There is also onInstalled event, but it doesnt work in development mode
+    this.onFirstStartup();
 
     if (!settings.IS_ENABLED) {
       return;

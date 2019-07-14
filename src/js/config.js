@@ -14,6 +14,7 @@ class Config {
     this.FAVICON_COLOR = '_fc';
     this.FAVICON_URL = '_fu';
     this.FIRST_VISIT = '_fv';
+    this.FIRST_STARTUP = '_fs';
     this.ID_PREFIX = 'chrome_ext_evestian-';
     this.INTERVAL_UPDATE_S = 1000;
     this.INTERVAL_UPDATE_MIN = 1000 * 60;
