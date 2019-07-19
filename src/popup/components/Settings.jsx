@@ -49,7 +49,12 @@ export default class Settings extends Component {
 
       return this.state.settings[name].map((inputValue) => {
         // @ Maybe spread operator
-        this.renderInput(name, inputConfig, inputValue);
+        const input = this.renderInput(name, inputConfig, inputValue);
+
+        return <Fragment>
+          { input }
+          <a href="#" className="remove-icon"></a>
+        </Fragment>;
       });
     } else if (inputConfig.type === 'checkbox') {
       return <Switch

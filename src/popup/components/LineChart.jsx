@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 import { Chart, Line } from 'react-chartjs-2';
 import PropTypes from 'prop-types';
+import Color from '../../js/Color';
 
 export default class LineChart extends Component {
   constructor(props) {
     super(props);
+
+    this.chartFirstColorBorder = new Color('primary').toRGBa(.65);
+    this.chartFirstColorBackground = new Color('primaryLight').toRGBa(.65);
+    this.chartSecondColorBorder = new Color('secondaryDark').toRGBa(.65);
+    this.chartSecondColorBackground = new Color('secondary').toRGBa(.65);
   }
 
   registerChartPlugin() {
@@ -26,6 +32,9 @@ export default class LineChart extends Component {
   }
 
   render() {
+    if (!this.props.chartData1 || !this.props.chartData2) {
+      return null;
+    }
     return (
       <section className="lineChart__section">
         <div className="container">
@@ -34,17 +43,16 @@ export default class LineChart extends Component {
             data={ {
               datasets: [{
                 yAxisID: 'Today',
-                // @todo Those labels should be parameterized
-                label: 'Time in minutes Today',
+                label: 'Today in minutes',
                 data: this.props.chartData1.data,
-                borderColor: 'rgb(0, 102, 255)',
-                backgroundColor: 'rgb(77, 148, 255, .65)',
+                borderColor: this.chartFirstColorBorder,
+                backgroundColor: this.chartFirstColorBackground,
               }, {
                 yAxisID: 'Global',
-                label: 'Time in minutes Global',
+                label: 'Global in minutes',
                 data: this.props.chartData2.data,
-                borderColor: 'rgb(243, 26, 11)',
-                backgroundColor: 'rgba(249, 106, 95, .65)',
+                borderColor: this.chartSecondColorBorder,
+                backgroundColor: this.chartSecondColorBackground,
               }],
               labels: this.props.chartData2.labels,
             } }
@@ -63,6 +71,9 @@ export default class LineChart extends Component {
                   id: 'Global',
                   position: 'right',
                   type: 'linear',
+                  ticks: {
+                    suggestedMin: 0,
+                  },
                 }],
               },
             } } />

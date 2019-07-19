@@ -63,7 +63,7 @@ class Settings {
     const config = this.config;
 
     Object.keys(config).map((setting) => {
-       // @todo this[setting] should be private
+      // @todo this[setting] should be private
       this[setting] = config[setting].default;
     });
   }
@@ -98,7 +98,7 @@ class Settings {
     this.save(cb);
   }
 
-   /**
+  /**
    * @param {string} settingName
    * @return {*}
    */
@@ -163,8 +163,11 @@ class Settings {
     let settingsFromStorage = await thenChrome.storage[this.area].get(this.name);
 
     if (Object.keys(settingsFromStorage).length) {
+      utils.debugLog('Settings loaded', settingsFromStorage[this.name]);
       settingsFromStorage = settingsFromStorage[this.name];
       this.setAll(settingsFromStorage);
+    } else {
+      utils.debugLog('Settings in storage are empty');
     }
 
     return this;

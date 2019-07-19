@@ -1,5 +1,6 @@
 import config from './config';
 import utils from './utils';
+import Color from './Color';
 import DataManagement from './DataManagement';
 
 /** Class DataProcessing */
@@ -464,35 +465,24 @@ export default class DataProcessing extends DataManagement {
    */
   setLabelColors(data) {
     this.labelsCache = this.labelsCache || {
-      'www.facebook.com': 'rgb(60, 90, 153)',
-      'www.youtube.com': 'rgb(252, 4, 4)',
-      'github.com': 'rgb(20, 20, 20)',
-      'mail.google.com': 'rgb(212, 70, 56)',
-      'www.google.com': 'rgb(52, 132, 240)',
-      'www.google.pl': 'rgb(52, 132, 240)',
+      'www.google.com': new Color('google').color,
+      'www.google.pl': new Color('google').color,
+      'www.youtube.com': new Color('youtube').color,
+      'www.facebook.com': new Color('facebook').color,
+      'www.instagram.com': new Color('instagram').color,
+      'github.com': new Color('github').color,
+      'mail.google.com': new Color('gmail').color,
     };
     this.colors = this.colors || [
-      '#00ffff',
-      '#f0ffff',
-      '#f5f5dc',
-      '#000000',
-      '#0000ff',
-      '#a52a2a',
-      '#00ffff',
-      '#00008b',
-      '#008b8b',
-      '#a9a9a9',
-      '#006400',
-      '#bdb76b',
-      '#8b008b',
-      '#556b2f',
-      '#d19eff',
-      '#b86bff',
-      '#a038ff',
-      '#8805ff',
-      '#6d00d1',
-      '#53009e',
-      '#38006b',
+      new Color('primary100').color,
+      new Color('primary200').color,
+      new Color('primary300').color,
+      new Color('primary400').color,
+      new Color('primary500').color,
+      new Color('primary600').color,
+      new Color('primary700').color,
+      new Color('primary800').color,
+      new Color('primary900').color,
     ];
 
     data.colors = [];
@@ -528,24 +518,48 @@ export default class DataProcessing extends DataManagement {
     this.totalDomains = Object.keys(this.data).length - 2;
   }
 
-  processFirstDoughnutData() {
+  processPagesVisitedToday() {
     this.pagesVisitedTodayArrayData = this.getSortedPagesVisitedInGivenPeriod('Today');
     this.pagesVisitedToday = this.addOtherData(this.pagesVisitedTodayArrayData, 10);
     this.setLabelColors(this.pagesVisitedToday);
+
+    return {
+      chartData: this.pagesVisitedToday,
+      tableData: this.pagesVisitedTodayArrayData,
+    };
   }
 
-  processDoughnutsData() {
+  processPagesVisitedYesterday() {
     this.pagesVisitedYesterdayArrayData = this.getSortedPagesVisitedInGivenPeriod('Yesterday');
     this.pagesVisitedYesterday = this.addOtherData(this.pagesVisitedYesterdayArrayData, 10);
     this.setLabelColors(this.pagesVisitedYesterday);
 
+    return {
+      chartData: this.pagesVisitedYesterday,
+      tableData: this.pagesVisitedYesterdayArrayData,
+    };
+  }
+
+  processPagesVisitedThisMonth() {
     this.pagesVisitedThisMonthArrayData = this.getSortedPagesVisitedInGivenPeriod('Month');
     this.pagesVisitedThisMonth = this.addOtherData(this.pagesVisitedThisMonthArrayData, 10);
     this.setLabelColors(this.pagesVisitedThisMonth);
 
+    return {
+      chartData: this.pagesVisitedThisMonth,
+      tableData: this.pagesVisitedThisMonthArrayData,
+    };
+  }
+
+  processPagesVisitedAllTime() {
     this.pagesVisitedAllTimeArrayData = this.getSortedPagesVisitedInGivenPeriod('Year');
     this.pagesVisitedAllTime = this.addOtherData(this.pagesVisitedAllTimeArrayData, 10);
     this.setLabelColors(this.pagesVisitedAllTime);
+
+    return {
+      chartData: this.pagesVisitedAllTime,
+      tableData: this.pagesVisitedAllTimeArrayData,
+    };
   }
 
   processLinesChartsData() {

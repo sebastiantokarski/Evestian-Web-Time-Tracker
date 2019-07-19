@@ -63,7 +63,10 @@ export default class DoughnutChart extends Component {
       const percentage = (itemDataInSeconds / DataProcessing.sum(chartData.data) * 100).toFixed(2);
 
       hoveredItemName = this.props.chartData.labels[hoveredItemIndex];
-      customTextInside = `${text}\n${hoveredItemName.replace(/(.{17})..+/, '$1...')}\n${percentage}%`;
+
+      const shortenName = hoveredItemName.replace(/(.{17})..+/, '$1...');
+
+      customTextInside = `${text}\n${shortenName}\n${percentage}%`;
     } else {
       customTextInside = this.parseArrayOfSecondsToTimeString(chartData.data);
     }
@@ -80,7 +83,7 @@ export default class DoughnutChart extends Component {
   }
 
   render() {
-    if (!this.props.renderOnLoad) {
+    if (!this.props.renderOnLoad || !this.props.chartData) {
       return null;
     }
 
@@ -123,7 +126,6 @@ export default class DoughnutChart extends Component {
 
 DoughnutChart.propTypes = {
   chartData: PropTypes.object,
-  chartName: PropTypes.string,
   renderOnLoad: PropTypes.bool,
   handleChartHover: PropTypes.func,
 };

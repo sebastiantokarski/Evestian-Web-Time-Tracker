@@ -9,3 +9,50 @@ $secondaryDarkColor: #00b2cc;
 $borderColor: #cac7c7;
 $borderPrimaryColor: $primaryDarkColor;
 $disabledColor: #cac7c7;
+
+$primary900: #4a148c;
+$primary800: #6a1b9a;
+$primary700: #7b1fa2;
+$primary600: #8e24aa;
+$primary500: #9c27b0;
+$primary400: #ab47bc;
+$primary300: #ba68c8;
+$primary200: #ce93d8;
+$primary100: #e1bee7;
+$primary50: #f3e5f5;
+
+$google: #3484f0;
+$youtube: #fc0404;
+$facebook: #3c5a99;
+$instagram: #cb4186;
+$github: #141414;
+$gmail: #d44638;
+
+
+:export {
+  primary: $primaryColor;
+  primaryLight: $primaryLightColor;
+  primaryDark: $primaryDarkColor;
+
+  secondary: $secondaryColor;
+  secondaryLight: $secondaryLightColor;
+  secondaryDark: $secondaryDarkColor;
+
+  primary900: $primary900;
+  primary800: $primary800;
+  primary700: $primary700;
+  primary600: $primary600;
+  primary500: $primary500;
+  primary400: $primary400;
+  primary300: $primary300;
+  primary200: $primary200;
+  primary100: $primary100;
+  primary50: $primary50;
+
+  google: $google;
+  youtube: $youtube;
+  facebook: $facebook;
+  instagram: $instagram;
+  github: $github;
+  gmail: $gmail;
+}
