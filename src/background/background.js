@@ -12,6 +12,7 @@ class Background {
    */
   constructor() {
     this.currentState = chrome.idle.IdleState.ACTIVE;
+    this.setBeforeSave = [];
 
     if (config.DEVELOPMENT_MODE) {
       this._hotReload = new HotReload();
@@ -92,8 +93,14 @@ class Background {
         '\nFrom:', sender);
 
     switch (request.action) {
+      case 'saveFaviconColorAfterSave':
+        setTimeout(() => {
+          this.dataManagement.data[request.hostname][request.key] = request.value;
+        }, config.INTERVAL_UPDATE_S);
+        return true;
+
       // first save custom property, then go to case 'save'
-      case 'customSave':
+      case 'saveFaviconColor':
         this.dataManagement.data[request.hostname][request.key] = request.value;
 
       case 'save':
@@ -209,6 +216,7 @@ class Background {
     });
 
     settings.setOnChangedListener(this.onChangedInBackground, this);
+
   }
 
   updateDataCallback() {
@@ -235,7 +243,7 @@ class Background {
   }
 
   updateStorageCallback() {
-    this.dataManagement.saveInStorage();
+    this.dataManagement.saveInStorage(null);
   }
 
   /**

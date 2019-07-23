@@ -19,6 +19,10 @@ export default class MainTabs extends Component {
       pagesVisitedYesterday: this.dataProcessing.processPagesVisitedYesterday(),
       pagesVisitedThisMonth: this.dataProcessing.processPagesVisitedThisMonth(),
       pagesVisitedAllTime: this.dataProcessing.processPagesVisitedAllTime(),
+      timeSpentInHours: null,
+      timeSpentInHoursTotal: null,
+      timeSpentEachDayOfTheWeek: null,
+      timeSpentEachDayOfTheWeekTotal: null,
     };
 
     this.handleChartHover = this.handleChartHover.bind(this);
@@ -32,12 +36,21 @@ export default class MainTabs extends Component {
   }
 
   performRestOfWork() {
-    this.dataProcessing.processLinesChartsData();
+    this.setState({
+      timeSpentInHours: this.dataProcessing.processTimeSpentInHours(),
+      timeSpentInHoursTotal: this.dataProcessing.processTimeSpentInHoursTotal(),
+      timeSpentEachDayOfTheWeek: this.dataProcessing.processTimeSpentEachDayOfTheWeek(),
+      timeSpentEachDayOfTheWeekTotal: this.dataProcessing.processTimeSpentEachDayOfTheWeekTotal(),
+    });
   }
 
   componentDidMount() {
-    window.addEventListener('load', this.performRestOfWork);
+    window.addEventListener('load', this.performRestOfWork, false);
   }
+
+  componentWillUnmount() {
+    window.removeEventListener('load', this.performRestOfWork, false);
+}
 
   render() {
     return (
@@ -90,12 +103,12 @@ export default class MainTabs extends Component {
           <Tab eventKey="more" title="More">
             <LineChart
               chartTitle="Time spent each hour"
-              chartData1={ this.dataProcessing.timeSpentInHours }
-              chartData2={ this.dataProcessing.timeSpentInHoursTotal } />
+              chartData1={ this.state.timeSpentInHours }
+              chartData2={ this.state.timeSpentInHoursTotal } />
             <LineChart
               chartTitle="Time spent each day of the week"
-              chartData1={ this.dataProcessing.timeSpentEachDayOfTheWeek }
-              chartData2={ this.dataProcessing.timeSpentEachDayOfTheWeekTotal } />
+              chartData1={ this.state.timeSpentEachDayOfTheWeek }
+              chartData2={ this.state.timeSpentEachDayOfTheWeekTotal } />
           </Tab>
         </Tabs>
       </div>

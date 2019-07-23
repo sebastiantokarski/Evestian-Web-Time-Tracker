@@ -73,6 +73,7 @@ export default class LineChart extends Component {
                   type: 'linear',
                   ticks: {
                     suggestedMin: 0,
+                    suggestedMax: 60,
                   },
                 }],
               },

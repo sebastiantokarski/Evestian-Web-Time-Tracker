@@ -13,15 +13,23 @@ new MessageHandler();
 
 chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
   const currHostname = window.location.hostname;
-  const currHostnameData = data[config.EXTENSION_DATA_NAME][currHostname];
-  const faviconUrl = currHostnameData ? currHostnameData[config.FAVICON_URL] : null;
+  const currHostnameData = data[config.EXTENSION_DATA_NAME] ? data[config.EXTENSION_DATA_NAME][currHostname] : null;
   const image = document.createElement('img');
   const script = document.createElement('script');
+
+  let hostnameDataExists = true;
+  let faviconUrl = currHostnameData ? currHostnameData[config.FAVICON_URL] : null;
 
   // @todo Here a new one data object for hostname should be created
   if (!currHostnameData) {
     utils.debugLog('Data not found for', location.hostname);
-    return;
+    hostnameDataExists = false;
+
+    if (document.querySelector('link[rel="shortcut icon"]')) {
+      faviconUrl = document.querySelector('link[rel="shortcut icon"]').href;
+    } else {
+      return;
+    }
   }
 
   if (!faviconUrl) {
@@ -29,7 +37,7 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
     return;
   }
 
-  if (currHostnameData[config.FAVICON_COLOR]) {
+  if (currHostnameData && currHostnameData[config.FAVICON_COLOR]) {
     const faviconColor = currHostnameData[config.FAVICON_COLOR];
 
     utils.debugLog(`%cFavicon color ${faviconColor} %c  `,
@@ -718,7 +726,7 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
         }
 
         document.getElementById('${config.ID_PREFIX}message-handler').dataset.message = JSON.stringify({
-          action: 'customSave',
+          action: '${hostnameDataExists ? 'saveFaviconColor' : 'saveFaviconColorAfterSave'}',
           dataName: '${config.EXTENSION_DATA_NAME}',
           hostname: '${currHostname}',
           key: '${config.FAVICON_COLOR}',

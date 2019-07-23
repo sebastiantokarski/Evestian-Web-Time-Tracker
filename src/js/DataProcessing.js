@@ -562,7 +562,7 @@ export default class DataProcessing extends DataManagement {
     };
   }
 
-  processLinesChartsData() {
+  processTimeSpentInHours() {
     const timeSpentInHoursDataArray = this.getTimeSpentInHours();
 
     this.timeSpentInHours = {
@@ -570,6 +570,10 @@ export default class DataProcessing extends DataManagement {
       labels: timeSpentInHoursDataArray.map((hour) => hour[0]),
     };
 
+    return this.timeSpentInHours;
+  }
+
+  processTimeSpentInHoursTotal() {
     let timeSpentInHoursTotalDataArray = this.getAllHours();
     const timeMap = this.constructor.createSimpleMap(24, 0);
 
@@ -582,8 +586,10 @@ export default class DataProcessing extends DataManagement {
       labels: timeSpentInHoursTotalDataArray.map((hour) => hour[0]),
     };
 
+    return this.timeSpentInHoursTotal;
+  }
 
-    // // @todo new year bug @line356
+  processTimeSpentEachDayOfTheWeek() {
     const timeSpentEachDayOfTheWeekDataArray = this.getTimeSpentInDaysOfTheWeek();
 
     this.timeSpentEachDayOfTheWeek = {
@@ -591,12 +597,18 @@ export default class DataProcessing extends DataManagement {
       labels: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0])),
     };
 
+    return this.timeSpentEachDayOfTheWeek;
+  }
+
+  processTimeSpentEachDayOfTheWeekTotal() {
     const timeSpentEachDayOfTheWeekTotalDataArray = this.getTimeSpentInDaysOfTheWeekTotal();
 
     this.timeSpentEachDayOfTheWeekTotal = {
       data: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) => Math.round(dayOfTheWeek[1] / 60)),
       labels: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0])),
     };
+
+    return this.timeSpentEachDayOfTheWeekTotal;
   }
 
   /**
