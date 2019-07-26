@@ -48,7 +48,7 @@ export default class Settings extends Component {
       inputConfig.type = inputConfig.type.slice(0, -1);
 
       return this.state.settings[name].map((inputValue) => {
-        // @ Maybe spread operator
+        // @todo Maybe spread operator
         const input = this.renderInput(name, inputConfig, inputValue);
 
         return <Fragment>

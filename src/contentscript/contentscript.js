@@ -13,7 +13,8 @@ new MessageHandler();
 
 chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
   const currHostname = window.location.hostname;
-  const currHostnameData = data[config.EXTENSION_DATA_NAME] ? data[config.EXTENSION_DATA_NAME][currHostname] : null;
+  const spentTimeData = data[config.EXTENSION_DATA_NAME];
+  const currHostnameData = spentTimeData ? spentTimeData[currHostname] : null;
   const image = document.createElement('img');
   const script = document.createElement('script');
 

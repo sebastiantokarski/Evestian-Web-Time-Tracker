@@ -216,7 +216,6 @@ class Background {
     });
 
     settings.setOnChangedListener(this.onChangedInBackground, this);
-
   }
 
   updateDataCallback() {

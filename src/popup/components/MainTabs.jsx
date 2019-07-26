@@ -50,7 +50,7 @@ export default class MainTabs extends Component {
 
   componentWillUnmount() {
     window.removeEventListener('load', this.performRestOfWork, false);
-}
+  }
 
   render() {
     return (
