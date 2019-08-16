@@ -22,7 +22,7 @@ export default class DoughnutChart extends Component {
           const fontSize = texts.length === 1 ? 24 : 20;
 
           ctx.restore();
-          ctx.font = `${fontSize}px Roboto sans-serif`;
+          ctx.font = `${fontSize}px Courier sans-serif`;
           ctx.textBaseline = 'middle';
 
           for (let i = 0; i < texts.length; i++) {
@@ -40,6 +40,23 @@ export default class DoughnutChart extends Component {
 
   parseArrayOfSecondsToTimeString(array) {
     return DataProcessing.parseSecondsIntoTime(DataProcessing.sum(array));
+  }
+
+  /**
+   * @param {string} text
+   * @param {number} [maxLength=20]
+   * @return {string}
+   */
+  getShortenText(text, maxLength = 20) {
+    const regex = new RegExp(`(.{${maxLength}})..+`);
+
+    text = text.replace(regex, '$1...');
+
+    if (text.slice(-4) === '....') {
+      text = text.slice(0, -1);
+    }
+
+    return text;
   }
 
   onChartHover(chartData, event, items) {
@@ -64,7 +81,7 @@ export default class DoughnutChart extends Component {
 
       hoveredItemName = this.props.chartData.labels[hoveredItemIndex];
 
-      const shortenName = hoveredItemName.replace(/(.{17})..+/, '$1...');
+      const shortenName = this.getShortenText(hoveredItemName, 17);
 
       customTextInside = `${text}\n${shortenName}\n${percentage}%`;
     } else {
@@ -72,7 +89,7 @@ export default class DoughnutChart extends Component {
     }
 
     this.lastHoveredItemIndex = hoveredItemIndex;
-    this.props.handleChartHover(hoveredItemName);
+    this.props.handleChartHover(this.props.chartTable, hoveredItemName);
 
     chart.options.customTextInside = customTextInside;
     chart.update();
@@ -126,6 +143,7 @@ export default class DoughnutChart extends Component {
 
 DoughnutChart.propTypes = {
   chartData: PropTypes.object,
+  chartTable: PropTypes.string,
   renderOnLoad: PropTypes.bool,
   handleChartHover: PropTypes.func,
 };

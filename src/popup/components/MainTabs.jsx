@@ -29,9 +29,9 @@ export default class MainTabs extends Component {
     this.performRestOfWork = this.performRestOfWork.bind(this);
   }
 
-  handleChartHover(item) {
+  handleChartHover(chartTable, item) {
     this.setState({
-      hoveredChartItem: item,
+      [`${chartTable}HoveredItem`]: item,
     });
   }
 
@@ -60,44 +60,48 @@ export default class MainTabs extends Component {
             <DoughnutChart
               renderOnLoad
               chartData={ this.state.pagesVisitedToday.chartData }
+              chartTable="myChartTodayTable"
               handleChartHover={ this.handleChartHover } />
             <Table
               className="myChartTodayTable"
               tableData={ this.state.pagesVisitedToday.tableData }
-              hoveredChartItem={ this.state.hoveredChartItem }
+              hoveredChartItem={ this.state.myChartTodayTableHoveredItem }
               striped />
           </Tab>
           <Tab eventKey="yesterday" title="Yesterday">
             <DoughnutChart
               renderOnLoad
               chartData={ this.state.pagesVisitedYesterday.chartData }
+              chartTable="myChartYesterdayTable"
               handleChartHover={ this.handleChartHover } />
             <Table
               className="myChartYesterdayTable"
               tableData={ this.state.pagesVisitedYesterday.tableData }
-              hoveredChartItem={ this.state.hoveredChartItem }
+              hoveredChartItem={ this.state.myChartYesterdayTableHoveredItem }
               striped />
           </Tab>
           <Tab eventKey="thisMonth" title="This Month">
             <DoughnutChart
               renderOnLoad
               chartData={ this.state.pagesVisitedThisMonth.chartData }
+              chartTable="myChartThisMonthTable"
               handleChartHover={ this.handleChartHover } />
             <Table
               className="myChartThisMonthTable"
               tableData={ this.state.pagesVisitedThisMonth.tableData }
-              hoveredChartItem={ this.state.hoveredChartItem }
+              hoveredChartItem={ this.state.myChartThisMonthTableHoveredItem }
               striped />
           </Tab>
           <Tab eventKey="myChartAllTime" title="All Time">
             <DoughnutChart
               renderOnLoad
               chartData={ this.state.pagesVisitedAllTime.chartData }
+              chartTable="myChartLastMonthTable"
               handleChartHover={ this.handleChartHover } />
             <Table
               className="myChartLastMonthTable"
               tableData={ this.state.pagesVisitedAllTime.tableData }
-              hoveredChartItem={ this.state.hoveredChartItem }
+              hoveredChartItem={ this.state.myChartLastMonthTableHoveredItem }
               striped />
           </Tab>
           <Tab eventKey="more" title="More">

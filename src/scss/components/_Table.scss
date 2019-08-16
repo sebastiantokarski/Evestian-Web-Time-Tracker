@@ -7,7 +7,20 @@
 
   }
 
-  .active {
+  td {
+
+    &:after {
+      display: block;
+      content: attr(hoverText);
+      font-weight: bold;
+      height: 0;
+      color: transparent;
+      overflow: hidden;
+      visibility: hidden;
+    }
+  }
+
+  .active td {
     font-weight: bold;
   }
 

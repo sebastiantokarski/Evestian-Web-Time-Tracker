@@ -28,20 +28,20 @@ export default class Table extends Component {
 
     return this.props.tableData.map((item, index) => {
       itemIndex = index + 1;
-      itemName = item[0].replace(/(.{30})..+/, '$1...');
+      itemName = item[0].replace(/(.{27})..+/, '$1...');
       itemFavicon = item[2] ? item[2] : this.defaultFavUrl;
       itemTime = DataProcessing.parseSecondsIntoTime(item[1]);
 
       return (
         <tr key={ itemIndex } className={ this.props.hoveredChartItem === item[0] ? 'active' : '' }>
-          <td>{ itemIndex }</td>
-          <td>
+          <td hoverText={ itemIndex }>{ itemIndex }</td>
+          <td className="faviconCell">
             <Lazy onError={ this.handleImageError }>
               <img className="favImage" src={ itemFavicon } />
             </Lazy>
           </td>
-          <td><span>{ itemName }</span></td>
-          <td className="spentTimeCell"><span>{ itemTime }</span></td>
+          <td hoverText={ itemIndex < 10 && itemName }><span>{ itemName }</span></td>
+          <td hoverText={ itemTime } className="spentTimeCell"><span>{ itemTime }</span></td>
         </tr>
       );
     });
