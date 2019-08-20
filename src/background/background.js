@@ -154,28 +154,26 @@ class Background {
     clearInterval(this.updateStorageInterval);
   }
 
-  onChangedInBackground(changes, area) {
-    const settingsChanges = changes[settings.name];
+  /**
+   * @param {object} settingsChanges
+   */
+  onChangedSettingsInBackground(settingsChanges) {
+    const oldValue = settingsChanges.oldValue.IS_ENABLED;
+    const newValue = settingsChanges.newValue.IS_ENABLED;
+    const areDifferente = oldValue !== newValue;
 
-    if (settingsChanges && settings.area === area && settingsChanges.oldValue) {
-      const oldValue = settingsChanges.oldValue.IS_ENABLED;
-      const newValue = settingsChanges.newValue.IS_ENABLED;
-      const areDifferente = oldValue !== newValue;
+    if (areDifferente) {
+      switch (newValue) {
+        case true:
+          this.onEnableExtension();
+          break;
 
-      if (areDifferente) {
-        switch (newValue) {
-          case true:
-            this.onEnableExtension();
-            break;
-
-          case false:
-            this.onDisableExtension();
-            break;
-        }
+        case false:
+          this.onDisableExtension();
+          break;
       }
     }
   }
-
 
   /**
    * Execute all extension listeners.
@@ -215,7 +213,7 @@ class Background {
       }
     });
 
-    settings.setOnChangedListener(this.onChangedInBackground, this);
+    settings.setOnChangedListener(this.onChangedSettingsInBackground, this);
   }
 
   updateDataCallback() {
