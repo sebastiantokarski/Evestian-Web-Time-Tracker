@@ -38,18 +38,3 @@
     border-bottom: 1px solid $borderColor;
   }
 }
-
-.setting {
-  &-name {
-    font-weight: bold;
-  }
-
-  &-description {
-    font-size: .8rem;
-    line-height: 1.35;
-  }
-
-  &-input {
-    width: 100%;
-  }
-}

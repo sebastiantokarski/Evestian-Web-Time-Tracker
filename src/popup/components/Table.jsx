@@ -34,14 +34,14 @@ export default class Table extends Component {
 
       return (
         <tr key={ itemIndex } className={ this.props.hoveredChartItem === item[0] ? 'active' : '' }>
-          <td hoverText={ itemIndex }>{ itemIndex }</td>
+          <td data-hover-text={ itemIndex }>{ itemIndex }</td>
           <td className="faviconCell">
             <Lazy onError={ this.handleImageError }>
               <img className="favImage" src={ itemFavicon } />
             </Lazy>
           </td>
-          <td hoverText={ itemIndex < 10 && itemName }><span>{ itemName }</span></td>
-          <td hoverText={ itemTime } className="spentTimeCell"><span>{ itemTime }</span></td>
+          <td data-hover-text={ itemIndex < 10 && itemName }><span>{ itemName }</span></td>
+          <td data-hover-text={ itemTime } className="spentTimeCell"><span>{ itemTime }</span></td>
         </tr>
       );
     });

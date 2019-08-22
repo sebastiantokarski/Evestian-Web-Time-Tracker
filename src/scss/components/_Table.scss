@@ -11,7 +11,7 @@
 
     &:after {
       display: block;
-      content: attr(hoverText);
+      content: attr(data-hover-text);
       font-weight: bold;
       height: 0;
       color: transparent;
