@@ -132,14 +132,10 @@ class Settings {
     }, cb);
   }
 
-  onChangedCallback(changes, area) {
-    if (area === this.area) {
-      utils.debugLog('Changes in settings:', changes.settings);
-      // Synchronize all properties from storage
-      this.setAll(changes.settings.newValue);
-    }
-  }
-
+  /**
+   * @param {Function} cb
+   * @param {object} [bindEl]
+   */
   setOnChangedListener(cb, bindEl) {
     const onChangedEvent = chrome.storage.onChanged;
     const cbName = cb.name;
@@ -154,7 +150,14 @@ class Settings {
         configurable: false,
       });
 
-      onChangedEvent.addListener(bindedCb);
+      onChangedEvent.addListener((changes, area) => {
+        const settingsChanges = changes[this.name];
+
+        if (settingsChanges && this.area === area && settingsChanges.oldValue) {
+          utils.debugLog('Changes in settings:', settingsChanges);
+          bindedCb(settingsChanges);
+        }
+      });
       utils.debugLog('Listener successfully added', cbName);
     }
   }
@@ -174,7 +177,6 @@ class Settings {
   }
 
   async init() {
-    this.setOnChangedListener(this.onChangedCallback, this);
     await this.load();
   }
 }

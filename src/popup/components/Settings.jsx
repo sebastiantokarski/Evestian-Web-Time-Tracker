@@ -47,14 +47,14 @@ export default class Settings extends Component {
     if (inputConfig.type === 'inputs') {
       inputConfig.type = inputConfig.type.slice(0, -1);
 
-      return this.state.settings[name].map((inputValue) => {
-        // @todo Maybe spread operator
+      return this.state.settings[name].map((inputValue, index, arr) => {
         const input = this.renderInput(name, inputConfig, inputValue);
 
-        return <Fragment>
+        return <div className="setting-input-wrapper" key={ index }>
           { input }
-          <a href="#" className="remove-icon"></a>
-        </Fragment>;
+          { index !== 0 && <a href="#" className="remove-icon"></a> }
+          { index === arr.length - 1 && <a href="#" className="add-icon"></a>}
+        </div>;
       });
     } else if (inputConfig.type === 'checkbox') {
       return <Switch
@@ -68,18 +68,20 @@ export default class Settings extends Component {
 
   renderSettings() {
     const renderedSettings = Object.keys(settings.getAll()).map((key) => {
-      const colWidth = settings.config[key].type === 'inputs' ? 'col-9' : 'col-3';
+      const colWidth = settings.config[key].type === 'inputs' ? 'col-12' : 'col-3';
 
       return (
-        <div className="setting-item row" key={ settings.config[key].id }>
-          <div className="col-9">
-            <label className="setting-name">{ settings.config[key].name }</label>
-          </div>
-          <div className={ `${colWidth} align-items-center align-self-center` }>
-            { this.renderInputs(key, settings.config[key]) }
-          </div>
-          <div className="col-12">
-            <p className="setting-description">{ settings.config[key].description }</p>
+        <div className="setting-item" key={ settings.config[key].id }>
+          <div className="row">
+            <div className="col-9">
+              <label className="setting-name">{ settings.config[key].name }</label>
+            </div>
+            <div className={ `${colWidth} align-items-center align-self-center` }>
+              { this.renderInputs(key, settings.config[key]) }
+            </div>
+            <div className="col-12">
+              <p className="setting-description">{ settings.config[key].description }</p>
+            </div>
           </div>
         </div>
       );

@@ -1,0 +1,30 @@
+.setting {
+  &-name {
+    font-weight: bold;
+  }
+
+  &-description {
+    font-size: .8rem;
+    line-height: 1.35;
+  }
+
+  &-input-wrapper {
+    padding-bottom: .5rem;
+  }
+}
+
+.remove-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-left: .3rem;
+  background-image: url('../../assets/minus.svg');
+}
+
+.add-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-left: .3rem;
+  background-image: url('../../assets/plus.svg');
+}

@@ -16,8 +16,7 @@ export default class Header extends Component {
     this.assetsDir = '../../assets/';
     this.toggleMenu = this.toggleMenu.bind(this);
 
-    // @todo Some part of "onChangedListeners" are the same in many modules
-    settings.setOnChangedListener(this.onChangesSettingsHeader, this);
+    settings.setOnChangedListener(this.onChangedSettingsInHeader, this);
   }
 
   async getSettings() {
@@ -43,17 +42,13 @@ export default class Header extends Component {
     this.setState({ openedMenu: !this.state.openedMenu });
   }
 
-  onChangesSettingsHeader(changes, area) {
-    const settingsChanges = changes[settings.name];
+  onChangedSettingsInHeader(settingsChanges) {
+    const oldValue = settingsChanges.oldValue.IS_ENABLED;
+    const newValue = settingsChanges.newValue.IS_ENABLED;
+    const areDifferente = oldValue !== newValue;
 
-    if (settingsChanges && settings.area === area) {
-      const oldValue = settingsChanges.oldValue.IS_ENABLED;
-      const newValue = settingsChanges.newValue.IS_ENABLED;
-      const areDifferente = oldValue !== newValue;
-
-      if (areDifferente && newValue !== this.state.isAppEnabled) {
-        this.setState({ isAppEnabled: newValue });
-      }
+    if (areDifferente && newValue !== this.state.isAppEnabled) {
+      this.setState({ isAppEnabled: newValue });
     }
   }
 
