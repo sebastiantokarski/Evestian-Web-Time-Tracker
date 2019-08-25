@@ -3,7 +3,6 @@ import config from '../js/config';
 import settings from '../js/settings';
 import utils from '../js/utils';
 import DataManagement from '../js/DataManagement';
-import HotReload from './hot-reload';
 
 /** Class Background */
 class Background {
@@ -13,11 +12,6 @@ class Background {
   constructor() {
     this.currentState = chrome.idle.IdleState.ACTIVE;
     this.setBeforeSave = [];
-
-    if (config.DEVELOPMENT_MODE) {
-      this._hotReload = new HotReload();
-    }
-
     this.dataManagement = new DataManagement(config.EXTENSION_DATA_NAME);
     this.dataManagement.loadFromStorage();
   }

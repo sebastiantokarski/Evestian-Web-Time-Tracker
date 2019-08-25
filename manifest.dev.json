@@ -1,9 +1,9 @@
 {
     "name": "Evestian Web Time Tracker",
     "short_name": "__MSG_short_name__",
-    "description": "__MSG_description__",
+    "description": "DEV __MSG_description__ __VERSION__",
     "author": "Ewelina Suska, Sebastian Tokarski",
-    "version": "0.0.9",
+    "version": "0.0.902",
     "default_locale": "en",
     "offline_enabled": true,
     "manifest_version": 2,
@@ -15,13 +15,14 @@
     },
     "background": {
         "scripts": [
-            "background/background.js"
+            "background/index.js",
+            "background/hot-reload.js"
         ]
     },
     "content_scripts": [
       {
         "matches": ["<all_urls>"],
-        "js": ["contentscript/contentscript.js"]
+        "js": ["contentscript/index.js"]
       }
     ],
     "permissions": [
@@ -38,7 +39,7 @@
             "128": "assets/icon128.png"
         },
         "default_title": "Evestian Web Time Tracker",
-        "default_popup": "popup/popup.html"
+        "default_popup": "popup/index.html"
     },
     "debug": true
 }

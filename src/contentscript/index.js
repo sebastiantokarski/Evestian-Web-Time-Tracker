@@ -41,9 +41,9 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
   if (currHostnameData && currHostnameData[config.FAVICON_COLOR]) {
     const faviconColor = currHostnameData[config.FAVICON_COLOR];
 
-    utils.debugLog(`%cFavicon color ${faviconColor} %c  `,
-        'color: #1E90FF',
-        `background-color: ${faviconColor}`);
+    utils.debugLog(`%c  %c Favicon color ${faviconColor}`,
+        `background-color: ${faviconColor}; border-radius: 50%;`,
+        'color: #1E90FF');
     return;
   }
 

@@ -2,17 +2,23 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-const SRC_DIR = path.resolve(__dirname, 'src');
 const BUILD_DIR = path.resolve(__dirname, 'build');
 
 module.exports = {
   entry: {
-    contentscript: path.resolve(__dirname, 'src/contentscript/contentscript.js'),
-    background: path.resolve(__dirname, 'src/background/background.js'),
-    popup: path.resolve(__dirname, 'src/popup/popup.js'),
+    contentscript: path.resolve(__dirname, 'src/contentscript/index.js'),
+    background: path.resolve(__dirname, 'src/background/index.js'),
+    popup: path.resolve(__dirname, 'src/popup/app.js'),
   },
   output: {
-    filename: '[name]/[name].js',
+    filename: (chunkData) => {
+      switch (chunkData.chunk.name) {
+        case 'popup':
+            return '[name]/app.js';
+        default:
+          return '[name]/index.js';
+      }
+    },
     path: BUILD_DIR,
   },
   watch: false,
@@ -68,12 +74,8 @@ module.exports = {
       ],
     }),
     new CopyWebpackPlugin([{
-      from: 'manifest.json',
-      transform(content) {
-        return content
-          .toString()
-          .replace(/,\s+\"debug":\s\w+/, '');
-      }
+      from: 'manifest.prod.json',
+      to: 'manifest.json',
     }, {
       from: 'assets/',
       to: 'assets',
@@ -81,8 +83,11 @@ module.exports = {
       from: '_locales/',
       to: '_locales',
     }, {
-      from: 'src/popup/popup.html',
+      from: 'src/popup/index.html',
       to: 'popup',
-    }])
+    }]),
+    new webpack.DefinePlugin({
+      __VERSION__: JSON.stringify('12345')
+   })
   ],
 }

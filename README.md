@@ -14,7 +14,11 @@ npm install
 ## Building
 
 ```javascript
-npm run build
+// Development mode
+npm run dev
+
+// Production mode
+npm run build:prod
 ```
 
 ## How to start

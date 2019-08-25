@@ -1,18 +1,28 @@
 const path = require('path');
+const ReplacePlugin = require('webpack-plugin-replace');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-const SRC_DIR = path.resolve(__dirname, 'src');
 const BUILD_DIR = path.resolve(__dirname, 'dev');
 
 module.exports = {
   entry: {
-    contentscript: path.resolve(__dirname, 'src/contentscript/contentscript.js'),
-    background: path.resolve(__dirname, 'src/background/background.js'),
-    popup: path.resolve(__dirname, 'src/popup/popup.js'),
+    contentscript: path.resolve(__dirname, 'src/contentscript/index.js'),
+    background: path.resolve(__dirname, 'src/background/index.js'),
+    hotReload: path.resolve(__dirname, 'src/background/hot-reload.js'),
+    popup: path.resolve(__dirname, 'src/popup/app.js'),
   },
   output: {
-    filename: '[name]/[name].js',
+    filename: (chunkData) => {
+      switch (chunkData.chunk.name) {
+        case 'hotReload':
+          return 'background/hot-reload.js';
+        case 'popup':
+            return '[name]/app.js';
+        default:
+          return '[name]/index.js';
+      }
+    },
     path: BUILD_DIR,
   },
   watch: true,
@@ -72,7 +82,8 @@ module.exports = {
       ],
     }),
     new CopyWebpackPlugin([{
-      from: 'manifest.json',
+      from: 'manifest.dev.json',
+      to: 'manifest.json',
     }, {
       from: 'assets/',
       to: 'assets',
@@ -80,8 +91,18 @@ module.exports = {
       from: '_locales/',
       to: '_locales',
     }, {
-      from: 'src/popup/popup.html',
+      from: 'src/popup/index.html',
       to: 'popup',
-    }])
+    }]),
+    new ReplacePlugin({
+      include: [
+        'manifest.dev.json',
+        'manifest.prod.json',
+        'package.json'
+      ],
+      values: {
+        __VERSION__: '123'
+      }
+    })
   ],
 }
