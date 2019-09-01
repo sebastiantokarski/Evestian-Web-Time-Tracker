@@ -20,18 +20,17 @@ class Settings {
    */
   get config() {
     return {
-      BLACKLIST_PROTOCOL: {
+      BLACKLISTED_URLS: {
         id: 0,
-        name: 'Protocols on blacklist',
+        name: 'Blacklisted URLs',
         type: 'inputs',
         default: [
-          'chrome:',
-          'chrome-extension:',
-          'vivaldi:',
-          'file:',
+          'file://*',
+          'chrome://*',
+          'chrome-extension://*',
         ],
-        description: `Lista protokołów, na których wtyczka ma nie zliczać spędzonego czasu.
-          Przykładowo strony konfiguracyjne przeglądarki, czy pliki otwierane w przeglądarce`,
+        description: `Lista stron, na których wtyczka ma nie zliczać spędzonego czasu.
+        Przykładowo strony konfiguracyjne przeglądarki, czy pliki otwierane w przeglądarce`,
       },
       COUNTY_ONLY_ACTIVE_STATE: {
         id: 1,

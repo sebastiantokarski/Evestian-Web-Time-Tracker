@@ -17,15 +17,19 @@ class Background {
   }
 
   /**
-   * Check if protocol from url is blacklisted.
+   * Check if url is blacklisted.
    *
    * @param  {string} url
    * @return {boolean}
    */
-  isProtocolOnBlacklist(url) {
-    const blacklistProtocol = settings.BLACKLIST_PROTOCOL;
+  isURLOnBlacklist(url) {
+    const blacklistedURLs = settings.BLACKLISTED_URLS;
 
-    return blacklistProtocol.indexOf(utils.getFromUrl('protocol', url)) !== -1;
+    return blacklistedURLs.filter((blacklistedUrl) => {
+      const regex = new RegExp(blacklistedUrl);
+
+      return regex.test(url);
+    }).length > 0;
   }
 
   // eslint-disable-next-line jsdoc/require-description-complete-sentence
@@ -217,7 +221,7 @@ class Background {
       const tab = utils.getActiveTab(window.tabs);
       const hostname = utils.getFromUrl('hostname', tab.url);
 
-      if (tab && utils.isWindowActive(window) && !this.isProtocolOnBlacklist(tab.url)
+      if (tab && utils.isWindowActive(window) && !this.isURLOnBlacklist(tab.url)
         && (this.isStateActive(this.currentState) || utils.isSoundFromTab(tab))) {
         const details = this.dataManagement.updateDataFor(hostname, tab);
 
