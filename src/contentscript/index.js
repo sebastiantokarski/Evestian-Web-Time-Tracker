@@ -3,10 +3,9 @@ import utils from '../js/utils';
 import MessageHandler from '../js/MessageHandler';
 
 /**
- * @todo saving image in extension directory
+ * @todo Saving image in extension directory.
  *
- * @todo Maybe API
- * @link https://www.google.com/s2/favicons?domain=google.com
+ * Maybe API link: https://www.google.com/s2/favicons?domain=google.com.
  */
 
 new MessageHandler();

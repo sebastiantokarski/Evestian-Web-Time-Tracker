@@ -1,6 +1,6 @@
 /**
- * Class representing main extension config
- * Properties are noeditable
+ * Class representing main extension config.
+ * Properties are noeditable.
  * */
 class Config {
   /**

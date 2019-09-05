@@ -3,7 +3,7 @@ import utils from './utils';
 import Color from './Color';
 import DataManagement from './DataManagement';
 
-/** Class DataProcessing */
+/** Class DataProcessing. */
 export default class DataProcessing extends DataManagement {
   /**
    * Constructor same as in Data class.
@@ -62,7 +62,7 @@ export default class DataProcessing extends DataManagement {
     const newArray = [];
 
     for (const key in obj) {
-      if (!obj.hasOwnProperty(key)) continue;
+      if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
 
       newArray.push([
         key,
@@ -158,14 +158,14 @@ export default class DataProcessing extends DataManagement {
     const allYears = [];
 
     for (const hostname in this.data) {
-      if (!this.data.hasOwnProperty(hostname)
+      if (!Object.prototype.hasOwnProperty.call(this.data, hostname)
           || !this.isThisHostnameData(hostname)) continue;
 
 
       const years = this.data[hostname];
 
       for (const year in years) {
-        if (!years.hasOwnProperty(year)
+        if (!Object.prototype.hasOwnProperty.call(years, year)
             || typeof years[year] !== 'object'
             || years[year] === null) continue;
 
@@ -194,7 +194,7 @@ export default class DataProcessing extends DataManagement {
         weekDetails = allYears[i][1][config.WEEK_DETAILS];
 
         for (const key in weekDetails) {
-          if (!weekDetails.hasOwnProperty(key)) continue;
+          if (!Object.prototype.hasOwnProperty.call(weekDetails, key)) continue;
 
           allDaysOfTheWeek.push([
             key,
@@ -251,7 +251,7 @@ export default class DataProcessing extends DataManagement {
       unit = parentUnit[i][1];
 
       for (const key in unit) {
-        if (!unit.hasOwnProperty(key)
+        if (!Object.prototype.hasOwnProperty.call(unit, key)
             || (typeof unit[key] !== 'object' && isChildrenUnitNotObject)
             || key === config.ALL_TIME) continue;
 
@@ -265,11 +265,10 @@ export default class DataProcessing extends DataManagement {
     return all;
   }
 
-  // eslint-disable-next-line jsdoc/require-description-complete-sentence
   /**
    * Returns an array with pages visited in given period sorted descending.
    *
-   * @param  {string} periodName - (Today|Yesterday|Month|Year)
+   * @param  {string} periodName - (Today|Yesterday|Month|Year).
    * @param  {string} [period]
    * @return {Array}
    */
@@ -279,7 +278,7 @@ export default class DataProcessing extends DataManagement {
     const data = this.data;
 
     for (const key in data) {
-      if (!data.hasOwnProperty(key)) continue;
+      if (!Object.prototype.hasOwnProperty.call(data, key)) continue;
       if (this.isThisHostnameData(key) && this[methodName](key, period)) {
         pagesArray.push([
           key,
@@ -310,7 +309,7 @@ export default class DataProcessing extends DataManagement {
     const hoursMap = this.constructor.createSimpleMap(24, 0);
 
     for (const hostname in this.data) {
-      if (!this.data.hasOwnProperty(hostname)) continue;
+      if (!Object.prototype.hasOwnProperty.call(this.data, hostname)) continue;
       if (this.isThisHostnameData(hostname)) {
         const today = this.getTodayData(hostname);
 
@@ -332,7 +331,7 @@ export default class DataProcessing extends DataManagement {
     const minutesMap = this.constructor.createSimpleMap(60, 0);
 
     for (const hostname in this.data) {
-      if (!this.data.hasOwnProperty(hostname)
+      if (!Object.prototype.hasOwnProperty.call(this.data, hostname)
           || !this.isThisHostnameData(hostname)) continue;
 
       const today = this.getTodayData(hostname);
@@ -359,13 +358,14 @@ export default class DataProcessing extends DataManagement {
     const minutesMap = this.constructor.createSimpleMap(60, 0);
 
     for (const hostname in this.data) {
-      if (!this.data.hasOwnProperty(hostname)
+      if (!Object.prototype.hasOwnProperty.call(this.data, hostname)
           || !this.isThisHostnameData(hostname)) continue;
 
       const hours = this.getAllHours(hostname);
 
       for (const minute in hours) {
-        if (!hours.hasOwnProperty(minute) || minute === config.ALL_TIME) continue;
+        if (!Object.prototype.hasOwnProperty.call(hours, minute)
+            || minute === config.ALL_TIME) continue;
 
         minutesMap[minute] += hours[minute];
       }
@@ -383,7 +383,7 @@ export default class DataProcessing extends DataManagement {
     const daysOfTheWeekMap = this.constructor.createSimpleMap(7, 0, 1);
 
     for (const hostname in this.data) {
-      if (!this.data.hasOwnProperty(hostname)
+      if (!Object.prototype.hasOwnProperty.call(this.data, hostname)
           || !this.isThisHostnameData(hostname)) continue;
 
       // @todo if this will launch at the beginning of new year, there will be a problem
@@ -393,7 +393,7 @@ export default class DataProcessing extends DataManagement {
       let weekOfTheYear;
 
       for (const week in weekDetails) {
-        if (!weekDetails.hasOwnProperty(week)) continue;
+        if (!Object.prototype.hasOwnProperty.call(weekDetails, week)) continue;
 
         weekOfTheYear = week.split('-')[0];
         dayOfTheWeek = week.split('-')[1];

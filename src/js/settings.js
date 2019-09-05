@@ -2,8 +2,8 @@ import utils from './utils';
 import thenChrome from 'then-chrome';
 
 /**
- * Class representing extension settings
- * Every property user can change in options
+ * Class representing extension settings.
+ * Every property user can change in options.
  */
 class Settings {
   /**
@@ -112,7 +112,7 @@ class Settings {
     const objSettings = {};
 
     for (const key in this) {
-      if (!this.hasOwnProperty(key)) continue;
+      if (!Object.prototype.hasOwnProperty.call(this, key)) continue;
 
       objSettings[key] = this[key];
     }

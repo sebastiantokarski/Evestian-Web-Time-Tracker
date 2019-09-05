@@ -196,7 +196,7 @@ class Utils {
    * Get active and focused tab.
    *
    * @param  {object[]} tabs
-   * @return {object|boolean} tab object or false
+   * @return {object|boolean} Tab object or false.
    */
   getActiveTab(tabs) {
     let i = 0;
@@ -258,7 +258,7 @@ class Utils {
    *
    * @param  {object} obj
    * @param  {string} property
-   * @return {object} obj
+   * @return {object}
    */
   increment(obj, property) {
     if (!obj[property]) {

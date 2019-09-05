@@ -11,6 +11,8 @@ export default class Settings extends Component {
     };
 
     this.handleSettingChange = this.handleSettingChange.bind(this);
+    this.handleTargetSettingChange = this.handleTargetSettingChange.bind(this);
+    this.addNewSettingItem = this.addNewSettingItem.bind(this);
   }
 
   async getSettings() {
@@ -19,10 +21,14 @@ export default class Settings extends Component {
     this.setState({ settings: settings.getAll() });
   }
 
-  handleSettingChange(e) {
+  handleTargetSettingChange(e) {
     const settingName = e.target.name;
     const settingValue = e.target.checked;
 
+    this.handleSettingChange(settingName, settingValue);
+  }
+
+  handleSettingChange(settingName, settingValue) {
     settings.set(settingName, settingValue);
 
     this.setState({
@@ -30,57 +36,72 @@ export default class Settings extends Component {
     });
   }
 
-  renderInput(name, inputConfig, inputValue) {
+  renderInput(settingKey, inputConfig, inputValue) {
     return (
       <input
         className={ `setting-${inputConfig.type}` }
-        name={ name }
+        name={ settingKey }
         type={ inputConfig.type }
-        checked={ inputConfig.type === 'checkbox' && this.state.settings[name] }
-        onChange={ this.handleSettingChange }
+        checked={ inputConfig.type === 'checkbox' && this.state.settings[settingKey] }
+        onChange={ this.handleTargetSettingChange }
         value={ inputValue ? inputValue : '' }></input>
     );
   }
 
-  renderInputs(name, inputConfig) {
+  // @todo Bug: Modal is closing (setting vs state.settings)
+  addNewSettingItem(settingKey) {
+    // const stateSettings = this.state.settings;
+    // const currValue = settings.get(settingKey);
+
+    // currValue.push('');
+    // stateSettings[settingKey] = currValue;
+
+    // this.setState({
+    //  settings: stateSettings,
+    // });
+  }
+
+  renderSingleSetting(settingKey, inputConfig) {
     // @todo Maybe some normal property like canAddOrRemove, not inputs...
     if (inputConfig.type === 'inputs') {
       inputConfig.type = inputConfig.type.slice(0, -1);
 
-      return this.state.settings[name].map((inputValue, index, arr) => {
-        const input = this.renderInput(name, inputConfig, inputValue);
+      return this.state.settings[settingKey].map((inputValue, index, arr) => {
+        const input = this.renderInput(settingKey, inputConfig, inputValue);
 
         return <div className="setting-input-wrapper" key={ index }>
           { input }
-          { index !== 0 && <a href="#" className="remove-icon"></a> }
-          { index === arr.length - 1 && <a href="#" className="add-icon"></a>}
+          <a href="#" className="remove-icon"></a>
+          { index === arr.length - 1 && <a href="#" className="add-icon" onClick={
+            () => this.addNewSettingItem(settingKey)
+          }></a> }
         </div>;
       });
     } else if (inputConfig.type === 'checkbox') {
       return <Switch
         config={ inputConfig }
-        name={ name }
-        value={ this.state.settings[name] }
-        handleSettingChange={ this.handleSettingChange } />;
+        name={ settingKey }
+        value={ this.state.settings[settingKey] }
+        handleSettingChange={ this.handleTargetSettingChange } />;
     }
-    return this.renderInput(name, inputConfig);
+    return this.renderInput(settingKey, inputConfig);
   }
 
   renderSettings() {
-    const renderedSettings = Object.keys(settings.getAll()).map((key) => {
-      const colWidth = settings.config[key].type === 'inputs' ? 'col-12' : 'col-3';
+    const renderedSettings = Object.keys(settings.getAll()).map((settingKey) => {
+      const colWidth = settings.config[settingKey].type === 'inputs' ? 'col-12' : 'col-3';
 
       return (
-        <div className="setting-item" key={ settings.config[key].id }>
+        <div className="setting-item" key={ settings.config[settingKey].id }>
           <div className="row">
             <div className="col-9">
-              <label className="setting-name">{ settings.config[key].name }</label>
+              <label className="setting-name">{ settings.config[settingKey].name }</label>
             </div>
             <div className={ `${colWidth} align-items-center align-self-center` }>
-              { this.renderInputs(key, settings.config[key]) }
+              { this.renderSingleSetting(settingKey, settings.config[settingKey]) }
             </div>
             <div className="col-12">
-              <p className="setting-description">{ settings.config[key].description }</p>
+              <p className="setting-description">{ settings.config[settingKey].description }</p>
             </div>
           </div>
         </div>

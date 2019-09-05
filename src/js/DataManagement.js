@@ -2,7 +2,7 @@ import config from './config';
 import thenChrome from 'then-chrome';
 import utils from './utils';
 
-/** Class Data */
+/** Class DataManagement. */
 export default class DataManagement {
   /**
    * Creating new data based on the data in chrome storage API.

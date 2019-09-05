@@ -1,7 +1,7 @@
 import utils from '../js/utils';
 
 /**
- * HotReload allows to automatically refresh whole extension
+ * HotReload allows to automatically refresh whole extension.
  */
 export default class HotReload {
   /**

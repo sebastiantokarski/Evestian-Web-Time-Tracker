@@ -4,7 +4,7 @@ import settings from '../js/settings';
 import utils from '../js/utils';
 import DataManagement from '../js/DataManagement';
 
-/** Class Background */
+/** Class Background. */
 class Background {
   /**
    * Constructor.
@@ -32,13 +32,12 @@ class Background {
     }).length > 0;
   }
 
-  // eslint-disable-next-line jsdoc/require-description-complete-sentence
   /**
    * Is current state active.
    *
-   * @todo There should be also check mouserover event (can be blur and mouseover in one time)
+   * @todo There should be also check mouserover event (can be blur and mouseover in one time).
    *
-   * @param  {string} state - active, idle or locked
+   * @param  {string} state - 'active', 'idle' or 'locked'.
    * @return {boolean}
    */
   isStateActive(state) {
@@ -178,14 +177,14 @@ class Background {
    */
   executeListeners() {
     /**
-     * Save data to storage if someone close browser window
+     * Save data to storage if someone close browser window.
      */
     chrome.windows.onRemoved.addListener(() => {
       this.dataManagement.saveInStorage();
     });
 
     /**
-     * Listens whether the current state of the user has changed
+     * Listens whether the current state of the user has changed.
      */
     chrome.idle.onStateChanged.addListener((state) => {
       this.currentState = state;
@@ -194,12 +193,12 @@ class Background {
 
     /**
      * Listens to all messages sent from chrome extension API
-     * e.g. from ../popup/popup.html.
+     * eg from ../popup/popup.html.
      */
     chrome.runtime.onMessage.addListener(this.onMessageCallback.bind(this));
 
     /**
-     *  Check whether new version is installed or extension was updated
+     * Check whether new version is installed or extension was updated.
      */
     chrome.runtime.onInstalled.addListener((details) => {
       if (details.reason === 'install') {
