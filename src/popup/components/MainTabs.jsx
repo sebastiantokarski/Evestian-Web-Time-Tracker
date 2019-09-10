@@ -18,7 +18,7 @@ export default class MainTabs extends Component {
       pagesVisitedToday: this.dataProcessing.processPagesVisitedToday(),
       pagesVisitedYesterday: this.dataProcessing.processPagesVisitedYesterday(),
       pagesVisitedThisMonth: this.dataProcessing.processPagesVisitedThisMonth(),
-      pagesVisitedAllTime: this.dataProcessing.processPagesVisitedAllTime(),
+      pagesVisitedAllTime: null,
       timeSpentInHours: null,
       timeSpentInHoursTotal: null,
       timeSpentEachDayOfTheWeek: null,
@@ -27,6 +27,7 @@ export default class MainTabs extends Component {
 
     this.handleChartHover = this.handleChartHover.bind(this);
     this.performRestOfWork = this.performRestOfWork.bind(this);
+    this.onSelectTab = this.onSelectTab.bind(this);
   }
 
   handleChartHover(chartTable, item) {
@@ -52,10 +53,32 @@ export default class MainTabs extends Component {
     window.removeEventListener('load', this.performRestOfWork, false);
   }
 
+  onSelectTab(selectedTabKey) {
+    switch (selectedTabKey) {
+      case 'myChartAllTime':
+        if (!this.state.pagesVisitedAllTime) {
+          this.setState({
+            pagesVisitedAllTime: this.dataProcessing.processPagesVisitedAllTime(),
+          });
+        }
+        break;
+      case 'more':
+        if (!this.state.timeSpentInHours) {
+          this.setState({
+            timeSpentInHours: this.dataProcessing.processTimeSpentInHours(),
+            timeSpentInHoursTotal: this.dataProcessing.processTimeSpentInHoursTotal(),
+            timeSpentEachDayOfTheWeek: this.dataProcessing.processTimeSpentEachDayOfTheWeek(),
+            timeSpentEachDayOfTheWeekTotal: this.dataProcessing.processTimeSpentEachDayOfTheWeekTotal(),
+          });
+        }
+        break;
+    }
+  }
+
   render() {
     return (
       <div className="main-tabs__section">
-        <Tabs defaultActiveKey="today" id="doughnuts-chart" >
+        <Tabs defaultActiveKey="today" id="doughnuts-chart" onSelect={ this.onSelectTab }>
           <Tab eventKey="today" title="Today">
             <DoughnutChart
               renderOnLoad
@@ -95,12 +118,12 @@ export default class MainTabs extends Component {
           <Tab eventKey="myChartAllTime" title="All Time">
             <DoughnutChart
               renderOnLoad
-              chartData={ this.state.pagesVisitedAllTime.chartData }
+              chartData={ this.state.pagesVisitedAllTime ? this.state.pagesVisitedAllTime.chartData : null }
               chartTable="myChartLastMonthTable"
               handleChartHover={ this.handleChartHover } />
             <Table
               className="myChartLastMonthTable"
-              tableData={ this.state.pagesVisitedAllTime.tableData }
+              tableData={ this.state.pagesVisitedAllTime ? this.state.pagesVisitedAllTime.tableData : null }
               hoveredChartItem={ this.state.myChartLastMonthTableHoveredItem }
               striped />
           </Tab>
