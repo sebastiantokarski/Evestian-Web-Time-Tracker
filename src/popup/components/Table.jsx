@@ -1,50 +1,59 @@
-import React, { Component } from 'react';
-import { Lazy } from 'react-lazy';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import DataProcessing from '../../js/DataProcessing';
+import TableRow from './TableRow.jsx';
 
 export default class Table extends Component {
   constructor(props) {
     super(props);
 
     this.defaultFavUrl = chrome.runtime.getURL('/assets/defaultFavicon.png');
-
-    this.handleImageError = this.handleImageError.bind(this);
   }
 
-  handleImageError(e) {
-    e.target.src = this.defaultFavUrl;
-  }
-
-  getDefaultFavicon() {
-    return <img src={ this.defaultFavUrl } />;
+  renderTableRow(tableRowData, index) {
+    return <TableRow tableRowData={ tableRowData }
+      index={ index }
+      hoveredChartItem={ this.props.hoveredChartItem }
+    />;
   }
 
   renderTableBody() {
-    let itemIndex;
-    let itemName;
-    let itemFavicon;
-    let itemTime;
+    let lastRowTime = 0;
+    const filterFirstRows = ({ time }, index) => {
+      if (index + 1 < this.props.rowLimit) {
+        return true;
+      }
+      lastRowTime += time;
+      return false;
+    };
 
-    return this.props.tableData.map((item, index) => {
-      itemIndex = index + 1;
-      itemName = item[0].replace(/(.{27})..+/, '$1...');
-      itemFavicon = item[2] ? item[2] : this.defaultFavUrl;
-      itemTime = DataProcessing.parseSecondsIntoTime(item[1]);
+    const tableRows = this.props.tableData
+        .filter(filterFirstRows)
+        .map(this.renderTableRow.bind(this));
 
-      return (
-        <tr key={ itemIndex } className={ this.props.hoveredChartItem === item[0] ? 'active' : '' }>
-          <td data-hover-text={ itemIndex }>{ itemIndex }</td>
-          <td className="faviconCell">
-            <Lazy onError={ this.handleImageError }>
-              <img className="favImage" src={ itemFavicon } />
-            </Lazy>
-          </td>
-          <td data-hover-text={ itemIndex < 10 && itemName }><span>{ itemName }</span></td>
-          <td data-hover-text={ itemTime } className="spentTimeCell"><span>{ itemTime }</span></td>
-        </tr>
-      );
-    });
+    const lastTableRow = this.renderTableRow({
+      name: 'Other',
+      faviconUrl: this.defaultFavUrl,
+      time: lastRowTime,
+    }, this.props.rowLimit - 1);
+
+    return (
+      <Fragment>
+        { tableRows }
+        { lastTableRow }
+      </Fragment>
+    );
+  }
+
+  getTableClasses() {
+    const classes = [];
+
+    if (this.props.striped) {
+      classes.push('table-striped');
+    } else if (this.props.hovered) {
+      classes.push('table-hovered');
+    }
+
+    return classes.join(' ');
   }
 
   render() {
@@ -53,7 +62,7 @@ export default class Table extends Component {
     }
 
     return (
-      <table className={ `table${ this.props.striped ? ' table-striped' : '' }` }>
+      <table className={ `table ${ this.getTableClasses() }` }>
         <tbody>{ this.renderTableBody() }</tbody>
       </table>
     );
@@ -62,6 +71,8 @@ export default class Table extends Component {
 
 Table.propTypes = {
   striped: PropTypes.bool,
+  hovered: PropTypes.bool,
   tableData: PropTypes.array,
   hoveredChartItem: PropTypes.oneOfType([PropTypes.string]),
+  rowLimit: PropTypes.number,
 };

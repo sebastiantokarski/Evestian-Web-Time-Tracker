@@ -35,6 +35,17 @@ export default class DataProcessing extends DataManagement {
   }
 
   /**
+   * Sorts descending objects.
+   *
+   * @param  {object[]} array
+   * @param  {string} propertyToCompare
+   * @return {*|undefined}
+   */
+  static sortDescendingObjects(array, propertyToCompare) {
+    return array.sort((a, b) => b[propertyToCompare] - a[propertyToCompare]);
+  }
+
+  /**
    * Creates map, where keys are numbers, and value is the same for every key.
    *
    * @param  {number} numberOfKeys
@@ -270,24 +281,24 @@ export default class DataProcessing extends DataManagement {
    *
    * @param  {string} periodName - (Today|Yesterday|Month|Year).
    * @param  {string} [period]
-   * @return {Array}
+   * @return {object[]}
    */
   getSortedPagesVisitedInGivenPeriod(periodName, period) {
     const methodName = `get${periodName}Data`;
-    const pagesArray = [];
+    const pagesData = [];
     const data = this.data;
 
     for (const key in data) {
       if (!Object.prototype.hasOwnProperty.call(data, key)) continue;
       if (this.isThisHostnameData(key) && this[methodName](key, period)) {
-        pagesArray.push([
-          key,
-          this[methodName](key, period)[config.ALL_TIME],
-          data[key][config.FAVICON_URL],
-        ]);
+        pagesData.push({
+          name: key,
+          time: this[methodName](key, period)[config.ALL_TIME],
+          faviconUrl: data[key][config.FAVICON_URL],
+        });
       }
     }
-    return this.constructor.sortDescending(pagesArray, 1);
+    return this.constructor.sortDescendingObjects(pagesData, 'time');
   }
 
   /**
@@ -425,37 +436,43 @@ export default class DataProcessing extends DataManagement {
   }
 
   /**
+   * Empty chart data object.
+   *
+   * @return {object}
+   */
+  getEmptyChartData() {
+    return {
+      data: [],
+      labels: [],
+      colors: [],
+    };
+  }
+
+  /**
    * After limit in the array, add all data and put it
    * at the end of array with label 'Other'.
    *
-   * @param  {Array} arrayData
-   * @param  {number} limit
-   * @return {{
-   * data: Array,
-   * labels: Array
-   * }}
+   * @param {object[]} arrayData
+   * @param {number} limitData
+   * @return {{ data: number[], labels: string[], colors: string[] }}
    */
-  addOtherData(arrayData, limit) {
-    let other = 0;
-    const result = {
-      data: [],
-      labels: [],
-    };
+  generateChartData(arrayData, limitData) {
+    let othersTime = 0;
 
-    for (let i = 0; i < arrayData.length; i++) {
-      if (i < limit - 1) {
-        result.data.push(arrayData[i][1]);
-        result.labels.push(arrayData[i][0]);
+    const chartData = arrayData.reduce((chartData, singleData, index) => {
+      if (index + 1 < limitData) {
+        chartData.data.push(singleData.time);
+        chartData.labels.push(singleData.name);
       } else {
-        if (result.labels.indexOf('Other') === -1) {
-          result.labels.push('Other');
-        }
-        other += arrayData[i][1];
+        othersTime += singleData.time;
       }
-    }
-    result.data[result.data.length] = other;
+      return chartData;
+    }, this.getEmptyChartData());
 
-    return result;
+    chartData.data.push(othersTime);
+    chartData.labels.push('Other');
+
+    return chartData;
   }
 
   /**
@@ -520,7 +537,7 @@ export default class DataProcessing extends DataManagement {
 
   processPagesVisitedToday() {
     this.pagesVisitedTodayArrayData = this.getSortedPagesVisitedInGivenPeriod('Today');
-    this.pagesVisitedToday = this.addOtherData(this.pagesVisitedTodayArrayData, 10);
+    this.pagesVisitedToday = this.generateChartData(this.pagesVisitedTodayArrayData, 10);
     this.setLabelColors(this.pagesVisitedToday);
 
     return {
@@ -531,7 +548,7 @@ export default class DataProcessing extends DataManagement {
 
   processPagesVisitedYesterday() {
     this.pagesVisitedYesterdayArrayData = this.getSortedPagesVisitedInGivenPeriod('Yesterday');
-    this.pagesVisitedYesterday = this.addOtherData(this.pagesVisitedYesterdayArrayData, 10);
+    this.pagesVisitedYesterday = this.generateChartData(this.pagesVisitedYesterdayArrayData, 10);
     this.setLabelColors(this.pagesVisitedYesterday);
 
     return {
@@ -542,7 +559,7 @@ export default class DataProcessing extends DataManagement {
 
   processPagesVisitedThisMonth() {
     this.pagesVisitedThisMonthArrayData = this.getSortedPagesVisitedInGivenPeriod('Month');
-    this.pagesVisitedThisMonth = this.addOtherData(this.pagesVisitedThisMonthArrayData, 10);
+    this.pagesVisitedThisMonth = this.generateChartData(this.pagesVisitedThisMonthArrayData, 10);
     this.setLabelColors(this.pagesVisitedThisMonth);
 
     return {
@@ -553,7 +570,7 @@ export default class DataProcessing extends DataManagement {
 
   processPagesVisitedAllTime() {
     this.pagesVisitedAllTimeArrayData = this.getSortedPagesVisitedInGivenPeriod('Year');
-    this.pagesVisitedAllTime = this.addOtherData(this.pagesVisitedAllTimeArrayData, 10);
+    this.pagesVisitedAllTime = this.generateChartData(this.pagesVisitedAllTimeArrayData, 10);
     this.setLabelColors(this.pagesVisitedAllTime);
 
     return {

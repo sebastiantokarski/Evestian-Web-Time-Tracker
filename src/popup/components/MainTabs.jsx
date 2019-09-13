@@ -54,21 +54,23 @@ export default class MainTabs extends Component {
   }
 
   onSelectTab(selectedTabKey) {
+    const dataProcess = this.dataProcessing;
+
     switch (selectedTabKey) {
       case 'myChartAllTime':
         if (!this.state.pagesVisitedAllTime) {
           this.setState({
-            pagesVisitedAllTime: this.dataProcessing.processPagesVisitedAllTime(),
+            pagesVisitedAllTime: dataProcess.processPagesVisitedAllTime(),
           });
         }
         break;
       case 'more':
         if (!this.state.timeSpentInHours) {
           this.setState({
-            timeSpentInHours: this.dataProcessing.processTimeSpentInHours(),
-            timeSpentInHoursTotal: this.dataProcessing.processTimeSpentInHoursTotal(),
-            timeSpentEachDayOfTheWeek: this.dataProcessing.processTimeSpentEachDayOfTheWeek(),
-            timeSpentEachDayOfTheWeekTotal: this.dataProcessing.processTimeSpentEachDayOfTheWeekTotal(),
+            timeSpentInHours: dataProcess.processTimeSpentInHours(),
+            timeSpentInHoursTotal: dataProcess.processTimeSpentInHoursTotal(),
+            timeSpentEachDayOfTheWeek: dataProcess.processTimeSpentEachDayOfTheWeek(),
+            timeSpentEachDayOfTheWeekTotal: dataProcess.processTimeSpentEachDayOfTheWeekTotal(),
           });
         }
         break;
@@ -89,7 +91,7 @@ export default class MainTabs extends Component {
               className="myChartTodayTable"
               tableData={ this.state.pagesVisitedToday.tableData }
               hoveredChartItem={ this.state.myChartTodayTableHoveredItem }
-              striped />
+              striped hovered rowLimit={ 10 }/>
           </Tab>
           <Tab eventKey="yesterday" title="Yesterday">
             <DoughnutChart
@@ -101,7 +103,7 @@ export default class MainTabs extends Component {
               className="myChartYesterdayTable"
               tableData={ this.state.pagesVisitedYesterday.tableData }
               hoveredChartItem={ this.state.myChartYesterdayTableHoveredItem }
-              striped />
+              striped hovered rowLimit={ 10 } />
           </Tab>
           <Tab eventKey="thisMonth" title="This Month">
             <DoughnutChart
@@ -113,19 +115,23 @@ export default class MainTabs extends Component {
               className="myChartThisMonthTable"
               tableData={ this.state.pagesVisitedThisMonth.tableData }
               hoveredChartItem={ this.state.myChartThisMonthTableHoveredItem }
-              striped />
+              striped hovered rowLimit={ 10 } />
           </Tab>
           <Tab eventKey="myChartAllTime" title="All Time">
             <DoughnutChart
               renderOnLoad
-              chartData={ this.state.pagesVisitedAllTime ? this.state.pagesVisitedAllTime.chartData : null }
-              chartTable="myChartLastMonthTable"
+              chartData={ this.state.pagesVisitedAllTime
+                ? this.state.pagesVisitedAllTime.chartData
+                : null }
+              chartTable="myCharAllTimeTable"
               handleChartHover={ this.handleChartHover } />
             <Table
-              className="myChartLastMonthTable"
-              tableData={ this.state.pagesVisitedAllTime ? this.state.pagesVisitedAllTime.tableData : null }
-              hoveredChartItem={ this.state.myChartLastMonthTableHoveredItem }
-              striped />
+              className="myCharAllTimeTable"
+              tableData={ this.state.pagesVisitedAllTime
+                ? this.state.pagesVisitedAllTime.tableData
+                : null }
+              hoveredChartItem={ this.state.myChartAllTimeTableHoveredItem }
+              striped hovered rowLimit={ 10 } />
           </Tab>
           <Tab eventKey="more" title="More">
             <LineChart
