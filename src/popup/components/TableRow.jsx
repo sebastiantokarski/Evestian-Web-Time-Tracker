@@ -1,19 +1,35 @@
 import React, { Component } from 'react';
-import { Lazy } from 'react-lazy';
+import { LazyGroup } from 'react-lazy';
 import PropTypes from 'prop-types';
 import DataProcessing from '../../js/DataProcessing';
+import Loader from 'react-loader-spinner';
+import Color from '../../js/Color';
 
 export default class TableRow extends Component {
   constructor(props) {
     super(props);
 
-    this.defaultFavUrl = chrome.runtime.getURL('/assets/defaultFavicon.png');
+    this.state = {
+      imageLoader: true,
+    };
 
+    this.defaultFavUrl = chrome.runtime.getURL('/assets/defaultFavicon.png');
+    this.loaderColor = new Color('primary');
+
+    this.handleImageLoad = this.handleImageLoad.bind(this);
     this.handleImageError = this.handleImageError.bind(this);
+  }
+
+  handleImageLoad() {
+    this.setState({
+      imageLoader: false,
+    });
   }
 
   handleImageError(e) {
     e.target.src = this.defaultFavUrl;
+
+    this.handleImageLoad();
   }
 
   render() {
@@ -26,14 +42,25 @@ export default class TableRow extends Component {
 
     return (
       <tr key={ tableRowIndex } className={ isActive }>
-        <td data-hover-text={ tableRowIndex }>{ tableRowIndex }</td>
-        <td>
-          <Lazy onError={ this.handleImageError }>
-            <img className="favImage" src={ faviconUrl } />
-          </Lazy>
+        <td className="index-cell" data-hover-text={ tableRowIndex }>{ tableRowIndex }</td>
+        <td className="favicon-cell">
+          <LazyGroup
+            cushion="200px">
+            <img
+              className="favicon-image"
+              onError={ this.handleImageError }
+              onLoad={ this.handleImageLoad }
+              src={ faviconUrl } />
+            { this.state.imageLoader &&
+              <Loader
+                type="Oval"
+                color={ this.loaderColor.color }
+                width={ 16 }
+                height={ 16 } /> }
+          </LazyGroup>
         </td>
         <td data-hover-text={ tableRowIndex < 10 && shortenName }><span>{ shortenName }</span></td>
-        <td data-hover-text={ parsedTime }><span>{ parsedTime }</span></td>
+        <td className="text-right" data-hover-text={ parsedTime }><span>{ parsedTime }</span></td>
       </tr>
     );
   }

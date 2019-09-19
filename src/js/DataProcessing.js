@@ -469,8 +469,10 @@ export default class DataProcessing extends DataManagement {
       return chartData;
     }, this.getEmptyChartData());
 
-    chartData.data.push(othersTime);
-    chartData.labels.push('Other');
+    if (othersTime) {
+      chartData.data.push(othersTime);
+      chartData.labels.push('Other');
+    }
 
     return chartData;
   }

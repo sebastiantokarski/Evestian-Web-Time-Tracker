@@ -1,0 +1,40 @@
+.index-cell {
+  width: 1%;
+}
+
+.favicon {
+  &-cell {
+    position: relative;
+    vertical-align: middle !important;
+    padding: 0;
+    width: 1%;
+
+    &:before {
+      content: ' ';
+      display: block;
+      width: 16px;
+    }
+  }
+
+  &-image {
+    display: table-cell;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+[aria-busy=true] {
+  position: absolute;
+  top: 0;
+}
+
+.react-lazy-wrapper {
+  opacity: 0;
+  transition: opacity .5s;
+
+  &--loaded,
+  &--failed {
+    opacity: 1;
+  }
+}
+

@@ -16,13 +16,24 @@ export default class Table extends Component {
     />;
   }
 
+  renderOthersRow(othersTime) {
+    if (othersTime) {
+      return this.renderTableRow({
+        name: 'Other',
+        faviconUrl: this.defaultFavUrl,
+        time: othersTime,
+      }, this.props.rowLimit - 1);
+    }
+    return null;
+  }
+
   renderTableBody() {
-    let lastRowTime = 0;
+    let othersTime = 0;
     const filterFirstRows = ({ time }, index) => {
       if (index + 1 < this.props.rowLimit) {
         return true;
       }
-      lastRowTime += time;
+      othersTime += time;
       return false;
     };
 
@@ -30,16 +41,12 @@ export default class Table extends Component {
         .filter(filterFirstRows)
         .map(this.renderTableRow.bind(this));
 
-    const lastTableRow = this.renderTableRow({
-      name: 'Other',
-      faviconUrl: this.defaultFavUrl,
-      time: lastRowTime,
-    }, this.props.rowLimit - 1);
+    const othersRow = this.renderOthersRow(othersTime);
 
     return (
       <Fragment>
         { tableRows }
-        { lastTableRow }
+        { othersRow }
       </Fragment>
     );
   }
