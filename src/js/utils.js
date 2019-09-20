@@ -191,7 +191,6 @@ class Utils {
     return a[property];
   }
 
-  // eslint-disable-next-line jsdoc/require-description-complete-sentence
   /**
    * Get active and focused tab.
    *
@@ -221,7 +220,6 @@ class Utils {
     return window && window.focused;
   }
 
-  // eslint-disable-next-line jsdoc/require-description-complete-sentence
   /**
    * Is there any sound from the tab (video, player, music).
    *
@@ -252,7 +250,6 @@ class Utils {
     }
   }
 
-  // eslint-disable-next-line jsdoc/require-description-complete-sentence
   /**
    * Add 1 to current number in a given property.
    *

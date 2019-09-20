@@ -5,9 +5,10 @@
     "es6": true
   },
   "extends": [
+    "google",
     "eslint:recommended",
     "plugin:react/recommended",
-    "google"
+    "plugin:jsdoc/recommended"
   ],
   "parserOptions": {
     "ecmaVersion": 2019,
@@ -21,37 +22,14 @@
     "react"
   ],
   "rules": {
-    "jsdoc/check-alignment": 1,
-    "jsdoc/check-examples": 1,
-    "jsdoc/check-indentation": 1,
-    "jsdoc/check-param-names": 1,
-    "jsdoc/check-syntax": 1,
-    "jsdoc/check-tag-names": 1,
-    "jsdoc/check-types": 1,
-    "jsdoc/implements-on-classes": 1,
-    "jsdoc/match-description": 1,
-    "jsdoc/newline-after-description": 1,
-    "jsdoc/no-types": 0,
-    "jsdoc/no-undefined-types": 1,
-    "jsdoc/require-description": 0,
-    "jsdoc/require-description-complete-sentence": 1,
-    "jsdoc/require-example": 0,
-    "jsdoc/require-hyphen-before-param-description": 1,
-    "jsdoc/require-jsdoc": 1,
-    "jsdoc/require-param": 1,
-    "jsdoc/require-param-description": 0,
-    "jsdoc/require-param-name": 1,
-    "jsdoc/require-param-type": 1,
-    "jsdoc/require-returns": 1,
-    "jsdoc/require-returns-check": 1,
     "jsdoc/require-returns-description": 0,
-    "jsdoc/require-returns-type": 1,
-    "jsdoc/valid-types": 1,
+    "jsdoc/require-param-description": 0,
     "max-len": ["error", 100],
     "newline-after-var": [ 2, "always"],
     "require-jsdoc" : 0,
     "no-fallthrough": 0,
-    "object-curly-spacing": [2, "always"]
+    "object-curly-spacing": [2, "always"],
+    "operator-linebreak": ["error", "before"]
   },
   "settings": {
     "jsdoc": {

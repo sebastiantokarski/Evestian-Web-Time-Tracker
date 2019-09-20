@@ -51,8 +51,8 @@ export default class TableRow extends Component {
               onError={ this.handleImageError }
               onLoad={ this.handleImageLoad }
               src={ faviconUrl } />
-            { this.state.imageLoader &&
-              <Loader
+            { this.state.imageLoader
+              && <Loader
                 type="Oval"
                 color={ this.loaderColor.color }
                 width={ 16 }
