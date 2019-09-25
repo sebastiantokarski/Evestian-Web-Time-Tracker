@@ -10,7 +10,7 @@ export default class TableRow extends Component {
     super(props);
 
     this.state = {
-      imageLoader: true,
+      setImageLoader: true,
     };
 
     this.defaultFavUrl = chrome.runtime.getURL('/assets/defaultFavicon.png');
@@ -22,7 +22,7 @@ export default class TableRow extends Component {
 
   handleImageLoad() {
     this.setState({
-      imageLoader: false,
+      setImageLoader: false,
     });
   }
 
@@ -32,35 +32,65 @@ export default class TableRow extends Component {
     this.handleImageLoad();
   }
 
-  render() {
-    const tableRowData = this.props.tableRowData;
-    const tableRowIndex = this.props.index + 1;
-    const shortenName = tableRowData.name && tableRowData.name.replace(/(.{27})..+/, '$1...');
-    const faviconUrl = tableRowData.faviconUrl ? tableRowData.faviconUrl : this.defaultFavUrl;
-    const parsedTime = tableRowData.time && DataProcessing.parseSecondsIntoTime(tableRowData.time);
-    const isActive = this.props.hoveredChartItem === tableRowData.name ? 'active' : '';
+  shortenText(text) {
+    return text.replace(/(.{27})..+/, '$1...');
+  }
+
+  renderButtonRow() {
+    const { tableRowData } = this.props;
 
     return (
-      <tr key={ tableRowIndex } className={ isActive }>
-        <td className="index-cell" data-hover-text={ tableRowIndex }>{ tableRowIndex }</td>
+      <tr className="show-more-row">
+        <td className="show-more-cell text-center" colSpan="4">
+          <button
+            className="show-more-btn"
+            onClick={tableRowData.handleOnClick}
+          >{tableRowData.name}</button>
+        </td>
+      </tr>
+    );
+  }
+
+  render() {
+    const { tableRowData, index, hoveredChartItem } = this.props;
+    const { setImageLoader } = this.state;
+
+    if (tableRowData.type === 'button') {
+      return this.renderButtonRow();
+    }
+
+    const shortenName = tableRowData.name && this.shortenText(tableRowData.name);
+    const faviconUrl = tableRowData.faviconUrl ? tableRowData.faviconUrl : this.defaultFavUrl;
+    const parsedTime = tableRowData.time && DataProcessing.parseSecondsIntoTime(tableRowData.time);
+    const isActive = hoveredChartItem === tableRowData.name;
+
+    return (
+      <tr key={index} className={isActive ? 'active' : ''}>
+        <td className="index-cell" data-hover-text={index}>{index}</td>
         <td className="favicon-cell">
-          <LazyGroup
-            cushion="200px">
+          <LazyGroup cushion="200px">
             <img
               className="favicon-image"
-              onError={ this.handleImageError }
-              onLoad={ this.handleImageLoad }
-              src={ faviconUrl } />
-            { this.state.imageLoader
-              && <Loader
+              onError={this.handleImageError}
+              onLoad={this.handleImageLoad}
+              src={faviconUrl}
+            />
+            {setImageLoader && (
+              <Loader
                 type="Oval"
-                color={ this.loaderColor.color }
-                width={ 16 }
-                height={ 16 } /> }
+                color={this.loaderColor.color}
+                width={16}
+                height={16}
+              />
+            )}
           </LazyGroup>
         </td>
-        <td data-hover-text={ tableRowIndex < 10 && shortenName }><span>{ shortenName }</span></td>
-        <td className="text-right" data-hover-text={ parsedTime }><span>{ parsedTime }</span></td>
+        <td data-hover-text={index < 10 && shortenName}>
+          <span>{shortenName}</span>
+        </td>
+        <td className="text-right" data-hover-text={parsedTime}>
+          <span>{parsedTime}</span>
+        </td>
       </tr>
     );
   }

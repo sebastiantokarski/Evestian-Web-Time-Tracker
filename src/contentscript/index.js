@@ -32,6 +32,11 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
     }
   }
 
+  if (currHostnameData[config.FAVICON_COLOR] === null) {
+    utils.debugLog('Favicon color is not available', currHostnameData);
+    return;
+  }
+
   if (!faviconUrl) {
     utils.debugLog('Favicon url not found for', currHostnameData);
     return;

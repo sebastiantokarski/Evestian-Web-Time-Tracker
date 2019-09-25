@@ -2,6 +2,18 @@
   width: 1%;
 }
 
+[data-hover-text] {
+  &:after {
+    display: block;
+    content: attr(data-hover-text);
+    font-weight: bold;
+    height: 0;
+    color: transparent;
+    overflow: hidden;
+    visibility: hidden;
+  }
+}
+
 .favicon {
   &-cell {
     position: relative;
@@ -38,3 +50,49 @@
   }
 }
 
+.show-more {
+
+  &-cell {
+    position: relative;
+
+    &:before,
+    &:after {
+      content: ' ';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      z-index: -1;
+      transition: all .3s ease-in-out;
+      background-size: 100%;
+      background-image: url('../../assets/arrowDown.svg');
+      transform: translateY(20%);
+    }
+
+    &:after {
+      transform: translate(-100%, 20%);
+    }
+
+    &:hover {
+
+      &:before {
+        transform: translate(700%, 20%);
+      }
+
+      &:after {
+        transform: translate(-800%, 20%);
+      }
+    }
+  }
+
+  &-btn {
+    position: relative;
+    background: none;
+    border: none;
+    height: 100%;
+    width: 100%;
+
+    &:hover {
+      font-weight: bold;
+    }
+  }
+}

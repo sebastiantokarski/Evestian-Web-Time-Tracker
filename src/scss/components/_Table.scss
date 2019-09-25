@@ -7,19 +7,6 @@
 
   }
 
-  td {
-
-    &:after {
-      display: block;
-      content: attr(data-hover-text);
-      font-weight: bold;
-      height: 0;
-      color: transparent;
-      overflow: hidden;
-      visibility: hidden;
-    }
-  }
-
   .active td {
     font-weight: bold;
   }

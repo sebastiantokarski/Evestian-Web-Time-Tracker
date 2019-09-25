@@ -7,13 +7,37 @@ export default class Table extends Component {
     super(props);
 
     this.defaultFavUrl = chrome.runtime.getURL('/assets/defaultFavicon.png');
+
+    const { rowLimit, tableData } = this.props;
+
+    this.state = {
+      numberOfRowsToShow: rowLimit,
+      renderShowMoreBtn: tableData.length > rowLimit,
+    };
+
+    this.showMoreRows = this.showMoreRows.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    const { rowLimit, tableData } = this.props;
+
+    if (prevProps.tableData !== tableData) {
+      this.setState({
+        renderShowMoreBtn: tableData.length > rowLimit,
+      });
+    }
   }
 
   renderTableRow(tableRowData, index) {
-    return <TableRow tableRowData={ tableRowData }
-      index={ index }
-      hoveredChartItem={ this.props.hoveredChartItem }
-    />;
+    const { hoveredChartItem } = this.props;
+
+    return (
+      <TableRow
+        tableRowData={tableRowData}
+        index={index + 1}
+        hoveredChartItem={hoveredChartItem}
+      />
+    );
   }
 
   renderOthersRow(othersTime) {
@@ -22,15 +46,38 @@ export default class Table extends Component {
         name: 'Other',
         faviconUrl: this.defaultFavUrl,
         time: othersTime,
-      }, this.props.rowLimit - 1);
+      },
+      this.state.numberOfRowsToShow - 1
+      );
     }
     return null;
+  }
+
+  renderShowMoreRow(othersTime) {
+    if (othersTime) {
+      return this.renderTableRow({
+        name: 'Show more',
+        type: 'button',
+        handleOnClick: this.showMoreRows,
+      });
+    }
+
+    return null;
+  }
+
+  showMoreRows() {
+    this.setState({
+      numberOfRowsToShow: this.props.tableData.length,
+      renderShowMoreBtn: false,
+    });
   }
 
   renderTableBody() {
     let othersTime = 0;
     const filterFirstRows = ({ time }, index) => {
-      if (index + 1 < this.props.rowLimit) {
+      const rIndex = index + 1;
+
+      if (rIndex <= this.state.numberOfRowsToShow) {
         return true;
       }
       othersTime += time;
@@ -42,21 +89,24 @@ export default class Table extends Component {
         .map(this.renderTableRow.bind(this));
 
     const othersRow = this.renderOthersRow(othersTime);
+    const showMoreRow = this.renderShowMoreRow(othersTime);
 
     return (
       <Fragment>
-        { tableRows }
-        { othersRow }
+        {tableRows}
+        {othersRow}
+        {this.state.renderShowMoreBtn && showMoreRow}
       </Fragment>
     );
   }
 
   getTableClasses() {
-    const classes = [];
+    const { striped, hovered } = this.props;
+    const classes = ['table'];
 
-    if (this.props.striped) {
+    if (striped) {
       classes.push('table-striped');
-    } else if (this.props.hovered) {
+    } else if (hovered) {
       classes.push('table-hovered');
     }
 
@@ -64,13 +114,15 @@ export default class Table extends Component {
   }
 
   render() {
-    if (!this.props.tableData) {
+    const { tableData } = this.props;
+
+    if (!tableData.length) {
       return null;
     }
 
     return (
-      <table className={ `table ${ this.getTableClasses() }` }>
-        <tbody>{ this.renderTableBody() }</tbody>
+      <table className={this.getTableClasses()}>
+        <tbody>{this.renderTableBody()}</tbody>
       </table>
     );
   }
