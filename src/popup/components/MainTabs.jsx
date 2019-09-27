@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import DoughnutChart from './DoughnutChart.jsx';
-import LineChart from './LineChart.jsx';
+import ChartDoughnut from './ChartDoughnut.jsx';
+import ChartLine from './ChartLine.jsx';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import Table from './Table.jsx';
@@ -86,7 +86,7 @@ export default class MainTabs extends Component {
           onSelect={this.onSelectTab}
         >
           <Tab eventKey="today" title="Today">
-            <DoughnutChart
+            <ChartDoughnut
               renderOnLoad
               chartData={this.state.pagesVisitedToday.chartData}
               chartTable="myChartTodayTable"
@@ -102,7 +102,7 @@ export default class MainTabs extends Component {
             />
           </Tab>
           <Tab eventKey="yesterday" title="Yesterday">
-            <DoughnutChart
+            <ChartDoughnut
               renderOnLoad
               chartData={this.state.pagesVisitedYesterday.chartData}
               chartTable="myChartYesterdayTable"
@@ -118,7 +118,7 @@ export default class MainTabs extends Component {
             />
           </Tab>
           <Tab eventKey="thisMonth" title="This Month">
-            <DoughnutChart
+            <ChartDoughnut
               renderOnLoad
               chartData={this.state.pagesVisitedThisMonth.chartData}
               chartTable="myChartThisMonthTable"
@@ -134,7 +134,7 @@ export default class MainTabs extends Component {
             />
           </Tab>
           <Tab eventKey="myChartAllTime" title="All Time">
-            <DoughnutChart
+            <ChartDoughnut
               renderOnLoad
               chartData={
                 this.state.pagesVisitedAllTime
@@ -158,12 +158,12 @@ export default class MainTabs extends Component {
             />
           </Tab>
           <Tab eventKey="more" title="More">
-            <LineChart
+            <ChartLine
               chartTitle="Time spent each hour"
               chartData1={this.state.timeSpentInHours}
               chartData2={this.state.timeSpentInHoursTotal}
             />
-            <LineChart
+            <ChartLine
               chartTitle="Time spent each day of the week"
               chartData1={this.state.timeSpentEachDayOfTheWeek}
               chartData2={this.state.timeSpentEachDayOfTheWeekTotal}

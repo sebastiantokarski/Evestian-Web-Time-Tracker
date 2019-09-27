@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Chart, Doughnut } from 'react-chartjs-2';
 import DataProcessing from '../../js/DataProcessing';
 
-export default class DoughnutChart extends Component {
+export default class ChartDoughnut extends Component {
   constructor(props) {
     super(props);
 
@@ -141,7 +141,7 @@ export default class DoughnutChart extends Component {
   }
 }
 
-DoughnutChart.propTypes = {
+ChartDoughnut.propTypes = {
   chartData: PropTypes.object,
   chartTable: PropTypes.string,
   renderOnLoad: PropTypes.bool,

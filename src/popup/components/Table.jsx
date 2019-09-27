@@ -67,7 +67,8 @@ export default class Table extends Component {
 
   showMoreRows() {
     this.setState({
-      numberOfRowsToShow: this.props.tableData.length,
+      // + 1 because we don't count '0'
+      numberOfRowsToShow: this.props.tableData.length + 1,
       renderShowMoreBtn: false,
     });
   }
@@ -77,7 +78,7 @@ export default class Table extends Component {
     const filterFirstRows = ({ time }, index) => {
       const rIndex = index + 1;
 
-      if (rIndex <= this.state.numberOfRowsToShow) {
+      if (rIndex < this.state.numberOfRowsToShow) {
         return true;
       }
       othersTime += time;

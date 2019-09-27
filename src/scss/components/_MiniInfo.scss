@@ -23,7 +23,7 @@ $arrowsSize: .7rem;
     &:after {
       content: '';
       position: absolute;
-      top: calc(50% - .25rem);
+      top: calc(50% - .3rem);
       background-size: $arrowsSize $arrowsSize;
       background-repeat: no-repeat;
       height: $arrowsSize;
@@ -32,13 +32,13 @@ $arrowsSize: .7rem;
 
     &:after {
       right: -1rem;
-      background-image: url('../../assets/rightArrow.svg');
+      background-image: url('../../assets/sliderArrowRight.svg');
 
     }
 
     &:before {
       left: -1rem;
-      background-image: url('../../assets/leftArrow.svg');
+      background-image: url('../../assets/sliderArrowLeft.svg');
     }
   }
 }

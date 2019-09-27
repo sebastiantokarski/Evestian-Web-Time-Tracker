@@ -3,6 +3,7 @@ import { LazyGroup } from 'react-lazy';
 import PropTypes from 'prop-types';
 import DataProcessing from '../../js/DataProcessing';
 import Loader from 'react-loader-spinner';
+import { uid } from 'react-uid';
 import Color from '../../js/Color';
 
 export default class TableRow extends Component {
@@ -40,7 +41,7 @@ export default class TableRow extends Component {
     const { tableRowData } = this.props;
 
     return (
-      <tr className="show-more-row">
+      <tr key={uid(tableRowData)} className="show-more-row">
         <td className="show-more-cell text-center" colSpan="4">
           <button
             className="show-more-btn"
@@ -65,7 +66,7 @@ export default class TableRow extends Component {
     const isActive = hoveredChartItem === tableRowData.name;
 
     return (
-      <tr key={index} className={isActive ? 'active' : ''}>
+      <tr key={uid(tableRowData)} className={isActive ? 'active' : ''}>
         <td className="index-cell" data-hover-text={index}>{index}</td>
         <td className="favicon-cell">
           <LazyGroup cushion="200px">

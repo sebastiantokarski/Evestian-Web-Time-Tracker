@@ -3,7 +3,7 @@ import { Chart, Line } from 'react-chartjs-2';
 import PropTypes from 'prop-types';
 import Color from '../../js/Color';
 
-export default class LineChart extends Component {
+export default class ChartLine extends Component {
   constructor(props) {
     super(props);
 
@@ -47,12 +47,14 @@ export default class LineChart extends Component {
                 data: this.props.chartData1.data,
                 borderColor: this.chartFirstColorBorder,
                 backgroundColor: this.chartFirstColorBackground,
+                pointStyle: 'circle',
               }, {
                 yAxisID: 'Global',
                 label: 'Global in minutes',
                 data: this.props.chartData2.data,
                 borderColor: this.chartSecondColorBorder,
                 backgroundColor: this.chartSecondColorBackground,
+                pointStyle: 'circle',
               }],
               labels: this.props.chartData2.labels,
             } }
@@ -77,6 +79,11 @@ export default class LineChart extends Component {
                   },
                 }],
               },
+              legend: {
+                labels: {
+                  usePointStyle: true,
+                },
+              },
             } } />
         </div>
       </section>
@@ -84,7 +91,7 @@ export default class LineChart extends Component {
   }
 }
 
-LineChart.propTypes = {
+ChartLine.propTypes = {
   chartTitle: PropTypes.string,
   chartData1: PropTypes.object,
   chartData2: PropTypes.object,
