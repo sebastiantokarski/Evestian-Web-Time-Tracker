@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { LazyGroup } from 'react-lazy';
-import PropTypes from 'prop-types';
-import DataProcessing from '../../js/DataProcessing';
 import Loader from 'react-loader-spinner';
 import { uid } from 'react-uid';
+import PropTypes from 'prop-types';
+import DataProcessing from '../../js/DataProcessing';
 import Color from '../../js/Color';
 
 export default class TableRow extends Component {
@@ -11,7 +11,7 @@ export default class TableRow extends Component {
     super(props);
 
     this.state = {
-      setImageLoader: true,
+      showImageLoader: true,
     };
 
     this.defaultFavUrl = chrome.runtime.getURL('/assets/defaultFavicon.png');
@@ -19,11 +19,12 @@ export default class TableRow extends Component {
 
     this.handleImageLoad = this.handleImageLoad.bind(this);
     this.handleImageError = this.handleImageError.bind(this);
+    this.renderFaviconCell = this.renderFaviconCell.bind(this);
   }
 
   handleImageLoad() {
     this.setState({
-      setImageLoader: false,
+      showImageLoader: false,
     });
   }
 
@@ -35,6 +36,37 @@ export default class TableRow extends Component {
 
   shortenText(text) {
     return text.replace(/(.{27})..+/, '$1...');
+  }
+
+  renderFaviconCell(faviconUrl, index) {
+    const { showImageLoader } = this.state;
+
+    return (
+      <td className="favicon-cell">
+        {
+          faviconUrl
+            ? <LazyGroup cushion="200px">
+              <img
+                className="favicon-image"
+                onError={ this.handleImageError }
+                onLoad={ this.handleImageLoad }
+                src={ faviconUrl } />
+              { showImageLoader
+                && index > 5
+                && <Loader
+                  type="Oval"
+                  color={this.loaderColor.color}
+                  width={16}
+                  height={16}
+                />
+              }
+            </LazyGroup>
+            : <img
+              className="favicon-image"
+              src={ this.defaultFavUrl } />
+        }
+      </td>
+    );
   }
 
   renderButtonRow() {
@@ -54,38 +86,19 @@ export default class TableRow extends Component {
 
   render() {
     const { tableRowData, index, hoveredChartItem } = this.props;
-    const { setImageLoader } = this.state;
 
     if (tableRowData.type === 'button') {
       return this.renderButtonRow();
     }
 
     const shortenName = tableRowData.name && this.shortenText(tableRowData.name);
-    const faviconUrl = tableRowData.faviconUrl ? tableRowData.faviconUrl : this.defaultFavUrl;
     const parsedTime = tableRowData.time && DataProcessing.parseSecondsIntoTime(tableRowData.time);
     const isActive = hoveredChartItem === tableRowData.name;
 
     return (
       <tr key={uid(tableRowData)} className={isActive ? 'active' : ''}>
         <td className="index-cell" data-hover-text={index}>{index}</td>
-        <td className="favicon-cell">
-          <LazyGroup cushion="200px">
-            <img
-              className="favicon-image"
-              onError={this.handleImageError}
-              onLoad={this.handleImageLoad}
-              src={faviconUrl}
-            />
-            {setImageLoader && (
-              <Loader
-                type="Oval"
-                color={this.loaderColor.color}
-                width={16}
-                height={16}
-              />
-            )}
-          </LazyGroup>
-        </td>
+        {this.renderFaviconCell(tableRowData.faviconUrl, index)}
         <td data-hover-text={index < 10 && shortenName}>
           <span>{shortenName}</span>
         </td>

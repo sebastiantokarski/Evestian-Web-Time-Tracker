@@ -48,26 +48,22 @@ export default class Settings extends Component {
     );
   }
 
-  // @todo Bug: Modal is closing (setting vs state.settings)
   addNewSettingItem(settingKey) {
-    // const stateSettings = this.state.settings;
-    // const currValue = settings.get(settingKey);
+    settings.get(settingKey).push('');
 
-    // currValue.push('');
-    // stateSettings[settingKey] = currValue;
-
-    // this.setState({
-    //  settings: stateSettings,
-    // });
+    this.setState({
+      settings: settings.getAll(),
+    });
   }
 
-  renderSingleSetting(settingKey, inputConfig) {
-    // @todo Maybe some normal property like canAddOrRemove, not inputs...
-    if (inputConfig.type === 'inputs') {
-      inputConfig.type = inputConfig.type.slice(0, -1);
+  isGroupOfInputs(settingDetails) {
+    return settingDetails.type === 'input' && settingDetails.default instanceof Array;
+  }
 
+  renderSingleSetting(settingKey, setting) {
+    if (this.isGroupOfInputs(setting)) {
       return this.state.settings[settingKey].map((inputValue, index, arr) => {
-        const input = this.renderInput(settingKey, inputConfig, inputValue);
+        const input = this.renderInput(settingKey, setting, inputValue);
 
         return <div className="setting-input-wrapper" key={ index }>
           { input }
@@ -77,31 +73,32 @@ export default class Settings extends Component {
           }></a> }
         </div>;
       });
-    } else if (inputConfig.type === 'checkbox') {
+    } else if (setting.type === 'checkbox') {
       return <Switch
-        config={ inputConfig }
+        config={ setting }
         name={ settingKey }
         value={ this.state.settings[settingKey] }
         handleSettingChange={ this.handleTargetSettingChange } />;
     }
-    return this.renderInput(settingKey, inputConfig);
+    return this.renderInput(settingKey, setting);
   }
 
   renderSettings() {
-    const renderedSettings = Object.keys(settings.getAll()).map((settingKey) => {
-      const colWidth = settings.config[settingKey].type === 'inputs' ? 'col-12' : 'col-3';
+    const renderedSettings = Object.keys(this.state.settings).map((settingKey) => {
+      const setting = settings.getDetails(settingKey);
+      const colWidth = this.isGroupOfInputs(setting) ? 'col-12' : 'col-3';
 
       return (
-        <div className="setting-item" key={ settings.config[settingKey].id }>
+        <div className="setting-item" key={ setting.id }>
           <div className="row">
             <div className="col-9">
-              <label className="setting-name">{ settings.config[settingKey].name }</label>
+              <label className="setting-name">{ setting.name }</label>
             </div>
             <div className={ `${colWidth} align-items-center align-self-center` }>
-              { this.renderSingleSetting(settingKey, settings.config[settingKey]) }
+              { this.renderSingleSetting(settingKey, setting) }
             </div>
             <div className="col-12">
-              <p className="setting-description">{ settings.config[settingKey].description }</p>
+              <p className="setting-description">{ setting.description }</p>
             </div>
           </div>
         </div>
@@ -117,6 +114,7 @@ export default class Settings extends Component {
 
   render() {
     if (!this.state.settings) {
+      // @todo loader
       return null;
     }
     return this.renderSettings();

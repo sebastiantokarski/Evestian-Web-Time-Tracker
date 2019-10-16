@@ -21,7 +21,7 @@ export default class Table extends Component {
   componentDidUpdate(prevProps) {
     const { rowLimit, tableData } = this.props;
 
-    if (prevProps.tableData !== tableData) {
+    if (tableData.length && prevProps.tableData !== tableData) {
       this.setState({
         renderShowMoreBtn: tableData.length > rowLimit,
       });
@@ -44,7 +44,6 @@ export default class Table extends Component {
     if (othersTime) {
       return this.renderTableRow({
         name: 'Other',
-        faviconUrl: this.defaultFavUrl,
         time: othersTime,
       },
       this.state.numberOfRowsToShow - 1
@@ -101,7 +100,7 @@ export default class Table extends Component {
     );
   }
 
-  getTableClasses() {
+  getTableClasses(additionalClass) {
     const { striped, hovered } = this.props;
     const classes = ['table'];
 
@@ -109,20 +108,22 @@ export default class Table extends Component {
       classes.push('table-striped');
     } else if (hovered) {
       classes.push('table-hovered');
+    } else if (additionalClass) {
+      classes.push(additionalClass);
     }
 
     return classes.join(' ');
   }
 
   render() {
-    const { tableData } = this.props;
+    const { tableData, className } = this.props;
 
     if (!tableData.length) {
       return null;
     }
 
     return (
-      <table className={this.getTableClasses()}>
+      <table className={this.getTableClasses(className)}>
         <tbody>{this.renderTableBody()}</tbody>
       </table>
     );
@@ -135,4 +136,5 @@ Table.propTypes = {
   tableData: PropTypes.array,
   hoveredChartItem: PropTypes.oneOfType([PropTypes.string]),
   rowLimit: PropTypes.number,
+  className: PropTypes.string,
 };

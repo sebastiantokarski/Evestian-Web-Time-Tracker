@@ -23,7 +23,7 @@ class Settings {
       BLACKLISTED_URLS: {
         id: 0,
         name: 'Blacklisted URLs',
-        type: 'inputs',
+        type: 'input',
         default: [
           'file://*',
           'chrome://*',
@@ -47,6 +47,18 @@ class Settings {
         default: true,
         description: 'Czy wtyczka jest włączona',
       },
+      TIME_ON_BADGE: {
+        id: 3,
+        name: 'Time on badge',
+        type: 'radio',
+        default: {
+          'timeSpentEachSiteToday': true,
+          'timeSpentToday': false,
+          'timeSpentAllTime': false,
+          'timeSpendEachSiteAllTime': false,
+        },
+        description: '',
+      },
     };
   }
 
@@ -65,6 +77,14 @@ class Settings {
       // @todo this[setting] should be private
       this[setting] = config[setting].default;
     });
+  }
+
+  /**
+   * @param {string} settingKey
+   * @return {object}
+   */
+  getDetails(settingKey) {
+    return this.config[settingKey];
   }
 
   /**

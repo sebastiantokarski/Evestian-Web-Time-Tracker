@@ -25,4 +25,4 @@ npm run build:prod
 
 1. Open [chrome://extensions/](chrome://extensions/)
 2. Enable Developer Mode by clicking the toggle switch next to **Developer mode**
-3. Click **Load unpacked** button and select directory Evestian-Web-Time-Tracker/dev
+3. Click **Load unpacked** button and select directory evestian-web-time-tracker/dev
