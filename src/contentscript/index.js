@@ -1,6 +1,7 @@
 import config from '../js/config';
 import utils from '../js/utils';
 import MessageHandler from '../js/MessageHandler';
+import settings from '../js/settings';
 
 /**
  * @todo Saving image in extension directory.
@@ -20,19 +21,25 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
   let hostnameDataExists = true;
   let faviconUrl = currHostnameData ? currHostnameData[config.FAVICON_URL] : null;
 
+  settings.init();
+
+  if (!settings.get('IS_ENABLED')) {
+    return;
+  }
+
   // @todo Here a new one data object for hostname should be created
   if (!currHostnameData) {
     utils.debugLog('Data not found for', location.hostname);
     hostnameDataExists = false;
 
-    if (document.querySelector('link[rel="shortcut icon"]')) {
+    if (document && document.querySelector('link[rel="shortcut icon"]')) {
       faviconUrl = document.querySelector('link[rel="shortcut icon"]').href;
     } else {
       return;
     }
   }
 
-  if (currHostnameData[config.FAVICON_COLOR] === null) {
+  if (currHostnameData && currHostnameData[config.FAVICON_COLOR] === null) {
     utils.debugLog('Favicon color is not available', currHostnameData);
     return;
   }

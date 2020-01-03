@@ -397,20 +397,30 @@ export default class DataProcessing extends DataManagement {
       if (!Object.prototype.hasOwnProperty.call(this.data, hostname)
           || !this.isThisHostnameData(hostname)) continue;
 
-      // @todo if this will launch at the beginning of new year, there will be a problem
-      const weekDetails = this.getYearData(hostname)[config.WEEK_DETAILS];
-      const currentWeek = utils.getCurrentWeekOfTheYear();
-      let dayOfTheWeek;
-      let weekOfTheYear;
+      const getFirstVisitYear = Number(this.data[config.FIRST_VISIT].match(/-(\d{4})$/)[1]);
+      const currentYear = Number(utils.getCurrentYear());
+      let weekDetails = null;
 
-      for (const week in weekDetails) {
-        if (!Object.prototype.hasOwnProperty.call(weekDetails, week)) continue;
+      for (let i = getFirstVisitYear; i < currentYear; i++) {
+        weekDetails = this.getYearData(hostname);
 
-        weekOfTheYear = week.split('-')[0];
-        dayOfTheWeek = week.split('-')[1];
+        if (!weekDetails) continue;
 
-        if (weekOfTheYear === currentWeek) {
-          daysOfTheWeekMap[dayOfTheWeek] += weekDetails[week];
+        weekDetails = this.getYearData(hostname)[config.WEEK_DETAILS];
+
+        const currentWeek = utils.getCurrentWeekOfTheYear();
+        let dayOfTheWeek;
+        let weekOfTheYear;
+
+        for (const week in weekDetails) {
+          if (!Object.prototype.hasOwnProperty.call(weekDetails, week)) continue;
+
+          weekOfTheYear = week.split('-')[0];
+          dayOfTheWeek = week.split('-')[1];
+
+          if (weekOfTheYear === currentWeek) {
+            daysOfTheWeekMap[dayOfTheWeek] += weekDetails[week];
+          }
         }
       }
     }
