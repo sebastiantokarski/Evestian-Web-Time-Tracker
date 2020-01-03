@@ -41,7 +41,7 @@ export default class DataManagement {
     const getStoragePromise = thenChrome.storage.local.get(this.dataName);
     let currentStorage;
 
-    await getStoragePromise.then((storage) => currentStorage = storage[this.dataName]);
+    await getStoragePromise.then(storage => (currentStorage = storage[this.dataName]));
 
     const merged = { ...currentStorage, ...this.data };
     const setStoragePromise = thenChrome.storage.local.set({ [this.dataName]: merged });
@@ -64,7 +64,7 @@ export default class DataManagement {
   checkDataSize() {
     chrome.storage.local.getBytesInUse(this.dataName, function(size) {
       const totalSize = chrome.storage.local.QUOTA_BYTES;
-      const percentage = (size / totalSize * 100).toFixed(2);
+      const percentage = ((size / totalSize) * 100).toFixed(2);
 
       utils.debugLog(`Used storage size in bytes: ${size}. Percentage: ${percentage}%`);
     });
@@ -79,21 +79,20 @@ export default class DataManagement {
   loadFromStorage() {
     const self = this;
 
-    return new Promise((resolve) => {
-      thenChrome.storage.local.get(self.dataName)
-          .then((data) => {
-            if (data[self.dataName]) {
-              self.data = data[self.dataName];
-              utils.debugLog(`Loaded from storage - ${self.dataName}:`, self.data);
-            } else {
-              self.createEmptyDataObject();
-              utils.debugLog(`Item not found in storage - ${self.dataName}`, self.data);
-            }
-            if (config.DEVELOPMENT_MODE) {
-              window.data = this;
-            }
-            resolve(self.data);
-          });
+    return new Promise(resolve => {
+      thenChrome.storage.local.get(self.dataName).then(data => {
+        if (data[self.dataName]) {
+          self.data = data[self.dataName];
+          utils.debugLog(`Loaded from storage - ${self.dataName}:`, self.data);
+        } else {
+          self.createEmptyDataObject();
+          utils.debugLog(`Item not found in storage - ${self.dataName}`, self.data);
+        }
+        if (config.DEVELOPMENT_MODE) {
+          window.data = this;
+        }
+        resolve(self.data);
+      });
     });
   }
 
@@ -289,9 +288,12 @@ export default class DataManagement {
       this.data[hostname][dataObj.currentYear][config.WEEK_DETAILS][dataObj.currentWeekDetails] = 0;
     }
     if (!this.getDayOfTheMonthData(hostname, dataObj.currentDayOfTheMonth)) {
-      this.data[hostname][dataObj.currentYear][dataObj.currentMonth][dataObj.currentDayOfTheMonth] = dataObj.dayOfTheMonthObj;
+      this.data[hostname][dataObj.currentYear][dataObj.currentMonth][dataObj.currentDayOfTheMonth] =
+        dataObj.dayOfTheMonthObj;
     } else if (!this.getHourData(hostname, dataObj.currentHour)) {
-      this.data[hostname][dataObj.currentYear][dataObj.currentMonth][dataObj.currentDayOfTheMonth][dataObj.currentHour] = dataObj.minuteObj;
+      this.data[hostname][dataObj.currentYear][dataObj.currentMonth][dataObj.currentDayOfTheMonth][
+        dataObj.currentHour
+      ] = dataObj.minuteObj;
     }
 
     // Increment global data
@@ -302,8 +304,14 @@ export default class DataManagement {
 
     utils.increment(this.getYearData(hostname, dataObj.currentYear), config.ALL_TIME);
     utils.increment(this.getMonthData(hostname, dataObj.currentMonth), config.ALL_TIME);
-    utils.increment(this.getDayOfTheMonthData(hostname, dataObj.currentDayOfTheMonth), config.ALL_TIME);
-    utils.increment(this.getYearData(hostname, dataObj.currentYear)[config.WEEK_DETAILS], dataObj.currentWeekDetails);
+    utils.increment(
+      this.getDayOfTheMonthData(hostname, dataObj.currentDayOfTheMonth),
+      config.ALL_TIME
+    );
+    utils.increment(
+      this.getYearData(hostname, dataObj.currentYear)[config.WEEK_DETAILS],
+      dataObj.currentWeekDetails
+    );
     utils.increment(this.getHourData(hostname, dataObj.currentHour), config.ALL_TIME);
     utils.increment(this.getHourData(hostname, dataObj.currentHour), dataObj.currentMinute);
 

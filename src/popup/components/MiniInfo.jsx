@@ -14,27 +14,27 @@ export default class MiniInfo extends Component {
    */
   parseFirstVisit(date) {
     const currDate = utils.getDateString();
-    const getYear = (date) => {
+    const getYear = date => {
       return date.match(/-\d{4}/)[0];
     };
-    const parseDate = (date) => {
+    const parseDate = date => {
       let month = date.match(/^\d{2}-(\d{2})-/)[1];
 
       date = date.replace(/-\d{2}-\d{4}$/, '');
 
       month = month
-          .replace('01', 'January')
-          .replace('02', 'February')
-          .replace('03', 'March')
-          .replace('04', 'April')
-          .replace('05', 'May')
-          .replace('06', 'June')
-          .replace('07', 'July')
-          .replace('08', 'August')
-          .replace('09', 'September')
-          .replace('10', 'October')
-          .replace('11', 'November')
-          .replace('12', 'December');
+        .replace('01', 'January')
+        .replace('02', 'February')
+        .replace('03', 'March')
+        .replace('04', 'April')
+        .replace('05', 'May')
+        .replace('06', 'June')
+        .replace('07', 'July')
+        .replace('08', 'August')
+        .replace('09', 'September')
+        .replace('10', 'October')
+        .replace('11', 'November')
+        .replace('12', 'December');
 
       return `${date} ${month}`;
     };
@@ -57,10 +57,10 @@ export default class MiniInfo extends Component {
 
     return (
       <span className="mini-info__content">
-        You spent { dataProcessing.totalTime + ' '}
-        on { dataProcessing.totalDomains + ' '}
-        { dataProcessing.totalDomains > 1 ? 'sites ' : 'site ' }
-        { this.parseFirstVisit(dataProcessing.firstVisit) }
+        You spent {dataProcessing.totalTime + ' '}
+        on {dataProcessing.totalDomains + ' '}
+        {dataProcessing.totalDomains > 1 ? 'sites ' : 'site '}
+        {this.parseFirstVisit(dataProcessing.firstVisit)}
       </span>
     );
   }
@@ -69,9 +69,7 @@ export default class MiniInfo extends Component {
     return (
       <div className="mini-info__section">
         <div className="container">
-          <div className="mini-info__wrapper">
-            { this.renderMiniInfo() }
-          </div>
+          <div className="mini-info__wrapper">{this.renderMiniInfo()}</div>
         </div>
       </div>
     );

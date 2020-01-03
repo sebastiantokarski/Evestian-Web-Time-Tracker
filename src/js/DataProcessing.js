@@ -75,10 +75,7 @@ export default class DataProcessing extends DataManagement {
     for (const key in obj) {
       if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
 
-      newArray.push([
-        key,
-        obj[key],
-      ]);
+      newArray.push([key, obj[key]]);
     }
 
     return newArray;
@@ -123,16 +120,14 @@ export default class DataProcessing extends DataManagement {
 
     if (time.seconds >= oneDay) {
       time.days = Math.floor(time.seconds / oneDay);
-      time.seconds -= (time.days * oneDay);
+      time.seconds -= time.days * oneDay;
       time.days = time.days + 'd';
     }
 
     if (time.seconds >= oneHour) {
       time.hours = Math.floor(time.seconds / oneHour);
-      time.seconds -= (time.hours * oneHour);
-      time.hours = time.days
-        ? ('0' + time.hours).slice(-2) + 'h'
-        : time.hours + 'h';
+      time.seconds -= time.hours * oneHour;
+      time.hours = time.days ? ('0' + time.hours).slice(-2) + 'h' : time.hours + 'h';
       time.minutes = '00m';
     } else if (time.days) {
       time.hours = '00h';
@@ -141,17 +136,14 @@ export default class DataProcessing extends DataManagement {
 
     if (time.seconds >= oneMinute) {
       time.minutes = Math.floor(time.seconds / oneMinute);
-      time.seconds -= (time.minutes * oneMinute);
-      time.minutes = time.days || time.hours
-        ? ('0' + time.minutes).slice(-2) + 'm'
-        : time.minutes + 'm';
+      time.seconds -= time.minutes * oneMinute;
+      time.minutes =
+        time.days || time.hours ? ('0' + time.minutes).slice(-2) + 'm' : time.minutes + 'm';
     } else if (time.days || time.hours) {
       time.minutes = '00m';
     }
 
-    time.seconds = time.minutes
-      ? ('0' + time.seconds).slice(-2) + 's'
-      : time.seconds + 's';
+    time.seconds = time.minutes ? ('0' + time.seconds).slice(-2) + 's' : time.seconds + 's';
 
     return `${time.days}${time.hours}${time.minutes}${time.seconds}`;
   }
@@ -169,21 +161,23 @@ export default class DataProcessing extends DataManagement {
     const allYears = [];
 
     for (const hostname in this.data) {
-      if (!Object.prototype.hasOwnProperty.call(this.data, hostname)
-          || !this.isThisHostnameData(hostname)) continue;
-
+      if (
+        !Object.prototype.hasOwnProperty.call(this.data, hostname) ||
+        !this.isThisHostnameData(hostname)
+      )
+        continue;
 
       const years = this.data[hostname];
 
       for (const year in years) {
-        if (!Object.prototype.hasOwnProperty.call(years, year)
-            || typeof years[year] !== 'object'
-            || years[year] === null) continue;
+        if (
+          !Object.prototype.hasOwnProperty.call(years, year) ||
+          typeof years[year] !== 'object' ||
+          years[year] === null
+        )
+          continue;
 
-        allYears.push([
-          year,
-          years[year],
-        ]);
+        allYears.push([year, years[year]]);
       }
     }
 
@@ -207,10 +201,7 @@ export default class DataProcessing extends DataManagement {
         for (const key in weekDetails) {
           if (!Object.prototype.hasOwnProperty.call(weekDetails, key)) continue;
 
-          allDaysOfTheWeek.push([
-            key,
-            weekDetails[key],
-          ]);
+          allDaysOfTheWeek.push([key, weekDetails[key]]);
         }
       } catch (ex) {
         utils.debugLog('Exception in getAllDaysOfTheWeek', ex, allYears[i]);
@@ -262,14 +253,14 @@ export default class DataProcessing extends DataManagement {
       unit = parentUnit[i][1];
 
       for (const key in unit) {
-        if (!Object.prototype.hasOwnProperty.call(unit, key)
-            || (typeof unit[key] !== 'object' && isChildrenUnitNotObject)
-            || key === config.ALL_TIME) continue;
+        if (
+          !Object.prototype.hasOwnProperty.call(unit, key) ||
+          (typeof unit[key] !== 'object' && isChildrenUnitNotObject) ||
+          key === config.ALL_TIME
+        )
+          continue;
 
-        all.push([
-          key,
-          unit[key],
-        ]);
+        all.push([key, unit[key]]);
       }
     }
 
@@ -309,8 +300,7 @@ export default class DataProcessing extends DataManagement {
    * @return {boolean}
    */
   isThisHostnameData(hostname) {
-    return typeof this.data[hostname] === 'object'
-           && !!this.data[hostname][config.ALL_TIME];
+    return typeof this.data[hostname] === 'object' && !!this.data[hostname][config.ALL_TIME];
   }
 
   /**
@@ -342,8 +332,11 @@ export default class DataProcessing extends DataManagement {
     const minutesMap = this.constructor.createSimpleMap(60, 0);
 
     for (const hostname in this.data) {
-      if (!Object.prototype.hasOwnProperty.call(this.data, hostname)
-          || !this.isThisHostnameData(hostname)) continue;
+      if (
+        !Object.prototype.hasOwnProperty.call(this.data, hostname) ||
+        !this.isThisHostnameData(hostname)
+      )
+        continue;
 
       const today = this.getTodayData(hostname);
 
@@ -369,14 +362,17 @@ export default class DataProcessing extends DataManagement {
     const minutesMap = this.constructor.createSimpleMap(60, 0);
 
     for (const hostname in this.data) {
-      if (!Object.prototype.hasOwnProperty.call(this.data, hostname)
-          || !this.isThisHostnameData(hostname)) continue;
+      if (
+        !Object.prototype.hasOwnProperty.call(this.data, hostname) ||
+        !this.isThisHostnameData(hostname)
+      )
+        continue;
 
       const hours = this.getAllHours(hostname);
 
       for (const minute in hours) {
-        if (!Object.prototype.hasOwnProperty.call(hours, minute)
-            || minute === config.ALL_TIME) continue;
+        if (!Object.prototype.hasOwnProperty.call(hours, minute) || minute === config.ALL_TIME)
+          continue;
 
         minutesMap[minute] += hours[minute];
       }
@@ -394,8 +390,11 @@ export default class DataProcessing extends DataManagement {
     const daysOfTheWeekMap = this.constructor.createSimpleMap(7, 0, 1);
 
     for (const hostname in this.data) {
-      if (!Object.prototype.hasOwnProperty.call(this.data, hostname)
-          || !this.isThisHostnameData(hostname)) continue;
+      if (
+        !Object.prototype.hasOwnProperty.call(this.data, hostname) ||
+        !this.isThisHostnameData(hostname)
+      )
+        continue;
 
       const getFirstVisitYear = Number(this.data[config.FIRST_VISIT].match(/-(\d{4})$/)[1]);
       const currentYear = Number(utils.getCurrentYear());
@@ -434,7 +433,6 @@ export default class DataProcessing extends DataManagement {
    * @return {Array}
    */
   getTimeSpentInDaysOfTheWeekTotal() {
-    // @todo if this will launch at the beginning of new year, there will be a problem
     const daysOfTheWeek = this.getAllDaysOfTheWeek();
     const daysOfTheWeekMap = this.constructor.createSimpleMap(7, 0, 1);
 
@@ -595,8 +593,8 @@ export default class DataProcessing extends DataManagement {
     const timeSpentInHoursDataArray = this.getTimeSpentInHours();
 
     this.timeSpentInHours = {
-      data: timeSpentInHoursDataArray.map((hour) => Math.round(hour[1] / 60)),
-      labels: timeSpentInHoursDataArray.map((hour) => hour[0]),
+      data: timeSpentInHoursDataArray.map(hour => Math.round(hour[1] / 60)),
+      labels: timeSpentInHoursDataArray.map(hour => hour[0]),
     };
 
     return this.timeSpentInHours;
@@ -606,13 +604,13 @@ export default class DataProcessing extends DataManagement {
     let timeSpentInHoursTotalDataArray = this.getAllHours();
     const timeMap = this.constructor.createSimpleMap(24, 0);
 
-    timeSpentInHoursTotalDataArray.map((time) => {
+    timeSpentInHoursTotalDataArray.map(time => {
       timeMap[time[0]] += time[1][config.ALL_TIME];
     });
     timeSpentInHoursTotalDataArray = this.constructor.convertSimpleObjectToArray(timeMap);
     this.timeSpentInHoursTotal = {
-      data: timeSpentInHoursTotalDataArray.map((hour) => Math.round(hour[1] / 60)),
-      labels: timeSpentInHoursTotalDataArray.map((hour) => hour[0]),
+      data: timeSpentInHoursTotalDataArray.map(hour => Math.round(hour[1] / 60)),
+      labels: timeSpentInHoursTotalDataArray.map(hour => hour[0]),
     };
 
     return this.timeSpentInHoursTotal;
@@ -622,8 +620,12 @@ export default class DataProcessing extends DataManagement {
     const timeSpentEachDayOfTheWeekDataArray = this.getTimeSpentInDaysOfTheWeek();
 
     this.timeSpentEachDayOfTheWeek = {
-      data: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) => Math.round(dayOfTheWeek[1] / 60)),
-      labels: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0])),
+      data: timeSpentEachDayOfTheWeekDataArray.map(dayOfTheWeek =>
+        Math.round(dayOfTheWeek[1] / 60)
+      ),
+      labels: timeSpentEachDayOfTheWeekDataArray.map(dayOfTheWeek =>
+        this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0])
+      ),
     };
 
     return this.timeSpentEachDayOfTheWeek;
@@ -633,8 +635,12 @@ export default class DataProcessing extends DataManagement {
     const timeSpentEachDayOfTheWeekTotalDataArray = this.getTimeSpentInDaysOfTheWeekTotal();
 
     this.timeSpentEachDayOfTheWeekTotal = {
-      data: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) => Math.round(dayOfTheWeek[1] / 60)),
-      labels: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) => this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0])),
+      data: timeSpentEachDayOfTheWeekTotalDataArray.map(dayOfTheWeek =>
+        Math.round(dayOfTheWeek[1] / 60)
+      ),
+      labels: timeSpentEachDayOfTheWeekTotalDataArray.map(dayOfTheWeek =>
+        this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0])
+      ),
     };
 
     return this.timeSpentEachDayOfTheWeekTotal;
@@ -648,8 +654,8 @@ export default class DataProcessing extends DataManagement {
     const timeSpentInMinutesDataArray = this.getTimeSpentInMinutesToday();
 
     this.timeSpentInMinutes = {
-      data: timeSpentInMinutesDataArray.map((minute) => minute[1]),
-      labels: timeSpentInMinutesDataArray.map((minute) => minute[0]),
+      data: timeSpentInMinutesDataArray.map(minute => minute[1]),
+      labels: timeSpentInMinutesDataArray.map(minute => minute[0]),
     };
 
     // // let timeSpentInMinutesGlobalDataArray = this.getTimeSpentInMinutesGlobal();

@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import TableRow from './TableRow.jsx';
+import shortid from 'shortid';
 
 export default class Table extends Component {
   constructor(props) {
@@ -33,6 +34,7 @@ export default class Table extends Component {
 
     return (
       <TableRow
+        key={shortid.generate()}
         tableRowData={tableRowData}
         index={index + 1}
         hoveredChartItem={hoveredChartItem}
@@ -42,11 +44,12 @@ export default class Table extends Component {
 
   renderOthersRow(othersTime) {
     if (othersTime) {
-      return this.renderTableRow({
-        name: 'Other',
-        time: othersTime,
-      },
-      this.state.numberOfRowsToShow - 1
+      return this.renderTableRow(
+        {
+          name: 'Other',
+          time: othersTime,
+        },
+        this.state.numberOfRowsToShow - 1
       );
     }
     return null;
@@ -85,8 +88,8 @@ export default class Table extends Component {
     };
 
     const tableRows = this.props.tableData
-        .filter(filterFirstRows)
-        .map(this.renderTableRow.bind(this));
+      .filter(filterFirstRows)
+      .map(this.renderTableRow.bind(this));
 
     const othersRow = this.renderOthersRow(othersTime);
     const showMoreRow = this.renderShowMoreRow(othersTime);

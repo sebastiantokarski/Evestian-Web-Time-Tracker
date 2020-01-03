@@ -4,12 +4,7 @@
     "webextensions": true,
     "es6": true
   },
-  "extends": [
-    "google",
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:jsdoc/recommended"
-  ],
+  "extends": [],
   "parserOptions": {
     "ecmaVersion": 2019,
     "sourceType": "module",
@@ -17,19 +12,15 @@
       "jsx": true
     }
   },
-  "plugins": [
-    "jsdoc",
-    "react"
-  ],
+  "plugins": ["jsdoc", "react"],
   "rules": {
     "jsdoc/require-returns-description": 0,
     "jsdoc/require-param-description": 0,
     "max-len": ["error", 100],
-    "newline-after-var": [ 2, "always"],
-    "require-jsdoc" : 0,
+    "newline-after-var": [2, "always"],
+    "require-jsdoc": 0,
     "no-fallthrough": 0,
-    "object-curly-spacing": [2, "always"],
-    "operator-linebreak": ["error", "before"]
+    "object-curly-spacing": [2, "always"]
   },
   "settings": {
     "jsdoc": {
@@ -44,13 +35,10 @@
       "flowVersion": "0.53"
     },
     "propWrapperFunctions": [
-        "forbidExtraProps",
-        {"property": "freeze", "object": "Object"},
-        {"property": "myFavoriteWrapper"}
+      "forbidExtraProps",
+      { "property": "freeze", "object": "Object" },
+      { "property": "myFavoriteWrapper" }
     ],
-    "linkComponents": [
-      "Hyperlink",
-      {"name": "Link", "linkAttribute": "to"}
-    ]
+    "linkComponents": ["Hyperlink", { "name": "Link", "linkAttribute": "to" }]
   }
 }

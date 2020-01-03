@@ -24,11 +24,7 @@ class Settings {
         id: 0,
         name: 'Blacklisted URLs',
         type: 'input',
-        default: [
-          'file://*',
-          'chrome://*',
-          'chrome-extension://*',
-        ],
+        default: ['file://*', 'chrome://*', 'chrome-extension://*'],
         description: `Lista stron, na których wtyczka ma nie zliczać spędzonego czasu.
         Przykładowo strony konfiguracyjne przeglądarki, czy pliki otwierane w przeglądarce`,
       },
@@ -52,10 +48,10 @@ class Settings {
         name: 'Time on badge',
         type: 'radio',
         default: {
-          'timeSpentEachSiteToday': true,
-          'timeSpentToday': false,
-          'timeSpentAllTime': false,
-          'timeSpendEachSiteAllTime': false,
+          timeSpentEachSiteToday: true,
+          timeSpentToday: false,
+          timeSpentAllTime: false,
+          timeSpendEachSiteAllTime: false,
         },
         description: '',
       },
@@ -73,7 +69,7 @@ class Settings {
   setDefaults() {
     const config = this.config;
 
-    Object.keys(config).map((setting) => {
+    Object.keys(config).map(setting => {
       // @todo this[setting] should be private
       this[setting] = config[setting].default;
     });
@@ -146,9 +142,12 @@ class Settings {
   save(cb = () => utils.debugLog('Settings sucessfully saved', this)) {
     const settings = this.getAll();
 
-    chrome.storage.sync.set({
-      [this.name]: settings,
-    }, cb);
+    chrome.storage.sync.set(
+      {
+        [this.name]: settings,
+      },
+      cb
+    );
   }
 
   /**

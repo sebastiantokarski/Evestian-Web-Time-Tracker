@@ -11,13 +11,13 @@ export default class Switch extends Component {
     const id = `checkbox-${config.id}`;
 
     return (
-      <label className="switch" htmlFor={ id }>
+      <label className="switch" htmlFor={id}>
         <input
-          id={ id }
-          name={ this.props.name }
+          id={id}
+          name={this.props.name}
           type="checkbox"
-          checked={ this.props.value }
-          onChange={ this.props.handleSettingChange }
+          checked={this.props.value}
+          onChange={this.props.handleSettingChange}
         />
         <div className="slider round"></div>
       </label>

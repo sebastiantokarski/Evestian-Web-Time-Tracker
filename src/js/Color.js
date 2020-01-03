@@ -26,7 +26,9 @@ class Color {
     if (Color.isRGB(this.color)) {
       return this.color.replace('rgb', 'rgba').replace(')', `, ${opacity})`);
     }
-    return this.toRGB(this.color).replace('rgb', 'rgba').replace(')', `, ${opacity})`);
+    return this.toRGB(this.color)
+      .replace('rgb', 'rgba')
+      .replace(')', `, ${opacity})`);
   }
 }
 

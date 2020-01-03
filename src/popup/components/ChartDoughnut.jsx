@@ -28,7 +28,7 @@ export default class ChartDoughnut extends Component {
           for (let i = 0; i < texts.length; i++) {
             const text = texts[i];
             const textX = Math.round((rightCorner - ctx.measureText(text).width) / 2);
-            const textY = bottomCorner / 2 + ((i + 1) * 24) - ((texts.length + 1) * 12);
+            const textY = bottomCorner / 2 + (i + 1) * 24 - (texts.length + 1) * 12;
 
             ctx.fillText(text, textX, textY);
             ctx.save();
@@ -77,7 +77,9 @@ export default class ChartDoughnut extends Component {
       const chartDataset = chart.data.datasets[0];
       const itemDataInSeconds = chartDataset.data[hoveredItemIndex];
       const text = DataProcessing.parseSecondsIntoTime(itemDataInSeconds);
-      const percentage = (itemDataInSeconds / DataProcessing.sum(chartData.data) * 100).toFixed(2);
+      const percentage = ((itemDataInSeconds / DataProcessing.sum(chartData.data)) * 100).toFixed(
+        2
+      );
 
       hoveredItemName = this.props.chartData.labels[hoveredItemIndex];
 
@@ -122,19 +124,22 @@ export default class ChartDoughnut extends Component {
       },
     };
     const chartData = {
-      datasets: [{
-        data: this.props.chartData.data,
-        backgroundColor: this.props.chartData.colors,
-      }],
+      datasets: [
+        {
+          data: this.props.chartData.data,
+          backgroundColor: this.props.chartData.colors,
+        },
+      ],
     };
 
     return (
       <section className={`chart-doughnut__section`}>
         <div className="chart-doughnut__container">
           <Doughnut
-            ref={ (ref) => this.chartInstance = ref }
-            data={ chartData }
-            options={ chartOptions } />
+            ref={ref => (this.chartInstance = ref)}
+            data={chartData}
+            options={chartOptions}
+          />
         </div>
       </section>
     );

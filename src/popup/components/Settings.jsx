@@ -39,12 +39,13 @@ export default class Settings extends Component {
   renderInput(settingKey, inputConfig, inputValue) {
     return (
       <input
-        className={ `setting-${inputConfig.type}` }
-        name={ settingKey }
-        type={ inputConfig.type }
-        checked={ inputConfig.type === 'checkbox' && this.state.settings[settingKey] }
-        onChange={ this.handleTargetSettingChange }
-        value={ inputValue ? inputValue : '' }></input>
+        className={`setting-${inputConfig.type}`}
+        name={settingKey}
+        type={inputConfig.type}
+        checked={inputConfig.type === 'checkbox' && this.state.settings[settingKey]}
+        onChange={this.handleTargetSettingChange}
+        value={inputValue ? inputValue : ''}
+      ></input>
     );
   }
 
@@ -65,47 +66,56 @@ export default class Settings extends Component {
       return this.state.settings[settingKey].map((inputValue, index, arr) => {
         const input = this.renderInput(settingKey, setting, inputValue);
 
-        return <div className="setting-input-wrapper" key={ index }>
-          { input }
-          <a href="#" className="remove-icon"></a>
-          { index === arr.length - 1 && <a href="#" className="add-icon" onClick={
-            () => this.addNewSettingItem(settingKey)
-          }></a> }
-        </div>;
+        return (
+          <div className="setting-input-wrapper" key={index}>
+            {input}
+            <a href="#" className="remove-icon"></a>
+            {index === arr.length - 1 && (
+              <a
+                href="#"
+                className="add-icon"
+                onClick={() => this.addNewSettingItem(settingKey)}
+              ></a>
+            )}
+          </div>
+        );
       });
     } else if (setting.type === 'checkbox') {
-      return <Switch
-        config={ setting }
-        name={ settingKey }
-        value={ this.state.settings[settingKey] }
-        handleSettingChange={ this.handleTargetSettingChange } />;
+      return (
+        <Switch
+          config={setting}
+          name={settingKey}
+          value={this.state.settings[settingKey]}
+          handleSettingChange={this.handleTargetSettingChange}
+        />
+      );
     }
     return this.renderInput(settingKey, setting);
   }
 
   renderSettings() {
-    const renderedSettings = Object.keys(this.state.settings).map((settingKey) => {
+    const renderedSettings = Object.keys(this.state.settings).map(settingKey => {
       const setting = settings.getDetails(settingKey);
       const colWidth = this.isGroupOfInputs(setting) ? 'col-12' : 'col-3';
 
       return (
-        <div className="setting-item" key={ setting.id }>
+        <div className="setting-item" key={setting.id}>
           <div className="row">
             <div className="col-9">
-              <label className="setting-name">{ setting.name }</label>
+              <label className="setting-name">{setting.name}</label>
             </div>
-            <div className={ `${colWidth} align-items-center align-self-center` }>
-              { this.renderSingleSetting(settingKey, setting) }
+            <div className={`${colWidth} align-items-center align-self-center`}>
+              {this.renderSingleSetting(settingKey, setting)}
             </div>
             <div className="col-12">
-              <p className="setting-description">{ setting.description }</p>
+              <p className="setting-description">{setting.description}</p>
             </div>
           </div>
         </div>
       );
     });
 
-    return <Fragment>{ renderedSettings }</Fragment>;
+    return <Fragment>{renderedSettings}</Fragment>;
   }
 
   componentWillMount() {

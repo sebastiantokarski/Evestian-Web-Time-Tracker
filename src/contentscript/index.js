@@ -11,7 +11,7 @@ import settings from '../js/settings';
 
 new MessageHandler();
 
-chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
+chrome.storage.local.get(config.EXTENSION_DATA_NAME, data => {
   const currHostname = window.location.hostname;
   const spentTimeData = data[config.EXTENSION_DATA_NAME];
   const currHostnameData = spentTimeData ? spentTimeData[currHostname] : null;
@@ -52,9 +52,11 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
   if (currHostnameData && currHostnameData[config.FAVICON_COLOR]) {
     const faviconColor = currHostnameData[config.FAVICON_COLOR];
 
-    utils.debugLog(`%c  %c Favicon color ${faviconColor}`,
-        `background-color: ${faviconColor}; border-radius: 50%;`,
-        'color: #1E90FF');
+    utils.debugLog(
+      `%c  %c Favicon color ${faviconColor}`,
+      `background-color: ${faviconColor}; border-radius: 50%;`,
+      'color: #1E90FF'
+    );
     return;
   }
 
@@ -737,7 +739,9 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
           console.warn('Cannot get color from image', ex);
         }
 
-        document.getElementById('${config.ID_PREFIX}message-handler').dataset.message = JSON.stringify({
+        document.getElementById('${
+          config.ID_PREFIX
+        }message-handler').dataset.message = JSON.stringify({
           action: '${hostnameDataExists ? 'saveFaviconColor' : 'saveFaviconColorAfterSave'}',
           dataName: '${config.EXTENSION_DATA_NAME}',
           hostname: '${currHostname}',

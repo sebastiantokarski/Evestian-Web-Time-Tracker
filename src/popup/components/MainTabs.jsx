@@ -80,11 +80,7 @@ export default class MainTabs extends Component {
   render() {
     return (
       <div className="main-tabs__section">
-        <Tabs
-          defaultActiveKey="today"
-          id="doughnuts-chart"
-          onSelect={this.onSelectTab}
-        >
+        <Tabs defaultActiveKey="today" id="doughnuts-chart" onSelect={this.onSelectTab}>
           <Tab eventKey="today" title="Today">
             <ChartDoughnut
               renderOnLoad
@@ -137,9 +133,7 @@ export default class MainTabs extends Component {
             <ChartDoughnut
               renderOnLoad
               chartData={
-                this.state.pagesVisitedAllTime
-                  ? this.state.pagesVisitedAllTime.chartData
-                  : null
+                this.state.pagesVisitedAllTime ? this.state.pagesVisitedAllTime.chartData : null
               }
               chartTable="myCharAllTimeTable"
               handleChartHover={this.handleChartHover}
@@ -147,9 +141,7 @@ export default class MainTabs extends Component {
             <Table
               className="myCharAllTimeTable"
               tableData={
-                this.state.pagesVisitedAllTime
-                  ? this.state.pagesVisitedAllTime.tableData
-                  : []
+                this.state.pagesVisitedAllTime ? this.state.pagesVisitedAllTime.tableData : []
               }
               hoveredChartItem={this.state.myChartAllTimeTableHoveredItem}
               striped

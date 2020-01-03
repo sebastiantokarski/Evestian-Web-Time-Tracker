@@ -13,9 +13,9 @@ export default class App extends Component {
   render() {
     return (
       <Fragment>
-        <Header/>
-        <MiniInfo/>
-        <MainTabs/>
+        <Header />
+        <MiniInfo />
+        <MainTabs />
         <Footer />
       </Fragment>
     );

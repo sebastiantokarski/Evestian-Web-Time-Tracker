@@ -43,28 +43,21 @@ export default class TableRow extends Component {
 
     return (
       <td className="favicon-cell">
-        {
-          faviconUrl
-            ? <LazyGroup cushion="200px">
-              <img
-                className="favicon-image"
-                onError={ this.handleImageError }
-                onLoad={ this.handleImageLoad }
-                src={ faviconUrl } />
-              { showImageLoader
-                && index > 5
-                && <Loader
-                  type="Oval"
-                  color={this.loaderColor.color}
-                  width={16}
-                  height={16}
-                />
-              }
-            </LazyGroup>
-            : <img
+        {faviconUrl ? (
+          <LazyGroup cushion="200px">
+            <img
               className="favicon-image"
-              src={ this.defaultFavUrl } />
-        }
+              onError={this.handleImageError}
+              onLoad={this.handleImageLoad}
+              src={faviconUrl}
+            />
+            {showImageLoader && index > 5 && (
+              <Loader type="Oval" color={this.loaderColor.color} width={16} height={16} />
+            )}
+          </LazyGroup>
+        ) : (
+          <img className="favicon-image" src={this.defaultFavUrl} />
+        )}
       </td>
     );
   }
@@ -75,10 +68,9 @@ export default class TableRow extends Component {
     return (
       <tr key={uid(tableRowData)} className="show-more-row">
         <td className="show-more-cell text-center" colSpan="4">
-          <button
-            className="show-more-btn"
-            onClick={tableRowData.handleOnClick}
-          >{tableRowData.name}</button>
+          <button className="show-more-btn" onClick={tableRowData.handleOnClick}>
+            {tableRowData.name}
+          </button>
         </td>
       </tr>
     );
@@ -97,7 +89,9 @@ export default class TableRow extends Component {
 
     return (
       <tr key={uid(tableRowData)} className={isActive ? 'active' : ''}>
-        <td className="index-cell" data-hover-text={index}>{index}</td>
+        <td className="index-cell" data-hover-text={index}>
+          {index}
+        </td>
         {this.renderFaviconCell(tableRowData.faviconUrl, index)}
         <td data-hover-text={index < 10 && shortenName}>
           <span>{shortenName}</span>

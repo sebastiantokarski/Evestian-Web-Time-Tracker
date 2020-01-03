@@ -40,13 +40,15 @@ export default class Modal extends Component {
     }
     return (
       <Fragment>
-        { this.props.trigger }
-        <div className={ `modal-overlay${this.state.show ? ' active' : ''}` }>
-          <div className="modal-content" ref={(ref) => this.modal = ref }>
+        {this.props.trigger}
+        <div className={`modal-overlay${this.state.show ? ' active' : ''}`}>
+          <div className="modal-content" ref={ref => (this.modal = ref)}>
             <div className="container">
-              <a className="modal-hide" onClick={ this.hideModal }>&times;</a>
-              <h5 className="modal-title">{ this.props.title }</h5>
-              { this.props.children }
+              <a className="modal-hide" onClick={this.hideModal}>
+                &times;
+              </a>
+              <h5 className="modal-title">{this.props.title}</h5>
+              {this.props.children}
             </div>
           </div>
         </div>

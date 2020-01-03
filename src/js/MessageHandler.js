@@ -18,14 +18,14 @@ export default class MessageHandler {
   }
 
   addHandlerObserver() {
-    this.handlerObserver = new MutationObserver((mutations) => {
-      mutations.map((mutation) => {
+    this.handlerObserver = new MutationObserver(mutations => {
+      mutations.map(mutation => {
         const messageName = mutation.attributeName;
         const messageValue = JSON.parse(mutation.target.getAttribute(messageName));
 
         utils.debugLog('Handler observer:', messageName, messageValue);
 
-        this.constructor.sendMessage(messageValue, (response) => {
+        this.constructor.sendMessage(messageValue, response => {
           utils.debugLog(response);
         });
       });

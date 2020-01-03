@@ -25,11 +25,13 @@ class Background {
   isURLOnBlacklist(url) {
     const blacklistedURLs = settings.BLACKLISTED_URLS;
 
-    return blacklistedURLs.filter((blacklistedUrl) => {
-      const regex = new RegExp(blacklistedUrl);
+    return (
+      blacklistedURLs.filter(blacklistedUrl => {
+        const regex = new RegExp(blacklistedUrl);
 
-      return regex.test(url);
-    }).length > 0;
+        return regex.test(url);
+      }).length > 0
+    );
   }
 
   /**
@@ -85,9 +87,7 @@ class Background {
    * @return {boolean}
    */
   onMessageCallback(request, sender, sendResponse) {
-    utils.debugLog('New message:',
-        '\nDetails:', request,
-        '\nFrom:', sender);
+    utils.debugLog('New message:', '\nDetails:', request, '\nFrom:', sender);
 
     switch (request.action) {
       case 'saveFaviconColorAfterSave':
@@ -118,24 +118,31 @@ class Background {
   }
 
   onEnableExtension() {
-    chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16.png') });
+    chrome.browserAction.setIcon({
+      path: chrome.runtime.getURL('/assets/icon16.png'),
+    });
     this.executeIntervals();
   }
 
   onDisableExtension() {
-    chrome.browserAction.setIcon({ path: chrome.runtime.getURL('/assets/icon16Disabled.png') });
+    chrome.browserAction.setIcon({
+      path: chrome.runtime.getURL('/assets/icon16Disabled.png'),
+    });
 
     // Disable badge in current active tab
-    chrome.windows.getLastFocused({
-      populate: true,
-    }, (window) => {
-      const tab = utils.getActiveTab(window.tabs);
+    chrome.windows.getLastFocused(
+      {
+        populate: true,
+      },
+      window => {
+        const tab = utils.getActiveTab(window.tabs);
 
-      chrome.browserAction.setBadgeText({
-        tabId: tab.id,
-        text: '',
-      });
-    });
+        chrome.browserAction.setBadgeText({
+          tabId: tab.id,
+          text: '',
+        });
+      }
+    );
 
     // Disable badge in tabs activated in future
     chrome.tabs.onActivated.addListener(function(activeInfo) {
@@ -186,7 +193,7 @@ class Background {
     /**
      * Listens whether the current state of the user has changed.
      */
-    chrome.idle.onStateChanged.addListener((state) => {
+    chrome.idle.onStateChanged.addListener(state => {
       this.currentState = state;
       utils.debugLog('onStateChanged:', this.currentState);
     });
@@ -200,7 +207,7 @@ class Background {
     /**
      * Check whether new version is installed or extension was updated.
      */
-    chrome.runtime.onInstalled.addListener((details) => {
+    chrome.runtime.onInstalled.addListener(details => {
       if (details.reason === 'install') {
         this.onInstalledCallback();
       } else if (details.reason === 'update') {
@@ -214,26 +221,41 @@ class Background {
   }
 
   updateDataCallback() {
-    chrome.windows.getLastFocused({
-      populate: true,
-    }, (window) => {
-      const tab = utils.getActiveTab(window.tabs);
-      const hostname = utils.getFromUrl('hostname', tab.url);
+    chrome.windows.getLastFocused(
+      {
+        populate: true,
+      },
+      window => {
+        const tab = utils.getActiveTab(window.tabs);
+        const hostname = utils.getFromUrl('hostname', tab.url);
 
-      if (tab && utils.isWindowActive(window) && !this.isURLOnBlacklist(tab.url)
-        && (this.isStateActive(this.currentState) || utils.isSoundFromTab(tab))) {
-        const details = this.dataManagement.updateDataFor(hostname, tab);
+        if (
+          tab &&
+          utils.isWindowActive(window) &&
+          !this.isURLOnBlacklist(tab.url) &&
+          (this.isStateActive(this.currentState) || utils.isSoundFromTab(tab))
+        ) {
+          const details = this.dataManagement.updateDataFor(hostname, tab);
 
-        utils.debugLog('Active tab:', hostname,
-            '\nToday in seconds:', details.todayInSec,
-            '\nAll time in seconds:', details.allTimeInSec,
-            '\nTab:', tab, 'Window:', window);
+          utils.debugLog(
+            'Active tab:',
+            hostname,
+            '\nToday in seconds:',
+            details.todayInSec,
+            '\nAll time in seconds:',
+            details.allTimeInSec,
+            '\nTab:',
+            tab,
+            'Window:',
+            window
+          );
 
-        if (config.DISPLAY_BADGE) {
-          this.updateBadge(tab, hostname);
+          if (config.DISPLAY_BADGE) {
+            this.updateBadge(tab, hostname);
+          }
         }
       }
-    });
+    );
   }
 
   updateStorageCallback() {
@@ -245,10 +267,12 @@ class Background {
    */
   executeIntervals() {
     this.updateDataInterval = setInterval(
-        this.updateDataCallback.bind(this), config.INTERVAL_UPDATE_S
+      this.updateDataCallback.bind(this),
+      config.INTERVAL_UPDATE_S
     );
     this.updateStorageInterval = setInterval(
-        this.updateStorageCallback.bind(this), config.INTERVAL_UPDATE_MIN
+      this.updateStorageCallback.bind(this),
+      config.INTERVAL_UPDATE_MIN
     );
   }
 
@@ -278,6 +302,6 @@ class Background {
     this.executeIntervals();
   }
 }
-const background = window.background = new Background();
+const background = (window.background = new Background());
 
 background.init();
