@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Chart, Doughnut } from 'react-chartjs-2';
+import Chart from 'chart.js/auto';
+import { Doughnut } from 'react-chartjs-2';
 import DataProcessing from '../../js/DataProcessing';
 
 export default class ChartDoughnut extends Component {
@@ -12,24 +13,22 @@ export default class ChartDoughnut extends Component {
   }
 
   registerChartPlugin() {
-    Chart.pluginService.register({
-      beforeDraw: function(chart) {
+    Chart.register({
+      id: 'drawCenterText',
+      beforeDraw: function (chart) {
         if (chart && chart.options && chart.options.customTextInside) {
           const bottomCorner = chart.chartArea.bottom;
           const rightCorner = chart.chartArea.right;
-          const ctx = chart.chart.ctx;
+          const ctx = chart.ctx;
           const texts = chart.options.customTextInside.split('\n');
           const fontSize = texts.length === 1 ? 24 : 20;
-
           ctx.restore();
           ctx.font = `${fontSize}px Courier sans-serif`;
           ctx.textBaseline = 'middle';
-
           for (let i = 0; i < texts.length; i++) {
             const text = texts[i];
             const textX = Math.round((rightCorner - ctx.measureText(text).width) / 2);
             const textY = bottomCorner / 2 + (i + 1) * 24 - (texts.length + 1) * 12;
-
             ctx.fillText(text, textX, textY);
             ctx.save();
           }
@@ -136,7 +135,7 @@ export default class ChartDoughnut extends Component {
       <section className={`chart-doughnut__section`}>
         <div className="chart-doughnut__container">
           <Doughnut
-            ref={ref => (this.chartInstance = ref)}
+            ref={(ref) => (this.chartInstance = ref)}
             data={chartData}
             options={chartOptions}
           />

@@ -2,6 +2,7 @@ const path = require('path');
 const ReplacePlugin = require('webpack-plugin-replace');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const BUILD_DIR = path.resolve(__dirname, 'dev');
 
@@ -18,7 +19,7 @@ module.exports = {
         case 'hotReload':
           return 'background/hot-reload.js';
         case 'popup':
-            return '[name]/app.js';
+          return '[name]/app.js';
         default:
           return '[name]/index.js';
       }
@@ -29,80 +30,71 @@ module.exports = {
   mode: 'development',
   devtool: 'source-map',
   module: {
-    rules: [{
-      enforce: 'pre',
-      test: /\.(js|jsx)$/,
-      exclude: /node_modules/,
-      loader: 'eslint-loader',
-      options: {
-        emitWarning: true,
-        configFile: './eslintrc.json',
-      }
-    }, {
-      test: /\.(js|jsx)$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
-        options: {
-          presets: [
-            '@babel/preset-env',
-            '@babel/preset-react',
-          ]
-        }
-      }
-    }, {
-      test: /\.scss$/,
-      use: [{
-        loader: 'style-loader',
-      }, {
-        loader: 'css-loader',
-      }, {
-        loader: 'sass-loader',
-        options: {
-          sourceMap: true,
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env', '@babel/preset-react'],
+          },
         },
-      }]
-    }, {
-      test: /\.css$/,
-      include: /node_modules/,
-      loaders: ['style-loader', 'css-loader'],
-    }, {
-      test: /\.svg$/,
-      use: {
-        loader: 'svg-url-loader'
-      }
-    }]
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                localIdentName: '[local]',
+              },
+            },
+          },
+          {
+            loader: 'sass-loader',
+          },
+        ],
+      },
+      {
+        test: /\.css$/,
+        include: /node_modules/,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.svg$/,
+        use: {
+          loader: 'svg-url-loader',
+        },
+      },
+    ],
   },
   plugins: [
     new CleanWebpackPlugin({
       verbose: true,
-      cleanAfterEveryBuildPatterns: [
-        '!*/**/*',
-        '!manifest.json',
+      cleanAfterEveryBuildPatterns: ['!*/**/*', '!manifest.json'],
+    }),
+    new ESLintPlugin({
+      emitWarning: true,
+      overrideConfigFile: './eslintrc.json',
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'manifest.dev.json', to: 'manifest.json' },
+        { from: 'assets/', to: 'assets' },
+        { from: '_locales/', to: '_locales' },
+        { from: 'src/popup/index.html', to: 'popup' },
       ],
     }),
-    new CopyWebpackPlugin([{
-      from: 'manifest.dev.json',
-      to: 'manifest.json',
-    }, {
-      from: 'assets/',
-      to: 'assets',
-    }, {
-      from: '_locales/',
-      to: '_locales',
-    }, {
-      from: 'src/popup/index.html',
-      to: 'popup',
-    }]),
     new ReplacePlugin({
-      include: [
-        'manifest.dev.json',
-        'manifest.prod.json',
-        'package.json'
-      ],
+      include: ['manifest.dev.json', 'manifest.prod.json', 'package.json'],
       values: {
-        __VERSION__: '123'
-      }
-    })
+        __VERSION__: '123',
+      },
+    }),
   ],
-}
+};
