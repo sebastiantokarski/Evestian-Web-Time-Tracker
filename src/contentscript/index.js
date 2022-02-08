@@ -1,3 +1,5 @@
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import config from '../js/config';
 import utils from '../js/utils';
 import MessageHandler from '../js/MessageHandler';
@@ -11,7 +13,7 @@ import settings from '../js/settings';
 
 new MessageHandler();
 
-chrome.storage.local.get(config.EXTENSION_DATA_NAME, data => {
+chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
   const currHostname = window.location.hostname;
   const spentTimeData = data[config.EXTENSION_DATA_NAME];
   const currHostnameData = spentTimeData ? spentTimeData[currHostname] : null;

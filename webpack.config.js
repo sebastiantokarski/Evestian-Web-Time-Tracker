@@ -1,4 +1,4 @@
-module.exports = options => {
+module.exports = (options) => {
   if (options.dev) {
     return require(`./webpack.config.dev.js`);
   }

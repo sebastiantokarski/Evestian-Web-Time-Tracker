@@ -80,7 +80,7 @@ export default class MainTabs extends Component {
   render() {
     return (
       <div className="main-tabs__section">
-        <Tabs defaultActiveKey="today" id="doughnuts-chart" onSelect={this.onSelectTab}>
+        <Tabs defaultActiveKey="today" onSelect={this.onSelectTab}>
           <Tab eventKey="today" title="Today">
             <ChartDoughnut
               renderOnLoad

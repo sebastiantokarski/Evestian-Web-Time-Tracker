@@ -11,7 +11,7 @@ module.exports = {
     contentscript: path.resolve(__dirname, 'src/contentscript/index.js'),
     background: path.resolve(__dirname, 'src/background/index.js'),
     hotReload: path.resolve(__dirname, 'src/background/hot-reload.js'),
-    popup: path.resolve(__dirname, 'src/popup/app.js'),
+    popup: path.resolve(__dirname, 'src/popup/index.js'),
   },
   output: {
     filename: (chunkData) => {
@@ -19,7 +19,7 @@ module.exports = {
         case 'hotReload':
           return 'background/hot-reload.js';
         case 'popup':
-          return '[name]/app.js';
+          return '[name]/index.js';
         default:
           return '[name]/index.js';
       }
