@@ -29,7 +29,7 @@ export default class DataProcessing extends DataManagement {
    * @return {*|undefined}
    */
   static sortDescending(array, indexToCompare) {
-    return array.sort(function(a, b) {
+    return array.sort(function (a, b) {
       return b[indexToCompare] - a[indexToCompare];
     });
   }
@@ -593,8 +593,8 @@ export default class DataProcessing extends DataManagement {
     const timeSpentInHoursDataArray = this.getTimeSpentInHours();
 
     this.timeSpentInHours = {
-      data: timeSpentInHoursDataArray.map(hour => Math.round(hour[1] / 60)),
-      labels: timeSpentInHoursDataArray.map(hour => hour[0]),
+      data: timeSpentInHoursDataArray.map((hour) => Math.round(hour[1] / 60)),
+      labels: timeSpentInHoursDataArray.map((hour) => hour[0]),
     };
 
     return this.timeSpentInHours;
@@ -604,13 +604,13 @@ export default class DataProcessing extends DataManagement {
     let timeSpentInHoursTotalDataArray = this.getAllHours();
     const timeMap = this.constructor.createSimpleMap(24, 0);
 
-    timeSpentInHoursTotalDataArray.map(time => {
+    timeSpentInHoursTotalDataArray.map((time) => {
       timeMap[time[0]] += time[1][config.ALL_TIME];
     });
     timeSpentInHoursTotalDataArray = this.constructor.convertSimpleObjectToArray(timeMap);
     this.timeSpentInHoursTotal = {
-      data: timeSpentInHoursTotalDataArray.map(hour => Math.round(hour[1] / 60)),
-      labels: timeSpentInHoursTotalDataArray.map(hour => hour[0]),
+      data: timeSpentInHoursTotalDataArray.map((hour) => Math.round(hour[1] / 60)),
+      labels: timeSpentInHoursTotalDataArray.map((hour) => hour[0]),
     };
 
     return this.timeSpentInHoursTotal;
@@ -620,10 +620,10 @@ export default class DataProcessing extends DataManagement {
     const timeSpentEachDayOfTheWeekDataArray = this.getTimeSpentInDaysOfTheWeek();
 
     this.timeSpentEachDayOfTheWeek = {
-      data: timeSpentEachDayOfTheWeekDataArray.map(dayOfTheWeek =>
+      data: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) =>
         Math.round(dayOfTheWeek[1] / 60)
       ),
-      labels: timeSpentEachDayOfTheWeekDataArray.map(dayOfTheWeek =>
+      labels: timeSpentEachDayOfTheWeekDataArray.map((dayOfTheWeek) =>
         this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0])
       ),
     };
@@ -635,10 +635,10 @@ export default class DataProcessing extends DataManagement {
     const timeSpentEachDayOfTheWeekTotalDataArray = this.getTimeSpentInDaysOfTheWeekTotal();
 
     this.timeSpentEachDayOfTheWeekTotal = {
-      data: timeSpentEachDayOfTheWeekTotalDataArray.map(dayOfTheWeek =>
+      data: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) =>
         Math.round(dayOfTheWeek[1] / 60)
       ),
-      labels: timeSpentEachDayOfTheWeekTotalDataArray.map(dayOfTheWeek =>
+      labels: timeSpentEachDayOfTheWeekTotalDataArray.map((dayOfTheWeek) =>
         this.constructor.convertDayOfTheWeekToName(dayOfTheWeek[0])
       ),
     };
@@ -654,8 +654,8 @@ export default class DataProcessing extends DataManagement {
     const timeSpentInMinutesDataArray = this.getTimeSpentInMinutesToday();
 
     this.timeSpentInMinutes = {
-      data: timeSpentInMinutesDataArray.map(minute => minute[1]),
-      labels: timeSpentInMinutesDataArray.map(minute => minute[0]),
+      data: timeSpentInMinutesDataArray.map((minute) => minute[1]),
+      labels: timeSpentInMinutesDataArray.map((minute) => minute[0]),
     };
 
     // // let timeSpentInMinutesGlobalDataArray = this.getTimeSpentInMinutesGlobal();

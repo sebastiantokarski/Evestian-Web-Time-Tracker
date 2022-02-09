@@ -1,4 +1,5 @@
-import '@babel/polyfill';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import config from '../js/config';
 import settings from '../js/settings';
 import utils from '../js/utils';
@@ -26,7 +27,7 @@ class Background {
     const blacklistedURLs = settings.BLACKLISTED_URLS;
 
     return (
-      blacklistedURLs.filter(blacklistedUrl => {
+      blacklistedURLs.filter((blacklistedUrl) => {
         const regex = new RegExp(blacklistedUrl);
 
         return regex.test(url);
@@ -134,7 +135,7 @@ class Background {
       {
         populate: true,
       },
-      window => {
+      (window) => {
         const tab = utils.getActiveTab(window.tabs);
 
         chrome.browserAction.setBadgeText({
@@ -145,7 +146,7 @@ class Background {
     );
 
     // Disable badge in tabs activated in future
-    chrome.tabs.onActivated.addListener(function(activeInfo) {
+    chrome.tabs.onActivated.addListener(function (activeInfo) {
       if (!config.ENABLED) {
         chrome.browserAction.setBadgeText({
           tabId: activeInfo.id,
@@ -193,7 +194,7 @@ class Background {
     /**
      * Listens whether the current state of the user has changed.
      */
-    chrome.idle.onStateChanged.addListener(state => {
+    chrome.idle.onStateChanged.addListener((state) => {
       this.currentState = state;
       utils.debugLog('onStateChanged:', this.currentState);
     });
@@ -207,7 +208,7 @@ class Background {
     /**
      * Check whether new version is installed or extension was updated.
      */
-    chrome.runtime.onInstalled.addListener(details => {
+    chrome.runtime.onInstalled.addListener((details) => {
       if (details.reason === 'install') {
         this.onInstalledCallback();
       } else if (details.reason === 'update') {
@@ -225,7 +226,7 @@ class Background {
       {
         populate: true,
       },
-      window => {
+      (window) => {
         const tab = utils.getActiveTab(window.tabs);
         const hostname = utils.getFromUrl('hostname', tab.url);
 
