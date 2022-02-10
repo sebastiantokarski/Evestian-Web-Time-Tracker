@@ -3,7 +3,7 @@ import ChartDoughnut from './ChartDoughnut.jsx';
 import ChartLine from './ChartLine.jsx';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import Table from './Table.jsx';
+import Table from './Table/Table.jsx';
 import config from '../../js/config';
 import DataProcessing from '../../js/DataProcessing';
 

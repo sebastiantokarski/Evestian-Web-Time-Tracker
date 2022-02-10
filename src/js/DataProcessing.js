@@ -272,7 +272,11 @@ export default class DataProcessing extends DataManagement {
    *
    * @param  {string} periodName - (Today|Yesterday|Month|Year).
    * @param  {string} [period]
-   * @return {object[]}
+   * @return {{
+   *  name: string
+   *  time: number
+   *  faviconUrl: string | null
+   * }[]}
    */
   getSortedPagesVisitedInGivenPeriod(periodName, period) {
     const methodName = `get${periodName}Data`;

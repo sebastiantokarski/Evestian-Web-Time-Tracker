@@ -10,3 +10,7 @@ body {
 ::-webkit-scrollbar {
   display: none;
 }
+
+[data-testid='oval-loading'] {
+  padding: 0 !important;
+}
