@@ -1,5 +1,6 @@
+import Chart from 'chart.js/auto';
 import React, { Component } from 'react';
-import { Chart, Line } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import PropTypes from 'prop-types';
 import Color from '../../js/Color';
 
@@ -14,13 +15,13 @@ export default class ChartLine extends Component {
   }
 
   registerChartPlugin() {
-    Chart.plugins.register({
+    Chart.register({
       id: 'paddingBelowLegends',
-      beforeInit: function(chart) {
+      beforeInit: function (chart) {
         if (chart.config.type !== 'line') {
           return;
         }
-        chart.legend.afterFit = function() {
+        chart.legend.afterFit = function () {
           this.height += 10;
         };
       },
@@ -64,26 +65,42 @@ export default class ChartLine extends Component {
             options={{
               maintainAspectRatio: false,
               scales: {
-                yAxes: [
-                  {
-                    id: 'Today',
-                    position: 'left',
-                    type: 'linear',
-                    ticks: {
-                      suggestedMin: 0,
-                      suggestedMax: 60,
-                    },
+                Today: {
+                  position: 'left',
+                  type: 'linear',
+                  ticks: {
+                    suggestedMin: 0,
+                    suggestedMax: 60,
                   },
-                  {
-                    id: 'Global',
-                    position: 'right',
-                    type: 'linear',
-                    ticks: {
-                      suggestedMin: 0,
-                      suggestedMax: 60,
-                    },
+                },
+                Global: {
+                  position: 'right',
+                  type: 'linear',
+                  ticks: {
+                    suggestedMin: 0,
+                    suggestedMax: 60,
                   },
-                ],
+                },
+                // yAxes: [
+                //   {
+                //     id: 'Today',
+                //     position: 'left',
+                //     type: 'linear',
+                //     ticks: {
+                //       suggestedMin: 0,
+                //       suggestedMax: 60,
+                //     },
+                //   },
+                //   {
+                //     id: 'Global',
+                //     position: 'right',
+                //     type: 'linear',
+                //     ticks: {
+                //       suggestedMin: 0,
+                //       suggestedMax: 60,
+                //     },
+                //   },
+                // ],
               },
               legend: {
                 labels: {

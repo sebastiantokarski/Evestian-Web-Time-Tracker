@@ -69,7 +69,7 @@ class Settings {
   setDefaults() {
     const config = this.config;
 
-    Object.keys(config).map(setting => {
+    Object.keys(config).map((setting) => {
       // @todo this[setting] should be private
       this[setting] = config[setting].default;
     });
@@ -161,7 +161,7 @@ class Settings {
 
     if (!this[`isSet_${cbName}`]) {
       Object.defineProperty(this, `isSet_${cbName}`, {
-        get: function() {
+        get: function () {
           return true;
         },
         enumerable: false,

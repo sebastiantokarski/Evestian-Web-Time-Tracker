@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import TableRow from './TableRow.jsx';
-import shortid from 'shortid';
 
 export default class Table extends Component {
   constructor(props) {
@@ -34,7 +33,7 @@ export default class Table extends Component {
 
     return (
       <TableRow
-        key={shortid.generate()}
+        key={index}
         tableRowData={tableRowData}
         index={index + 1}
         hoveredChartItem={hoveredChartItem}
