@@ -1,23 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
 import config from '../../js/config';
 import DataProcessing from '../../js/DataProcessing';
 import utils from '../../js/utils';
 
-export default class MiniInfo extends Component {
-  constructor(props) {
-    super(props);
-  }
-
+const MiniInfo = () => {
   /**
    * @param {string} date - DD-MM-YYYY.
    * @return {string}
    */
-  parseFirstVisit(date) {
+  const parseFirstVisit = (date) => {
     const currDate = utils.getDateString();
-    const getYear = date => {
+    const getYear = (date) => {
       return date.match(/-\d{4}/)[0];
     };
-    const parseDate = date => {
+    const parseDate = (date) => {
       let month = date.match(/^\d{2}-(\d{2})-/)[1];
 
       date = date.replace(/-\d{2}-\d{4}$/, '');
@@ -48,9 +44,9 @@ export default class MiniInfo extends Component {
     }
 
     return `since ${date}`;
-  }
+  };
 
-  renderMiniInfo() {
+  const renderMiniInfo = () => {
     const dataProcessing = new DataProcessing(config.EXTENSION_DATA_NAME);
 
     dataProcessing.processGeneralData();
@@ -60,18 +56,18 @@ export default class MiniInfo extends Component {
         You spent {dataProcessing.totalTime + ' '}
         on {dataProcessing.totalDomains + ' '}
         {dataProcessing.totalDomains > 1 ? 'sites ' : 'site '}
-        {this.parseFirstVisit(dataProcessing.firstVisit)}
+        {parseFirstVisit(dataProcessing.firstVisit)}
       </span>
     );
-  }
+  };
 
-  render() {
-    return (
-      <div className="mini-info__section">
-        <div className="container">
-          <div className="mini-info__wrapper">{this.renderMiniInfo()}</div>
-        </div>
+  return (
+    <div className="mini-info__section">
+      <div className="container">
+        <div className="mini-info__wrapper">{renderMiniInfo()}</div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+export default MiniInfo;

@@ -1,20 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-const TableShowMoreBtn = ({ handleClick }) => {
+export interface TableShowMoreBtnProps {
+  handleClick: (event: React.MouseEvent) => void;
+}
+
+const TableShowMoreBtn: React.FC<TableShowMoreBtnProps> = ({ handleClick }) => {
   return (
     <tr className="show-more">
-      <td className="show-more-cell text-center" colSpan="4">
+      <td className="show-more-cell text-center" colSpan={4}>
         <button className="show-more-btn" onClick={handleClick}>
           Show more
         </button>
       </td>
     </tr>
   );
-};
-
-TableShowMoreBtn.propTypes = {
-  handleClick: PropTypes.func,
 };
 
 export default TableShowMoreBtn;

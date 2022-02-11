@@ -78,7 +78,6 @@ class Background {
     });
   }
 
-  // eslint-disable-next-line jsdoc/require-description-complete-sentence
   /**
    * Receives and processes messages sent by chrome extension API e.g. other files.
    *

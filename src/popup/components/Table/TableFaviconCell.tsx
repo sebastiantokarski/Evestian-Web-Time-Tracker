@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { LazyGroup } from 'react-lazy';
 import { Oval } from 'react-loader-spinner';
-import PropTypes from 'prop-types';
 import Color from '../../../js/Color';
 
-const TableFaviconCell = ({ faviconUrl, index }) => {
+export interface TableFaviconCellProps {
+  faviconUrl?: string;
+}
+
+const TableFaviconCell: React.FC<TableFaviconCellProps> = ({ faviconUrl }) => {
   const defaultFavUrl = chrome.runtime.getURL('/assets/defaultFavicon.png');
   const loaderColor = new Color('primary');
 
@@ -30,20 +33,13 @@ const TableFaviconCell = ({ faviconUrl, index }) => {
             src={faviconUrl}
             style={{ height: showImageLoader ? '0' : 'unset' }}
           />
-          {showImageLoader && index > 5 && (
-            <Oval color={loaderColor.color} width={16} height={16} />
-          )}
+          {showImageLoader && <Oval color={loaderColor.color} width={16} height={16} />}
         </LazyGroup>
       ) : (
         <img className="favicon-image" src={defaultFavUrl} />
       )}
     </td>
   );
-};
-
-TableFaviconCell.propTypes = {
-  faviconUrl: PropTypes.string,
-  index: PropTypes.number.isRequired,
 };
 
 export default TableFaviconCell;

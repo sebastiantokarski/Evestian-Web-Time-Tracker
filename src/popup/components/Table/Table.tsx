@@ -1,12 +1,33 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import TableRow from './TableRow.jsx';
-import TableShowMoreBtn from './TableShowMoreBtn.jsx';
+import TableRow from './TableRow';
+import TableShowMoreBtn from './TableShowMoreBtn';
 
-const Table = ({ className, tableData, hoveredChartItem, striped, hovered, rowLimit = 10 }) => {
+interface TableRowData {
+  name: string;
+  time: number;
+  faviconUrl?: string;
+}
+
+export interface TableProps {
+  striped: boolean;
+  hovered: boolean;
+  tableData: TableRowData[];
+  hoveredChartItem?: string;
+  rowLimit: number;
+  className?: string;
+}
+
+const Table = ({
+  tableData,
+  hoveredChartItem,
+  striped,
+  hovered,
+  rowLimit = 10,
+  className = '',
+}) => {
   const [numOfRowsToShow, setNumOfRowsToShow] = useState(rowLimit);
 
-  const getTableClassNames = (additionalClassName) => {
+  const getTableClassNames = (additionalClassName: string): string => {
     const classNames = ['table'];
 
     if (striped) {
@@ -40,7 +61,8 @@ const Table = ({ className, tableData, hoveredChartItem, striped, hovered, rowLi
 
   const getOthersTime = () => {
     return tableData.reduce(
-      (time, currData, index) => (index > numOfRowsToShow ? time + currData.time : time),
+      (time: number, currData, index: number) =>
+        index > numOfRowsToShow ? time + currData.time : time,
       0
     );
   };
@@ -58,15 +80,6 @@ const Table = ({ className, tableData, hoveredChartItem, striped, hovered, rowLi
       </tbody>
     </table>
   );
-};
-
-Table.propTypes = {
-  striped: PropTypes.bool,
-  hovered: PropTypes.bool,
-  tableData: PropTypes.array,
-  hoveredChartItem: PropTypes.oneOfType([PropTypes.string]),
-  rowLimit: PropTypes.number,
-  className: PropTypes.string,
 };
 
 export default Table;

@@ -1,5 +1,5 @@
-import utils from './utils';
 import thenChrome from 'then-chrome';
+import utils from './utils';
 
 /**
  * Class representing extension settings.

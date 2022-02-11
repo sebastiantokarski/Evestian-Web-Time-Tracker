@@ -1,3 +1,4 @@
+/* eslint-disable */
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -6,16 +7,17 @@ const WebpackExtensionManifestPlugin = require('webpack-extension-manifest-plugi
 
 module.exports = (options) => {
   const IS_DEV = Boolean(options.dev);
+  const __dirname = path.resolve();
   const BUILD_DIR = path.resolve(__dirname, IS_DEV ? 'dev' : 'build');
 
   const entry = {
-    popup: path.resolve(__dirname, 'src/popup/index.js'),
+    popup: path.resolve(__dirname, 'src/popup/index.tsx'),
     background: path.resolve(__dirname, 'src/background/index.js'),
     contentscript: path.resolve(__dirname, 'src/contentscript/index.js'),
   };
 
   if (IS_DEV) {
-    entry.hotReload = path.resolve(__dirname, 'src/background/hot-reload.js');
+    entry['hotReload'] = path.resolve(__dirname, 'src/background/hot-reload.js');
   }
 
   return {
@@ -36,8 +38,17 @@ module.exports = (options) => {
     watch: IS_DEV ? true : false,
     mode: IS_DEV ? 'development' : 'production',
     devtool: IS_DEV ? 'source-map' : undefined,
+    resolve: {
+      extensions: ['.tsx', '.ts', '.js', '.jsx'],
+      modules: ['src', 'node_modules']
+    },
     module: {
       rules: [
+        {
+          test: /\.(ts|tsx)?$/,
+          use: 'ts-loader',
+          exclude: /node_modules/,
+        },
         {
           test: /\.(js|jsx)$/,
           exclude: /node_modules/,
@@ -85,7 +96,7 @@ module.exports = (options) => {
         emitError: true,
         emitWarning: true,
         failOnError: true,
-        extensions: ['js', 'jsx'],
+        extensions: ['js', 'jsx', 'ts', 'tsx'],
         overrideConfigFile: './.eslintrc.json',
       }),
       new WebpackExtensionManifestPlugin({

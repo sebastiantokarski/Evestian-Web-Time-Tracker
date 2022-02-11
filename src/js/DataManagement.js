@@ -1,5 +1,5 @@
-import config from './config';
 import thenChrome from 'then-chrome';
+import config from './config';
 import utils from './utils';
 
 /** Class DataManagement. */
@@ -41,7 +41,7 @@ export default class DataManagement {
     const getStoragePromise = thenChrome.storage.local.get(this.dataName);
     let currentStorage;
 
-    await getStoragePromise.then(storage => (currentStorage = storage[this.dataName]));
+    await getStoragePromise.then((storage) => (currentStorage = storage[this.dataName]));
 
     const merged = { ...currentStorage, ...this.data };
     const setStoragePromise = thenChrome.storage.local.set({ [this.dataName]: merged });
@@ -62,7 +62,7 @@ export default class DataManagement {
    * Check how many bytes in currently used in storage.
    */
   checkDataSize() {
-    chrome.storage.local.getBytesInUse(this.dataName, function(size) {
+    chrome.storage.local.getBytesInUse(this.dataName, function (size) {
       const totalSize = chrome.storage.local.QUOTA_BYTES;
       const percentage = ((size / totalSize) * 100).toFixed(2);
 
@@ -77,10 +77,11 @@ export default class DataManagement {
    * @return {Promise}
    */
   loadFromStorage() {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
 
-    return new Promise(resolve => {
-      thenChrome.storage.local.get(self.dataName).then(data => {
+    return new Promise((resolve) => {
+      thenChrome.storage.local.get(self.dataName).then((data) => {
         if (data[self.dataName]) {
           self.data = data[self.dataName];
           utils.debugLog(`Loaded from storage - ${self.dataName}:`, self.data);

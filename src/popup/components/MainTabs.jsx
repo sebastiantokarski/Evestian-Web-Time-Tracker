@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import ChartDoughnut from './ChartDoughnut.jsx';
-import ChartLine from './ChartLine.jsx';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import Table from './Table/Table.jsx';
+import { Table, ChartDoughnut, ChartLine } from 'popup/components';
 import config from '../../js/config';
 import DataProcessing from '../../js/DataProcessing';
 
