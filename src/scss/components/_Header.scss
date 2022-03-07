@@ -15,13 +15,13 @@ $iconSizeOpenMenu: 1.8rem;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: .5rem;
+    padding: 0.5rem;
   }
 
   &__logo {
     position: absolute;
     width: $iconSize;
-    transition: all .3s ease-out;
+    transition: all 0.3s ease-out;
 
     &.opened-menu {
       width: 1.8rem;
@@ -35,7 +35,7 @@ $iconSizeOpenMenu: 1.8rem;
     font-size: 1.2rem;
     font-weight: 400;
     margin: 0;
-    transition: all .3s ease-out;
+    transition: all 0.3s ease-out;
 
     &.opened-menu {
       left: 2.5rem;
@@ -46,7 +46,9 @@ $iconSizeOpenMenu: 1.8rem;
   &__menu {
     &-trigger {
       opacity: 1;
-      transition: opacity .3s ease-out;
+      transition: opacity 0.3s ease-out;
+      background: none;
+      border: none;
     }
 
     &-trigger .header-svg {
@@ -58,14 +60,16 @@ $iconSizeOpenMenu: 1.8rem;
     &-app-switch,
     &-close,
     &-info {
-      margin-left: .3rem;
+      margin-left: 0.3rem;
       opacity: 0;
-      transition: opacity .3s ease-in-out;
+      transition: opacity 0.3s ease-in-out;
+      background: none;
+      border: none;
     }
 
     &-wrapper {
       position: relative;
-      transition: all .3s ease-in-out;
+      transition: all 0.3s ease-in-out;
       left: 8.3rem;
 
       &.opened {
@@ -83,7 +87,7 @@ $iconSizeOpenMenu: 1.8rem;
         }
 
         .header__menu-settings .header-svg {
-          animation: spin .5s ease-in-out;
+          animation: spin 0.5s ease-in-out;
         }
       }
     }

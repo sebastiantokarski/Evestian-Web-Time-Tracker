@@ -1,5 +1,5 @@
-import config from './config';
-import utils from './utils';
+import config from 'js/config';
+import { debugLog, getCurrentYear, getCurrentWeekOfTheYear, isObject } from 'js/utils';
 import Color from './Color';
 import DataManagement from './DataManagement';
 
@@ -29,9 +29,7 @@ export default class DataProcessing extends DataManagement {
    * @return {*|undefined}
    */
   static sortDescending(array, indexToCompare) {
-    return array.sort(function (a, b) {
-      return b[indexToCompare] - a[indexToCompare];
-    });
+    return array.sort((a, b) => b[indexToCompare] - a[indexToCompare]);
   }
 
   /**
@@ -56,7 +54,7 @@ export default class DataProcessing extends DataManagement {
   static createSimpleMap(numberOfKeys, value, startNumber = 0) {
     const newObj = {};
 
-    for (let i = startNumber; i < numberOfKeys + startNumber; i++) {
+    for (let i = startNumber; i < numberOfKeys + startNumber; i += 1) {
       newObj[i] = value;
     }
 
@@ -70,15 +68,7 @@ export default class DataProcessing extends DataManagement {
    * @return {Array[]}
    */
   static convertSimpleObjectToArray(obj) {
-    const newArray = [];
-
-    for (const key in obj) {
-      if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
-
-      newArray.push([key, obj[key]]);
-    }
-
-    return newArray;
+    return Object.entries(obj);
   }
 
   /**
@@ -121,13 +111,13 @@ export default class DataProcessing extends DataManagement {
     if (time.seconds >= oneDay) {
       time.days = Math.floor(time.seconds / oneDay);
       time.seconds -= time.days * oneDay;
-      time.days = time.days + 'd';
+      time.days = `${time.days}d`;
     }
 
     if (time.seconds >= oneHour) {
       time.hours = Math.floor(time.seconds / oneHour);
       time.seconds -= time.hours * oneHour;
-      time.hours = time.days ? ('0' + time.hours).slice(-2) + 'h' : time.hours + 'h';
+      time.hours = time.days ? `${`0${time.hours}`.slice(-2)}h` : `${time.hours}h`;
       time.minutes = '00m';
     } else if (time.days) {
       time.hours = '00h';
@@ -138,12 +128,12 @@ export default class DataProcessing extends DataManagement {
       time.minutes = Math.floor(time.seconds / oneMinute);
       time.seconds -= time.minutes * oneMinute;
       time.minutes =
-        time.days || time.hours ? ('0' + time.minutes).slice(-2) + 'm' : time.minutes + 'm';
+        time.days || time.hours ? `${`0${time.minutes}`.slice(-2)}m` : `${time.minutes}m`;
     } else if (time.days || time.hours) {
       time.minutes = '00m';
     }
 
-    time.seconds = time.minutes ? ('0' + time.seconds).slice(-2) + 's' : time.seconds + 's';
+    time.seconds = time.minutes ? `${`0${time.seconds}`.slice(-2)}s` : `${time.seconds}s`;
 
     return `${time.days}${time.hours}${time.minutes}${time.seconds}`;
   }
@@ -160,26 +150,15 @@ export default class DataProcessing extends DataManagement {
   getAllYears() {
     const allYears = [];
 
-    for (const hostname in this.data) {
-      if (
-        !Object.prototype.hasOwnProperty.call(this.data, hostname) ||
-        !this.isThisHostnameData(hostname)
-      )
-        continue;
-
+    Object.keys(this.data).forEach((hostname) => {
       const years = this.data[hostname];
 
-      for (const year in years) {
-        if (
-          !Object.prototype.hasOwnProperty.call(years, year) ||
-          typeof years[year] !== 'object' ||
-          years[year] === null
-        )
-          continue;
-
-        allYears.push([year, years[year]]);
-      }
-    }
+      Object.keys(years).forEach((year) => {
+        if (years?.[year]) {
+          allYears.push([year, years[year]]);
+        }
+      });
+    });
 
     return allYears;
   }
@@ -192,19 +171,18 @@ export default class DataProcessing extends DataManagement {
   getAllDaysOfTheWeek() {
     const allYears = this.getAllYears();
     const allDaysOfTheWeek = [];
-    let weekDetails;
 
-    for (let i = 0; i < allYears.length; i++) {
+    for (let i = 0; i < allYears.length; i += 1) {
       try {
-        weekDetails = allYears[i][1][config.WEEK_DETAILS];
+        const weekDetails = allYears[i][1][config.WEEK_DETAILS];
 
-        for (const key in weekDetails) {
-          if (!Object.prototype.hasOwnProperty.call(weekDetails, key)) continue;
-
-          allDaysOfTheWeek.push([key, weekDetails[key]]);
+        if (isObject(weekDetails)) {
+          Object.keys(weekDetails).forEach((key) => {
+            allDaysOfTheWeek.push([key, weekDetails[key]]);
+          });
         }
       } catch (ex) {
-        utils.debugLog('Exception in getAllDaysOfTheWeek', ex, allYears[i]);
+        debugLog('Exception in getAllDaysOfTheWeek', ex, allYears[i]);
       }
     }
 
@@ -215,28 +193,28 @@ export default class DataProcessing extends DataManagement {
    * @return {Array}
    */
   getAllMonths() {
-    return this.getAllStatsInGivenParentUnit(this.getAllYears());
+    return this.constructor.getAllStatsInGivenParentUnit(this.getAllYears());
   }
 
   /**
    * @return {Array}
    */
   getAllDays() {
-    return this.getAllStatsInGivenParentUnit(this.getAllMonths());
+    return this.constructor.getAllStatsInGivenParentUnit(this.getAllMonths());
   }
 
   /**
    * @return {Array}
    */
   getAllHours() {
-    return this.getAllStatsInGivenParentUnit(this.getAllDays());
+    return this.constructor.getAllStatsInGivenParentUnit(this.getAllDays());
   }
 
   /**
    * @return {Array}
    */
   getAllMinutes() {
-    return this.getAllStatsInGivenParentUnit(this.getAllHours(), true);
+    return this.constructor.getAllStatsInGivenParentUnit(this.getAllHours(), true);
   }
 
   /**
@@ -245,23 +223,17 @@ export default class DataProcessing extends DataManagement {
    * @param  {boolean} isChildrenUnitNotObject
    * @return {Array}
    */
-  getAllStatsInGivenParentUnit(parentUnit, isChildrenUnitNotObject) {
-    let unit;
+  static getAllStatsInGivenParentUnit(parentUnit) {
     const all = [];
 
-    for (let i = 0; i < parentUnit.length; i++) {
-      unit = parentUnit[i][1];
+    for (let i = 0; i < parentUnit.length; i += 1) {
+      const unit = parentUnit[i][1];
 
-      for (const key in unit) {
-        if (
-          !Object.prototype.hasOwnProperty.call(unit, key) ||
-          (typeof unit[key] !== 'object' && isChildrenUnitNotObject) ||
-          key === config.ALL_TIME
-        )
-          continue;
-
-        all.push([key, unit[key]]);
-      }
+      Object.keys(unit).forEach((key) => {
+        if (key !== config.ALL_TIME) {
+          all.push([key, unit[key]]);
+        }
+      });
     }
 
     return all;
@@ -281,18 +253,17 @@ export default class DataProcessing extends DataManagement {
   getSortedPagesVisitedInGivenPeriod(periodName, period) {
     const methodName = `get${periodName}Data`;
     const pagesData = [];
-    const data = this.data;
 
-    for (const key in data) {
-      if (!Object.prototype.hasOwnProperty.call(data, key)) continue;
+    Object.keys(this.data).forEach((key) => {
       if (this.isThisHostnameData(key) && this[methodName](key, period)) {
         pagesData.push({
           name: key,
           time: this[methodName](key, period)[config.ALL_TIME],
-          faviconUrl: data[key][config.FAVICON_URL],
+          faviconUrl: this.data[key][config.FAVICON_URL],
         });
       }
-    }
+    });
+
     return this.constructor.sortDescendingObjects(pagesData, 'time');
   }
 
@@ -313,18 +284,19 @@ export default class DataProcessing extends DataManagement {
   getTimeSpentInHours() {
     const hoursMap = this.constructor.createSimpleMap(24, 0);
 
-    for (const hostname in this.data) {
-      if (!Object.prototype.hasOwnProperty.call(this.data, hostname)) continue;
+    Object.keys(this.data).forEach((hostname) => {
       if (this.isThisHostnameData(hostname)) {
         const today = this.getTodayData(hostname);
 
-        for (const hour in today) {
-          if (hour !== config.ALL_TIME) {
-            hoursMap[hour] += today[hour][config.ALL_TIME];
-          }
+        if (today) {
+          Object.keys(today).forEach((hour) => {
+            if (hour !== config.ALL_TIME) {
+              hoursMap[hour] += today[hour][config.ALL_TIME];
+            }
+          });
         }
       }
-    }
+    });
 
     return this.constructor.convertSimpleObjectToArray(hoursMap);
   }
@@ -335,25 +307,19 @@ export default class DataProcessing extends DataManagement {
   getTimeSpentInMinutesToday() {
     const minutesMap = this.constructor.createSimpleMap(60, 0);
 
-    for (const hostname in this.data) {
-      if (
-        !Object.prototype.hasOwnProperty.call(this.data, hostname) ||
-        !this.isThisHostnameData(hostname)
-      )
-        continue;
-
+    Object.keys(this.data).forEach((hostname) => {
       const today = this.getTodayData(hostname);
 
-      for (const hour in today) {
+      Object.keys(today).forEach((hour) => {
         if (hour !== config.ALL_TIME) {
-          for (const minute in today[hour]) {
+          Object.keys(today[hour]).forEach((minute) => {
             if (minute !== config.ALL_TIME) {
               minutesMap[minute] += today[hour][minute];
             }
-          }
+          });
         }
-      }
-    }
+      });
+    });
 
     return this.constructor.convertSimpleObjectToArray(minutesMap);
   }
@@ -365,22 +331,15 @@ export default class DataProcessing extends DataManagement {
   getTimeSpentInMinutesGlobal() {
     const minutesMap = this.constructor.createSimpleMap(60, 0);
 
-    for (const hostname in this.data) {
-      if (
-        !Object.prototype.hasOwnProperty.call(this.data, hostname) ||
-        !this.isThisHostnameData(hostname)
-      )
-        continue;
-
+    Object.keys(this.data).forEach((hostname) => {
       const hours = this.getAllHours(hostname);
 
-      for (const minute in hours) {
-        if (!Object.prototype.hasOwnProperty.call(hours, minute) || minute === config.ALL_TIME)
-          continue;
-
-        minutesMap[minute] += hours[minute];
-      }
-    }
+      Object.keys(hours).forEach((minute) => {
+        if (minute !== config.ALL_TIME) {
+          minutesMap[minute] += hours[minute];
+        }
+      });
+    });
 
     return this.constructor.convertSimpleObjectToArray(minutesMap);
   }
@@ -391,42 +350,27 @@ export default class DataProcessing extends DataManagement {
    * @return {Array}
    */
   getTimeSpentInDaysOfTheWeek() {
+    const currentWeek = getCurrentWeekOfTheYear();
     const daysOfTheWeekMap = this.constructor.createSimpleMap(7, 0, 1);
+    const getWeekTime = (weekDetails, week) => {
+      const weekOfTheYear = week.split('-')[0];
+      const dayOfTheWeek = week.split('-')[1];
 
-    for (const hostname in this.data) {
-      if (
-        !Object.prototype.hasOwnProperty.call(this.data, hostname) ||
-        !this.isThisHostnameData(hostname)
-      )
-        continue;
-
-      const getFirstVisitYear = Number(this.data[config.FIRST_VISIT].match(/-(\d{4})$/)[1]);
-      const currentYear = Number(utils.getCurrentYear());
-      let weekDetails = null;
-
-      for (let i = getFirstVisitYear; i < currentYear; i++) {
-        weekDetails = this.getYearData(hostname);
-
-        if (!weekDetails) continue;
-
-        weekDetails = this.getYearData(hostname)[config.WEEK_DETAILS];
-
-        const currentWeek = utils.getCurrentWeekOfTheYear();
-        let dayOfTheWeek;
-        let weekOfTheYear;
-
-        for (const week in weekDetails) {
-          if (!Object.prototype.hasOwnProperty.call(weekDetails, week)) continue;
-
-          weekOfTheYear = week.split('-')[0];
-          dayOfTheWeek = week.split('-')[1];
-
-          if (weekOfTheYear === currentWeek) {
-            daysOfTheWeekMap[dayOfTheWeek] += weekDetails[week];
-          }
-        }
+      if (weekOfTheYear === currentWeek) {
+        daysOfTheWeekMap[dayOfTheWeek] += weekDetails[week];
       }
-    }
+    };
+
+    Object.keys(this.data).forEach((hostname) => {
+      const getFirstVisitYear = Number(this.data[config.FIRST_VISIT].match(/-(\d{4})$/)[1]);
+      const currentYear = Number(getCurrentYear());
+
+      for (let i = getFirstVisitYear; i < currentYear; i += 1) {
+        const weekDetails = this.getYearData(hostname)[config.WEEK_DETAILS];
+
+        Object.keys(weekDetails).forEach(getWeekTime.bind(weekDetails));
+      }
+    });
 
     return this.constructor.convertSimpleObjectToArray(daysOfTheWeekMap);
   }
@@ -440,7 +384,7 @@ export default class DataProcessing extends DataManagement {
     const daysOfTheWeek = this.getAllDaysOfTheWeek();
     const daysOfTheWeekMap = this.constructor.createSimpleMap(7, 0, 1);
 
-    for (let i = 0; i < daysOfTheWeek.length; i++) {
+    for (let i = 0; i < daysOfTheWeek.length; i += 1) {
       daysOfTheWeekMap[daysOfTheWeek[i][0].match(/-(\d)/)[1]] += daysOfTheWeek[i][1];
     }
 
@@ -452,12 +396,57 @@ export default class DataProcessing extends DataManagement {
    *
    * @return {object}
    */
-  getEmptyChartData() {
+  static getEmptyChartData() {
     return {
       data: [],
       labels: [],
       colors: [],
     };
+  }
+
+  /**
+   * Set color from static array for every label in given data.
+   *
+   * @param {object} data
+   */
+  setLabelColors(data) {
+    const staticColors = {
+      'www.google.com': new Color('google').color,
+      'www.google.pl': new Color('google').color,
+      'www.youtube.com': new Color('youtube').color,
+      'www.facebook.com': new Color('facebook').color,
+      'www.instagram.com': new Color('instagram').color,
+      'github.com': new Color('github').color,
+      'mail.google.com': new Color('gmail').color,
+    };
+    const defaultColors = [
+      new Color('primary100').color,
+      new Color('primary200').color,
+      new Color('primary300').color,
+      new Color('primary400').color,
+      new Color('primary500').color,
+      new Color('primary600').color,
+      new Color('primary700').color,
+      new Color('primary800').color,
+      new Color('primary900').color,
+    ];
+
+    const colors = data.labels.map((label) => {
+      if (staticColors[label]) {
+        return staticColors[label];
+      }
+
+      if (this.data[label]?.[config.FAVICON_COLOR]) {
+        return this.data[label]?.[config.FAVICON_COLOR];
+      }
+
+      if (label === 'Other') {
+        return '#c0c0c0';
+      }
+      return defaultColors.pop();
+    });
+
+    return colors;
   }
 
   /**
@@ -471,74 +460,24 @@ export default class DataProcessing extends DataManagement {
   generateChartData(arrayData, limitData) {
     let othersTime = 0;
 
-    const chartData = arrayData.reduce((chartData, singleData, index) => {
+    const chartData = arrayData.reduce((data, singleData, index) => {
       if (index + 1 < limitData) {
-        chartData.data.push(singleData.time);
-        chartData.labels.push(singleData.name);
+        data.data.push(singleData.time);
+        data.labels.push(singleData.name);
       } else {
         othersTime += singleData.time;
       }
-      return chartData;
-    }, this.getEmptyChartData());
+      return data;
+    }, DataProcessing.getEmptyChartData());
 
     if (othersTime) {
       chartData.data.push(othersTime);
       chartData.labels.push('Other');
     }
 
+    chartData.colors = this.setLabelColors(chartData);
+
     return chartData;
-  }
-
-  /**
-   * Set color from static array for every label in given data.
-   *
-   * @param {object} data
-   */
-  setLabelColors(data) {
-    this.labelsCache = this.labelsCache || {
-      'www.google.com': new Color('google').color,
-      'www.google.pl': new Color('google').color,
-      'www.youtube.com': new Color('youtube').color,
-      'www.facebook.com': new Color('facebook').color,
-      'www.instagram.com': new Color('instagram').color,
-      'github.com': new Color('github').color,
-      'mail.google.com': new Color('gmail').color,
-    };
-    this.colors = this.colors || [
-      new Color('primary100').color,
-      new Color('primary200').color,
-      new Color('primary300').color,
-      new Color('primary400').color,
-      new Color('primary500').color,
-      new Color('primary600').color,
-      new Color('primary700').color,
-      new Color('primary800').color,
-      new Color('primary900').color,
-    ];
-
-    data.colors = [];
-
-    for (let i = 0; i < data.labels.length; i++) {
-      if (this.data[data.labels[i]] && this.data[data.labels[i]][config.FAVICON_COLOR]) {
-        data.colors.push(this.data[data.labels[i]][config.FAVICON_COLOR]);
-        continue;
-      }
-
-      if (data.labels[i] === 'Other') {
-        data.colors.push('#c0c0c0');
-        this.labelsCache.Other = '#c0c0c0';
-        continue;
-      }
-
-      if (this.labelsCache[data.labels[i]]) {
-        data.colors.push(this.labelsCache[data.labels[i]]);
-      } else {
-        const color = this.colors.pop();
-
-        this.labelsCache[data.labels[i]] = color;
-        data.colors.push(color);
-      }
-    }
   }
 
   /* eslint-disable max-len */
@@ -552,7 +491,6 @@ export default class DataProcessing extends DataManagement {
   processPagesVisitedToday() {
     this.pagesVisitedTodayArrayData = this.getSortedPagesVisitedInGivenPeriod('Today');
     this.pagesVisitedToday = this.generateChartData(this.pagesVisitedTodayArrayData, 10);
-    this.setLabelColors(this.pagesVisitedToday);
 
     return {
       chartData: this.pagesVisitedToday,
@@ -563,7 +501,6 @@ export default class DataProcessing extends DataManagement {
   processPagesVisitedYesterday() {
     this.pagesVisitedYesterdayArrayData = this.getSortedPagesVisitedInGivenPeriod('Yesterday');
     this.pagesVisitedYesterday = this.generateChartData(this.pagesVisitedYesterdayArrayData, 10);
-    this.setLabelColors(this.pagesVisitedYesterday);
 
     return {
       chartData: this.pagesVisitedYesterday,
@@ -574,7 +511,6 @@ export default class DataProcessing extends DataManagement {
   processPagesVisitedThisMonth() {
     this.pagesVisitedThisMonthArrayData = this.getSortedPagesVisitedInGivenPeriod('Month');
     this.pagesVisitedThisMonth = this.generateChartData(this.pagesVisitedThisMonthArrayData, 10);
-    this.setLabelColors(this.pagesVisitedThisMonth);
 
     return {
       chartData: this.pagesVisitedThisMonth,
@@ -585,7 +521,6 @@ export default class DataProcessing extends DataManagement {
   processPagesVisitedAllTime() {
     this.pagesVisitedAllTimeArrayData = this.getSortedPagesVisitedInGivenPeriod('Year');
     this.pagesVisitedAllTime = this.generateChartData(this.pagesVisitedAllTimeArrayData, 10);
-    this.setLabelColors(this.pagesVisitedAllTime);
 
     return {
       chartData: this.pagesVisitedAllTime,
@@ -608,7 +543,7 @@ export default class DataProcessing extends DataManagement {
     let timeSpentInHoursTotalDataArray = this.getAllHours();
     const timeMap = this.constructor.createSimpleMap(24, 0);
 
-    timeSpentInHoursTotalDataArray.map((time) => {
+    timeSpentInHoursTotalDataArray.forEach((time) => {
       timeMap[time[0]] += time[1][config.ALL_TIME];
     });
     timeSpentInHoursTotalDataArray = this.constructor.convertSimpleObjectToArray(timeMap);

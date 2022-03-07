@@ -1,22 +1,17 @@
 import React from 'react';
-import config from '../../js/config';
-import DataProcessing from '../../js/DataProcessing';
-import utils from '../../js/utils';
+import config from 'js/config';
+import { getDateString } from 'js/utils';
+import DataProcessing from 'js/DataProcessing';
 
-const MiniInfo = () => {
-  /**
-   * @param {string} date - DD-MM-YYYY.
-   * @return {string}
-   */
-  const parseFirstVisit = (date) => {
-    const currDate = utils.getDateString();
-    const getYear = (date) => {
+export default function MiniInfo() {
+  const parseFirstVisit = (firstDate: string): string => {
+    const currDate = getDateString();
+    const getYear = (date: string): string => {
       return date.match(/-\d{4}/)[0];
     };
-    const parseDate = (date) => {
+    const parseDate = (date: string) => {
       let month = date.match(/^\d{2}-(\d{2})-/)[1];
-
-      date = date.replace(/-\d{2}-\d{4}$/, '');
+      const modDate = date.replace(/-\d{2}-\d{4}$/, '');
 
       month = month
         .replace('01', 'January')
@@ -32,18 +27,18 @@ const MiniInfo = () => {
         .replace('11', 'November')
         .replace('12', 'December');
 
-      return `${date} ${month}`;
+      return `${modDate} ${month}`;
     };
 
-    if (date === currDate) {
+    if (firstDate === currDate) {
       return 'today';
     }
 
-    if (getYear(date) === getYear(currDate)) {
-      return `since ${parseDate(date)}`;
+    if (getYear(firstDate) === getYear(currDate)) {
+      return `since ${parseDate(firstDate)}`;
     }
 
-    return `since ${date}`;
+    return `since ${firstDate}`;
   };
 
   const renderMiniInfo = () => {
@@ -53,8 +48,8 @@ const MiniInfo = () => {
 
     return (
       <span className="mini-info__content">
-        You spent {dataProcessing.totalTime + ' '}
-        on {dataProcessing.totalDomains + ' '}
+        You spent {dataProcessing.totalTime}
+        on {dataProcessing.totalDomains}
         {dataProcessing.totalDomains > 1 ? 'sites ' : 'site '}
         {parseFirstVisit(dataProcessing.firstVisit)}
       </span>
@@ -68,6 +63,4 @@ const MiniInfo = () => {
       </div>
     </div>
   );
-};
-
-export default MiniInfo;
+}

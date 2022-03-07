@@ -1,44 +1,23 @@
 {
+  "root": true,
   "env": {
-    "browser": true,
-    "webextensions": true,
-    "es6": true
+    "es6": true,
+    "webextensions": true
   },
-  "extends": [],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 2019,
+    "ecmaVersion": 2022,
     "sourceType": "module",
-    "ecmaFeatures": {
-      "jsx": true
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["@typescript-eslint"],
+  "extends": ["airbnb", "airbnb-typescript", "airbnb-typescript-prettier"],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["src"]
+      }
     }
   },
-  "plugins": ["jsdoc", "react"],
-  "rules": {
-    "jsdoc/require-returns-description": 0,
-    "jsdoc/require-param-description": 0,
-    "max-len": ["error", 100],
-    "newline-after-var": [2, "always"],
-    "require-jsdoc": 0,
-    "no-fallthrough": 0,
-    "object-curly-spacing": [2, "always"]
-  },
-  "settings": {
-    "jsdoc": {
-      "tagNamePreference": {
-        "returns": "return"
-      }
-    },
-    "react": {
-      "createClass": "createReactClass",
-      "pragma": "React",
-      "version": "detect",
-      "flowVersion": "0.53"
-    },
-    "propWrapperFunctions": [
-      "forbidExtraProps",
-      { "property": "freeze", "object": "Object" },
-      { "property": "myFavoriteWrapper" }
-    ],
-    "linkComponents": ["Hyperlink", { "name": "Link", "linkAttribute": "to" }]
-  }
+  "ignorePatterns": ["declarations.d.ts"]
 }

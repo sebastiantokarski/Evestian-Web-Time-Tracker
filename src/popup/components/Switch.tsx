@@ -7,15 +7,15 @@ export interface SwitchProps {
   handleSettingChange: (event: React.ChangeEvent) => void;
 }
 
-const Switch: React.FC<SwitchProps> = ({ name, value, config, handleSettingChange }) => {
+function Switch({ name, value, config, handleSettingChange }: SwitchProps) {
   const id = `checkbox-${config.id}`;
 
   return (
     <label className="switch" htmlFor={id}>
       <input id={id} name={name} type="checkbox" checked={value} onChange={handleSettingChange} />
-      <div className="slider round"></div>
+      <div className="slider round" />
     </label>
   );
-};
+}
 
 export default Switch;

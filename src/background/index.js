@@ -1,11 +1,10 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import config from '../js/config';
+import config from 'js/config';
+import { debugLog, getActiveTab, getFromUrl, isWindowActive, isSoundFromTab } from 'js/utils';
 import settings from '../js/settings';
-import utils from '../js/utils';
 import DataManagement from '../js/DataManagement';
 
-/** Class Background. */
 class Background {
   /**
    * Constructor.
@@ -13,7 +12,7 @@ class Background {
   constructor() {
     this.currentState = chrome.idle.IdleState.ACTIVE;
     this.setBeforeSave = [];
-    this.dataManagement = new DataManagement(config.EXTENSION_DATA_NAME);
+    this.dataManagement = new DataManagement();
     this.dataManagement.loadFromStorage();
   }
 
@@ -23,7 +22,7 @@ class Background {
    * @param  {string} url
    * @return {boolean}
    */
-  isURLOnBlacklist(url) {
+  static isURLOnBlacklist(url) {
     const blacklistedURLs = settings.BLACKLISTED_URLS;
 
     return (
@@ -43,7 +42,7 @@ class Background {
    * @param  {string} state - 'active', 'idle' or 'locked'.
    * @return {boolean}
    */
-  isStateActive(state) {
+  static isStateActive(state) {
     if (settings.COUNTY_ONLY_ACTIVE_STATE) {
       return chrome.idle.IdleState.ACTIVE === state;
     }
@@ -61,11 +60,11 @@ class Background {
     let tabTime = 0;
 
     if (timeInSeconds < 60) {
-      tabTime = timeInSeconds + 's';
+      tabTime = `${timeInSeconds}s`;
     } else if (timeInSeconds < 60 * 100) {
-      tabTime = Math.floor(timeInSeconds / 60) + 'm';
+      tabTime = `${Math.floor(timeInSeconds / 60)}m`;
     } else {
-      tabTime = Math.floor(timeInSeconds / 60 / 60) + 'h';
+      tabTime = `${Math.floor(timeInSeconds / 60 / 60)}h`;
     }
 
     chrome.browserAction.setBadgeText({
@@ -87,7 +86,7 @@ class Background {
    * @return {boolean}
    */
   onMessageCallback(request, sender, sendResponse) {
-    utils.debugLog('New message:', '\nDetails:', request, '\nFrom:', sender);
+    debugLog('New message:', '\nDetails:', request, '\nFrom:', sender);
 
     switch (request.action) {
       case 'saveFaviconColorAfterSave':
@@ -100,6 +99,7 @@ class Background {
       case 'saveFaviconColor':
         this.dataManagement.data[request.hostname][request.key] = request.value;
 
+      // eslint-disable-next-line no-fallthrough
       case 'save':
         this.dataManagement.saveInStorage(sendResponse);
         return true;
@@ -109,12 +109,12 @@ class Background {
     }
   }
 
-  onInstalledCallback() {
-    utils.debugLog('onInstalled event');
+  static onInstalledCallback() {
+    debugLog('onInstalled event');
   }
 
-  onUpdatedCallback(currVersion) {
-    utils.debugLog('onUpdated event. Current version:', currVersion);
+  static onUpdatedCallback(currVersion) {
+    debugLog('onUpdated event. Current version:', currVersion);
   }
 
   onEnableExtension() {
@@ -135,7 +135,7 @@ class Background {
         populate: true,
       },
       (window) => {
-        const tab = utils.getActiveTab(window.tabs);
+        const tab = getActiveTab(window.tabs);
 
         chrome.browserAction.setBadgeText({
           tabId: tab.id,
@@ -145,7 +145,7 @@ class Background {
     );
 
     // Disable badge in tabs activated in future
-    chrome.tabs.onActivated.addListener(function (activeInfo) {
+    chrome.tabs.onActivated.addListener((activeInfo) => {
       if (!config.ENABLED) {
         chrome.browserAction.setBadgeText({
           tabId: activeInfo.id,
@@ -171,10 +171,11 @@ class Background {
         case true:
           this.onEnableExtension();
           break;
-
         case false:
           this.onDisableExtension();
           break;
+        default:
+          this.onEnableExtension();
       }
     }
   }
@@ -195,7 +196,7 @@ class Background {
      */
     chrome.idle.onStateChanged.addListener((state) => {
       this.currentState = state;
-      utils.debugLog('onStateChanged:', this.currentState);
+      debugLog('onStateChanged:', this.currentState);
     });
 
     /**
@@ -226,18 +227,18 @@ class Background {
         populate: true,
       },
       (window) => {
-        const tab = utils.getActiveTab(window.tabs);
-        const hostname = utils.getFromUrl('hostname', tab.url);
+        const tab = getActiveTab(window.tabs);
+        const hostname = getFromUrl('hostname', tab.url);
 
         if (
           tab &&
-          utils.isWindowActive(window) &&
-          !this.isURLOnBlacklist(tab.url) &&
-          (this.isStateActive(this.currentState) || utils.isSoundFromTab(tab))
+          isWindowActive(window) &&
+          !this.constructor.isURLOnBlacklist(tab.url) &&
+          (this.constructor.isStateActive(this.currentState) || isSoundFromTab(tab))
         ) {
           const details = this.dataManagement.updateDataFor(hostname, tab);
 
-          utils.debugLog(
+          debugLog(
             'Active tab:',
             hostname,
             '\nToday in seconds:',
@@ -276,6 +277,7 @@ class Background {
     );
   }
 
+  // eslint-disable-next-line class-methods-use-this
   onFirstStartup() {
     if (!localStorage.getItem(config.FIRST_STARTUP)) {
       localStorage.setItem(config.FIRST_STARTUP, true);
@@ -302,6 +304,7 @@ class Background {
     this.executeIntervals();
   }
 }
-const background = (window.background = new Background());
+const background = new Background();
+window.background = background;
 
 background.init();

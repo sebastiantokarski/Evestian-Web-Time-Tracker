@@ -2,7 +2,13 @@ import React from 'react';
 import DataProcessing from '../../../js/DataProcessing';
 import TableFaviconCell from './TableFaviconCell';
 
-export interface TableRowProps {
+export interface TableRowData {
+  name: string;
+  time: number;
+  faviconUrl?: string;
+}
+
+export interface TableRowProps extends TableRowData {
   name: string;
   time: number;
   index: number;
@@ -10,7 +16,13 @@ export interface TableRowProps {
   hoveredChartItem?: string;
 }
 
-const TableRow: React.FC<TableRowProps> = ({ name, time, index, faviconUrl, hoveredChartItem }) => {
+export default function TableRow({
+  name,
+  time,
+  index,
+  faviconUrl,
+  hoveredChartItem,
+}: TableRowProps) {
   const isActive = hoveredChartItem === name;
 
   const shortenText = (text: string): string => {
@@ -32,6 +44,4 @@ const TableRow: React.FC<TableRowProps> = ({ name, time, index, faviconUrl, hove
       </td>
     </tr>
   );
-};
-
-export default TableRow;
+}

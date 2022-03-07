@@ -1,5 +1,4 @@
 import React, { createContext, useEffect, useState } from 'react';
-import type { FC, ReactNode } from 'react';
 import { THEMES } from '../constants';
 
 interface Settings {
@@ -13,10 +12,6 @@ interface Settings {
 export interface SettingsContextValue {
   settings: Settings;
   saveSettings: (update: Settings) => void;
-}
-
-interface SettingsProviderProps {
-  children?: ReactNode;
 }
 
 const initialSettings: Settings = {
@@ -55,7 +50,7 @@ const SettingsContext = createContext<SettingsContextValue>({
   saveSettings: () => undefined,
 });
 
-export const SettingsProvider: FC<SettingsProviderProps> = (props) => {
+export function SettingsProvider(props) {
   const { children } = props;
   const [settings, setSettings] = useState<Settings>(initialSettings);
 
@@ -82,7 +77,7 @@ export const SettingsProvider: FC<SettingsProviderProps> = (props) => {
       {children}
     </SettingsContext.Provider>
   );
-};
+}
 
 export const SettingsConsumer = SettingsContext.Consumer;
 

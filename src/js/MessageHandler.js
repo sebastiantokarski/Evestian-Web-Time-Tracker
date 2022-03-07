@@ -1,41 +1,45 @@
-import config from './config';
-import utils from './utils';
+import config from 'js/config';
+import { debugLog } from 'js/utils';
 
-export default class MessageHandler {
-  constructor() {
-    this.init();
-  }
+class MessageHandler {
+  #htmlHandler = null;
+
+  #handlerObserver = null;
 
   static sendMessage(messageValue, callback) {
     chrome.runtime.sendMessage(messageValue, callback);
   }
 
-  addHandlerHTMLElement() {
-    this.handler = document.createElement('div');
+  addHTMLElement() {
+    this.#htmlHandler = document.createElement('div');
+    this.#htmlHandler.id = `${config.ID_PREFIX}message-handler`;
 
-    this.handler.id = `${config.ID_PREFIX}message-handler`;
-    document.body.appendChild(this.handler);
+    document.body.appendChild(this.#htmlHandler);
   }
 
-  addHandlerObserver() {
-    this.handlerObserver = new MutationObserver(mutations => {
-      mutations.map(mutation => {
+  addObserver() {
+    this.#handlerObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
         const messageName = mutation.attributeName;
         const messageValue = JSON.parse(mutation.target.getAttribute(messageName));
 
-        utils.debugLog('Handler observer:', messageName, messageValue);
+        debugLog('Handler observer:', messageName, messageValue);
 
-        this.constructor.sendMessage(messageValue, response => {
-          utils.debugLog(response);
+        this.constructor.sendMessage(messageValue, (response) => {
+          debugLog('Handler observer response:', response);
         });
       });
     });
 
-    this.handlerObserver.observe(this.handler, { attributes: true });
+    if (this.#htmlHandler) {
+      this.#handlerObserver.observe(this.#htmlHandler, { attributes: true });
+    }
   }
 
   init() {
-    this.addHandlerHTMLElement();
-    this.addHandlerObserver();
+    this.addHTMLElement();
+    this.addObserver();
   }
 }
+
+export default new MessageHandler();

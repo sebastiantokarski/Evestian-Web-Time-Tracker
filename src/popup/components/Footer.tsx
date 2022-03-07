@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Footer = () => {
+function Footer() {
   const flaticonUrl = 'https://www.flaticon.com';
   const flaticonAuthorUrl = `${flaticonUrl}/authors/smashicons`;
 
@@ -32,6 +32,6 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+}
 
 export default Footer;

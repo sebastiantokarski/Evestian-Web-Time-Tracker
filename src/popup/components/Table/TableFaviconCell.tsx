@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { LazyGroup } from 'react-lazy';
 import { Oval } from 'react-loader-spinner';
-import Color from '../../../js/Color';
+import Color from 'js/Color';
 
 export interface TableFaviconCellProps {
   faviconUrl?: string;
 }
 
-const TableFaviconCell: React.FC<TableFaviconCellProps> = ({ faviconUrl }) => {
+export default function TableFaviconCell({ faviconUrl }: TableFaviconCellProps) {
   const defaultFavUrl = chrome.runtime.getURL('/assets/defaultFavicon.png');
-  const loaderColor = new Color('primary');
 
   const [showImageLoader, setShowImageLoader] = useState(true);
 
@@ -30,16 +29,15 @@ const TableFaviconCell: React.FC<TableFaviconCellProps> = ({ faviconUrl }) => {
             className="favicon-image"
             onError={handleImageError}
             onLoad={handleImageLoad}
+            alt="favicon"
             src={faviconUrl}
             style={{ height: showImageLoader ? '0' : 'unset' }}
           />
-          {showImageLoader && <Oval color={loaderColor.color} width={16} height={16} />}
+          {showImageLoader && <Oval color={new Color('primary').color} width={16} height={16} />}
         </LazyGroup>
       ) : (
-        <img className="favicon-image" src={defaultFavUrl} />
+        <img className="favicon-image" alt="favicon" src={defaultFavUrl} />
       )}
     </td>
   );
-};
-
-export default TableFaviconCell;
+}

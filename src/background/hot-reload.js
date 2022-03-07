@@ -1,4 +1,4 @@
-import utils from '../js/utils';
+import { debugLog } from 'js/utils';
 
 /**
  * HotReload allows to automatically refresh whole extension.
@@ -42,7 +42,7 @@ export default class HotReload {
         active: true,
         currentWindow: true,
       },
-      tabs => {
+      (tabs) => {
         if (this.HARD_RELOAD && tabs[0]) {
           chrome.tabs.reload(tabs[0].id);
         }
@@ -58,16 +58,20 @@ export default class HotReload {
    * @return {Promise}
    */
   getFilesInDirectory(dir) {
-    return new Promise(resolve => {
-      dir.createReader().readEntries(entries => {
+    return new Promise((resolve) => {
+      dir.createReader().readEntries((entries) => {
         Promise.all(
           entries
-            .filter(e => e.name[0] !== '.')
-            .map(e =>
-              e.isDirectory ? this.getFilesInDirectory(e) : new Promise(resolve => e.file(resolve))
+            .filter((e) => e.name[0] !== '.')
+            .map((e) =>
+              e.isDirectory
+                ? this.getFilesInDirectory(e)
+                : new Promise((childResolve) => {
+                    e.file(childResolve);
+                  })
             )
         )
-          .then(files => [].concat(...files))
+          .then((files) => [].concat(...files))
           .then(resolve);
       });
     });
@@ -82,7 +86,7 @@ export default class HotReload {
   async timestampForFilesInDirectory(dir) {
     const files = await this.getFilesInDirectory(dir);
 
-    return files.map(file => `${file.name} ${file.lastModifiedDate}`).join();
+    return files.map((file) => `${file.name} ${file.lastModifiedDate}`).join();
   }
 
   /**
@@ -92,7 +96,7 @@ export default class HotReload {
    * @param {string} [lastTimestamp]
    */
   watchForChanges(dir, lastTimestamp) {
-    this.timestampForFilesInDirectory(dir).then(timestamp => {
+    this.timestampForFilesInDirectory(dir).then((timestamp) => {
       if (!lastTimestamp || lastTimestamp === timestamp) {
         setTimeout(() => this.watchForChanges(dir, timestamp), this.WATCH_INTERVAL_MS);
       } else {
@@ -105,10 +109,10 @@ export default class HotReload {
    * Initialize HotReload.
    */
   init() {
-    chrome.management.getSelf(self => {
+    chrome.management.getSelf((self) => {
       if (self.installType === 'development') {
-        utils.debugLog('HotReload - start watching for changes...');
-        chrome.runtime.getPackageDirectoryEntry(dir => this.watchForChanges(dir));
+        debugLog('HotReload - start watching for changes...');
+        chrome.runtime.getPackageDirectoryEntry((dir) => this.watchForChanges(dir));
       }
     });
   }

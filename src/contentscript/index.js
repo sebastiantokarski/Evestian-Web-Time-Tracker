@@ -1,9 +1,9 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import config from '../js/config';
-import utils from '../js/utils';
-import MessageHandler from '../js/MessageHandler';
-import settings from '../js/settings';
+import config from 'js/config';
+import { debugLog } from 'js/utils';
+import MessageHandler from 'js/MessageHandler';
+import settings from 'js/settings';
 
 /**
  * @todo Saving image in extension directory.
@@ -11,7 +11,7 @@ import settings from '../js/settings';
  * Maybe API link: https://www.google.com/s2/favicons?domain=google.com.
  */
 
-new MessageHandler();
+MessageHandler.init();
 
 chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
   const currHostname = window.location.hostname;
@@ -31,7 +31,7 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
 
   // @todo Here a new one data object for hostname should be created
   if (!currHostnameData) {
-    utils.debugLog('Data not found for', location.hostname);
+    debugLog('Data not found for', window.location.hostname);
     hostnameDataExists = false;
 
     if (document && document.querySelector('link[rel="shortcut icon"]')) {
@@ -42,19 +42,19 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
   }
 
   if (currHostnameData && currHostnameData[config.FAVICON_COLOR] === null) {
-    utils.debugLog('Favicon color is not available', currHostnameData);
+    debugLog('Favicon color is not available', currHostnameData);
     return;
   }
 
   if (!faviconUrl) {
-    utils.debugLog('Favicon url not found for', currHostnameData);
+    debugLog('Favicon url not found for', currHostnameData);
     return;
   }
 
   if (currHostnameData && currHostnameData[config.FAVICON_COLOR]) {
     const faviconColor = currHostnameData[config.FAVICON_COLOR];
 
-    utils.debugLog(
+    debugLog(
       `%c  %c Favicon color ${faviconColor}`,
       `background-color: ${faviconColor}; border-radius: 50%;`,
       'color: #1E90FF'
@@ -62,7 +62,7 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
     return;
   }
 
-  utils.debugLog('Favicon url:', faviconUrl);
+  debugLog('Favicon url:', faviconUrl);
 
   image.id = `${config.ID_PREFIX}img`;
   image.src = faviconUrl;

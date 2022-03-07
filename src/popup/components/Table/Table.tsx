@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
-import TableRow from './TableRow';
+import TableRow, { TableRowData } from './TableRow';
 import TableShowMoreBtn from './TableShowMoreBtn';
-
-interface TableRowData {
-  name: string;
-  time: number;
-  faviconUrl?: string;
-}
 
 export interface TableProps {
   striped: boolean;
@@ -17,14 +11,14 @@ export interface TableProps {
   className?: string;
 }
 
-const Table = ({
+export default function Table({
   tableData,
   hoveredChartItem,
   striped,
   hovered,
   rowLimit = 10,
   className = '',
-}) => {
+}: TableProps) {
   const [numOfRowsToShow, setNumOfRowsToShow] = useState(rowLimit);
 
   const getTableClassNames = (additionalClassName: string): string => {
@@ -46,6 +40,7 @@ const Table = ({
 
     return (
       <TableRow
+        key={`${index}-${name}`}
         name={name}
         time={time}
         faviconUrl={faviconUrl}
@@ -80,6 +75,4 @@ const Table = ({
       </tbody>
     </table>
   );
-};
-
-export default Table;
+}

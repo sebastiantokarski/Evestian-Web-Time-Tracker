@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Switch } from 'popup/components';
 import settings from 'js/settings';
 
-const Settings = () => {
+export default function Settings() {
   const [extensionSettings, setExtensionSettings] = useState();
 
   useEffect(() => {
@@ -27,6 +27,10 @@ const Settings = () => {
     handleSettingChange(settingName, settingValue);
   };
 
+  const isGroupOfInputs = (settingDetails) => {
+    return settingDetails.type === 'input' && settingDetails.default instanceof Array;
+  };
+
   const renderInput = (settingKey, inputConfig, inputValue) => {
     return (
       <input
@@ -35,8 +39,8 @@ const Settings = () => {
         type={inputConfig.type}
         checked={inputConfig.type === 'checkbox' && settings[settingKey]}
         onChange={handleTargetSettingChange}
-        value={inputValue ? inputValue : ''}
-      ></input>
+        value={inputValue || ''}
+      />
     );
   };
 
@@ -52,16 +56,23 @@ const Settings = () => {
         const input = renderInput(settingKey, setting, inputValue);
 
         return (
-          <div className="setting-input-wrapper" key={index}>
+          <div className="setting-input-wrapper" key={inputValue}>
             {input}
-            <a href="#" className="remove-icon"></a>
+            <button type="button" aria-label="Remove setting" className="remove-icon" />
             {index === arr.length - 1 && (
-              <a href="#" className="add-icon" onClick={() => addNewSettingItem(settingKey)}></a>
+              <button
+                type="button"
+                aria-label="Add setting"
+                className="add-icon"
+                onClick={() => addNewSettingItem(settingKey)}
+              />
             )}
           </div>
         );
       });
-    } else if (setting.type === 'checkbox') {
+    }
+
+    if (setting.type === 'checkbox') {
       return (
         <Switch
           config={setting}
@@ -74,17 +85,13 @@ const Settings = () => {
     return renderInput(settingKey, setting, '');
   };
 
-  const isGroupOfInputs = (settingDetails) => {
-    return settingDetails.type === 'input' && settingDetails.default instanceof Array;
-  };
-
   if (!extensionSettings) {
     return null;
   }
 
   return (
     <>
-      {Object.keys(extensionSettings).map((settingKey) => {
+      {Object.keys(extensionSettings).map((settingKey, index) => {
         const setting = settings.getDetails(settingKey);
         const colWidth = isGroupOfInputs(setting) ? 'col-12' : 'col-3';
 
@@ -92,7 +99,9 @@ const Settings = () => {
           <div className="setting-item" key={setting.id}>
             <div className="row">
               <div className="col-9">
-                <label className="setting-name">{setting.name}</label>
+                <label className="setting-name" htmlFor={`input-${index}`}>
+                  {setting.name}
+                </label>
               </div>
               <div className={`${colWidth} align-items-center align-self-center`}>
                 {renderSingleSetting(settingKey, setting)}
@@ -106,6 +115,4 @@ const Settings = () => {
       })}
     </>
   );
-};
-
-export default Settings;
+}

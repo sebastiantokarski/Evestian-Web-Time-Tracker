@@ -9,28 +9,31 @@ export interface ChartLineProps {
   chartData2: any;
 }
 
-const ChartLine: React.FC<ChartLineProps> = ({ chartTitle, chartData1, chartData2 }) => {
+export default function ChartLine({ chartTitle, chartData1, chartData2 }: ChartLineProps) {
   const chartFirstColorBorder = new Color('primary').toRGBa(0.65);
   const chartFirstColorBackground = new Color('primaryLight').toRGBa(0.65);
   const chartSecondColorBorder = new Color('secondaryDark').toRGBa(0.65);
   const chartSecondColorBackground = new Color('secondary').toRGBa(0.65);
 
   useEffect(() => {
-    const registerChartPlugin = () => {
-      Chart.register({
-        id: 'paddingBelowLegends',
-        beforeInit: function (chart) {
-          if (chart.config.type !== 'line') {
-            return;
-          }
-          (chart as any).legend.afterFit = function () {
-            this.height += 10;
-          };
-        },
-      });
+    const plugin = {
+      id: 'paddingBelowLegends',
+      beforeInit: (chart) => {
+        if (chart.config.type !== 'line') {
+          return;
+        }
+
+        // eslint-disable-next-line
+        chart.legend.afterFit = function () {
+          // eslint-disable-next-line
+          this.height += 10;
+        };
+      },
     };
 
-    registerChartPlugin();
+    Chart.register(plugin);
+
+    return () => Chart.unregister(plugin);
   }, []);
 
   if (!chartData1 || !chartData2) {
@@ -38,9 +41,10 @@ const ChartLine: React.FC<ChartLineProps> = ({ chartTitle, chartData1, chartData
   }
   return (
     <section className="lineChart__section">
-      <div className="container">
+      <div className="container" style={{ height: '300px' }}>
         <h5 className="lineChart__title">{chartTitle}</h5>
         <Line
+          height={300}
           data={{
             datasets: [
               {
@@ -114,6 +118,4 @@ const ChartLine: React.FC<ChartLineProps> = ({ chartTitle, chartData1, chartData
       </div>
     </section>
   );
-};
-
-export default ChartLine;
+}

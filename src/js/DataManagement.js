@@ -1,24 +1,28 @@
 import thenChrome from 'then-chrome';
-import config from './config';
-import utils from './utils';
+import config from 'js/config';
+import {
+  debugLog,
+  increment,
+  getCurrentHour,
+  getCurrentMonth,
+  getCurrentYear,
+  getCurrentDayOfTheMonth,
+  getYesterdayDay,
+  getCurrentWeekDetails,
+  getDateString,
+  getCurrentWeekOfTheYear,
+  getCurrentMinute,
+} from 'js/utils';
 
 /** Class DataManagement. */
 export default class DataManagement {
-  /**
-   * Creating new data based on the data in chrome storage API.
-   * If not exist, creates empty object.
-   *
-   * @param {string} dataName
-   */
-  constructor(dataName) {
-    this.dataName = dataName;
-  }
+  #dataName = config.EXTENSION_DATA_NAME;
 
   /**
    * @return {string}
    */
   get dataName() {
-    return this._dataName;
+    return this.#dataName;
   }
 
   /**
@@ -28,7 +32,7 @@ export default class DataManagement {
     if (!value || typeof value !== 'string') {
       throw new Error('dataName is required');
     }
-    this._dataName = value;
+    this.#dataName = value;
   }
 
   /**
@@ -41,13 +45,15 @@ export default class DataManagement {
     const getStoragePromise = thenChrome.storage.local.get(this.dataName);
     let currentStorage;
 
-    await getStoragePromise.then((storage) => (currentStorage = storage[this.dataName]));
+    await getStoragePromise.then((storage) => {
+      currentStorage = storage[this.dataName];
+    });
 
     const merged = { ...currentStorage, ...this.data };
     const setStoragePromise = thenChrome.storage.local.set({ [this.dataName]: merged });
 
     await setStoragePromise.then(() => {
-      utils.debugLog(`Successfully saved in storage - ${this.dataName}:`, this.data);
+      debugLog(`Successfully saved in storage - ${this.dataName}:`, this.data);
       this.checkDataSize();
     });
 
@@ -62,11 +68,11 @@ export default class DataManagement {
    * Check how many bytes in currently used in storage.
    */
   checkDataSize() {
-    chrome.storage.local.getBytesInUse(this.dataName, function (size) {
+    chrome.storage.local.getBytesInUse(this.dataName, (size) => {
       const totalSize = chrome.storage.local.QUOTA_BYTES;
       const percentage = ((size / totalSize) * 100).toFixed(2);
 
-      utils.debugLog(`Used storage size in bytes: ${size}. Percentage: ${percentage}%`);
+      debugLog(`Used storage size in bytes: ${size}. Percentage: ${percentage}%`);
     });
   }
 
@@ -84,10 +90,10 @@ export default class DataManagement {
       thenChrome.storage.local.get(self.dataName).then((data) => {
         if (data[self.dataName]) {
           self.data = data[self.dataName];
-          utils.debugLog(`Loaded from storage - ${self.dataName}:`, self.data);
+          debugLog(`Loaded from storage - ${self.dataName}:`, self.data);
         } else {
           self.createEmptyDataObject();
-          utils.debugLog(`Item not found in storage - ${self.dataName}`, self.data);
+          debugLog(`Item not found in storage - ${self.dataName}`, self.data);
         }
         if (config.DEVELOPMENT_MODE) {
           window.data = this;
@@ -101,10 +107,10 @@ export default class DataManagement {
    * Gets year data object for a given domain.
    *
    * @param  {string} hostname
-   * @param  {string} [year=utils.getCurrentYear()]
+   * @param  {string} [year=getCurrentYear()]
    * @return {object|null}
    */
-  getYearData(hostname, year = utils.getCurrentYear()) {
+  getYearData(hostname, year = getCurrentYear()) {
     return this.data[hostname] ? this.data[hostname][year] : null;
   }
 
@@ -112,10 +118,10 @@ export default class DataManagement {
    * Gets month data object for a given domain.
    *
    * @param  {string} hostname
-   * @param  {string} [month=utils.getCurrentMonth()]
+   * @param  {string} [month=getCurrentMonth()]
    * @return {object|null}
    */
-  getMonthData(hostname, month = utils.getCurrentMonth()) {
+  getMonthData(hostname, month = getCurrentMonth()) {
     const yearData = this.getYearData(hostname);
 
     return yearData ? yearData[month] : null;
@@ -125,10 +131,10 @@ export default class DataManagement {
    * Gets day of the month data object for a given domain.
    *
    * @param  {string} hostname
-   * @param  {string} [dayOfTheMonth=utils.getCurrentDayOfTheMonth()]
+   * @param  {string} [dayOfTheMonth=getCurrentDayOfTheMonth()]
    * @return {object|null}
    */
-  getDayOfTheMonthData(hostname, dayOfTheMonth = utils.getCurrentDayOfTheMonth()) {
+  getDayOfTheMonthData(hostname, dayOfTheMonth = getCurrentDayOfTheMonth()) {
     const monthData = this.getMonthData(hostname);
 
     return monthData ? monthData[dayOfTheMonth] : null;
@@ -138,10 +144,10 @@ export default class DataManagement {
    * Gets hour data object for a given domain.
    *
    * @param  {string} hostname
-   * @param  {string} [hour=utils.getCurrentHour()]
+   * @param  {string} [hour=getCurrentHour()]
    * @return {object|null}
    */
-  getHourData(hostname, hour = utils.getCurrentHour()) {
+  getHourData(hostname, hour = getCurrentHour()) {
     const dayOfTheWeekData = this.getDayOfTheMonthData(hostname);
 
     return dayOfTheWeekData ? dayOfTheWeekData[hour] : null;
@@ -152,10 +158,10 @@ export default class DataManagement {
    * data object for a given domain.
    *
    * @param  {string} hostname
-   * @param  {string} [weekDetails=utils.getCurrentWeekDetails()]
+   * @param  {string} [weekDetails=getCurrentWeekDetails()]
    * @return {object|null}
    */
-  getWeekDetailsData(hostname, weekDetails = utils.getCurrentWeekDetails()) {
+  getWeekDetailsData(hostname, weekDetails = getCurrentWeekDetails()) {
     const yearData = this.getYearData(hostname);
 
     return yearData ? yearData[config.WEEK_DETAILS][weekDetails] : null;
@@ -178,7 +184,7 @@ export default class DataManagement {
    * @return {object}
    */
   getYesterdayData(hostname) {
-    return this.getDayOfTheMonthData(hostname, utils.getYesterdayDay());
+    return this.getDayOfTheMonthData(hostname, getYesterdayDay());
   }
 
   /**
@@ -187,7 +193,7 @@ export default class DataManagement {
   createEmptyDataObject() {
     this.data = {};
     this.data[config.ALL_TIME] = 0;
-    this.data[config.FIRST_VISIT] = utils.getDateString();
+    this.data[config.FIRST_VISIT] = getDateString();
   }
 
   /**
@@ -202,7 +208,7 @@ export default class DataManagement {
       [config.ALL_TIME]: 0,
     };
     this.data[hostname][config.FAVICON_URL] = null;
-    this.data[hostname][config.FIRST_VISIT] = utils.getDateString();
+    this.data[hostname][config.FIRST_VISIT] = getDateString();
   }
 
   /**
@@ -230,15 +236,15 @@ export default class DataManagement {
    * yearObj: (object)
    * }}
    */
-  getDataObjectTemplate() {
+  static getDataObjectTemplate() {
     const dataObj = {
-      currentYear: utils.getCurrentYear(),
-      currentWeekOfTheYear: utils.getCurrentWeekOfTheYear(),
-      currentMonth: utils.getCurrentMonth(),
-      currentWeekDetails: utils.getCurrentWeekDetails(),
-      currentDayOfTheMonth: utils.getCurrentDayOfTheMonth(),
-      currentHour: utils.getCurrentHour(),
-      currentMinute: utils.getCurrentMinute(),
+      currentYear: getCurrentYear(),
+      currentWeekOfTheYear: getCurrentWeekOfTheYear(),
+      currentMonth: getCurrentMonth(),
+      currentWeekDetails: getCurrentWeekDetails(),
+      currentDayOfTheMonth: getCurrentDayOfTheMonth(),
+      currentHour: getCurrentHour(),
+      currentMinute: getCurrentMinute(),
     };
 
     dataObj.minuteObj = {
@@ -274,7 +280,7 @@ export default class DataManagement {
    * @return {object}
    */
   updateDataFor(hostname, tab) {
-    const dataObj = this.getDataObjectTemplate();
+    const dataObj = DataManagement.getDataObjectTemplate();
 
     if (!this.isPageAlreadyInData(hostname)) {
       this.createEmptyHostnameDataObject(hostname, dataObj);
@@ -298,29 +304,26 @@ export default class DataManagement {
     }
 
     // Increment global data
-    utils.increment(this.data, config.ALL_TIME);
+    increment(this.data, config.ALL_TIME);
 
     // Increment hostname data
-    utils.increment(this.data[hostname], config.ALL_TIME);
+    increment(this.data[hostname], config.ALL_TIME);
 
-    utils.increment(this.getYearData(hostname, dataObj.currentYear), config.ALL_TIME);
-    utils.increment(this.getMonthData(hostname, dataObj.currentMonth), config.ALL_TIME);
-    utils.increment(
-      this.getDayOfTheMonthData(hostname, dataObj.currentDayOfTheMonth),
-      config.ALL_TIME
-    );
-    utils.increment(
+    increment(this.getYearData(hostname, dataObj.currentYear), config.ALL_TIME);
+    increment(this.getMonthData(hostname, dataObj.currentMonth), config.ALL_TIME);
+    increment(this.getDayOfTheMonthData(hostname, dataObj.currentDayOfTheMonth), config.ALL_TIME);
+    increment(
       this.getYearData(hostname, dataObj.currentYear)[config.WEEK_DETAILS],
       dataObj.currentWeekDetails
     );
-    utils.increment(this.getHourData(hostname, dataObj.currentHour), config.ALL_TIME);
-    utils.increment(this.getHourData(hostname, dataObj.currentHour), dataObj.currentMinute);
+    increment(this.getHourData(hostname, dataObj.currentHour), config.ALL_TIME);
+    increment(this.getHourData(hostname, dataObj.currentHour), dataObj.currentMinute);
 
     // Update other data
     if (tab.favIconUrl) {
       this.data[hostname][config.FAVICON_URL] = tab.favIconUrl;
     }
-    this.data[hostname][config.LAST_VISIT] = utils.getDateString();
+    this.data[hostname][config.LAST_VISIT] = getDateString();
 
     return {
       todayInSec: this.getTodayData(hostname)[config.ALL_TIME],
