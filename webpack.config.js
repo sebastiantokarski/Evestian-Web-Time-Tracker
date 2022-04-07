@@ -1,4 +1,3 @@
-/* eslint-disable */
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -40,7 +39,7 @@ module.exports = (options) => {
     devtool: IS_DEV ? 'source-map' : undefined,
     resolve: {
       extensions: ['.tsx', '.ts', '.js', '.jsx'],
-      modules: ['src', 'node_modules']
+      modules: ['src', 'node_modules'],
     },
     module: {
       rules: [
@@ -103,7 +102,7 @@ module.exports = (options) => {
         config: {
           base: 'manifest.js',
           extend: IS_DEV && {
-            name: 'Evestian Web Time Tracker Dev',
+            name: 'Evest Web Time Tracker Dev',
             background: {
               scripts: ['background/index.js', 'background/hot-reload.js'],
             },

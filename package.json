@@ -1,14 +1,13 @@
 {
-  "name": "evestian_web_time_tracker",
+  "name": "evest_web_time_tracker",
   "version": "0.0.1",
   "description": "Chrome Extension",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sebastiantokarski/Evestian-Web-Time-Tracker.git"
+    "url": "https://github.com/sebastiantokarski/Evest-Web-Time-Tracker.git"
   },
-  "author": "Ewelina Suska, Sebastian Tokarski",
+  "author": "Sebastian Tokarski",
   "license": "ISC",
-  "main": "",
   "scripts": {
     "dev": "webpack --env=dev",
     "build": "webpack"
@@ -37,7 +36,6 @@
     "@types/react-bootstrap": "^0.32.29",
     "@types/react-dom": "^17.0.11",
     "@types/webpack": "^5.28.0",
-    "@typescript-eslint/eslint-plugin": "^5.11.0",
     "@typescript-eslint/parser": "^5.11.0",
     "babel-loader": "~8.2.3",
     "clean-webpack-plugin": "^4.0.0",

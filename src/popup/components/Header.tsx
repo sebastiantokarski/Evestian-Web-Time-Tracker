@@ -38,7 +38,7 @@ function Header() {
               src={`${assetsDir}logoWhite.svg`}
             />
             <h1 className={`header__title${isMenuOpen ? ' opened-menu' : ''}`}>
-              Evestian Web Time Tracker
+              {chrome.i18n.getMessage('extension_full_name')}
             </h1>
             <div className={`header__menu-wrapper${isMenuOpen ? ' opened' : ''}`}>
               <button

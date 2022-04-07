@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": "src",
+    "outDir": "build",
     "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -17,6 +18,6 @@
     "jsx": "react",
     "incremental": true
   },
-  "include": ["src", "declarations.d.ts"],
+  "include": ["src", "index.d.ts"],
   "exclude": ["node_modules"]
 }

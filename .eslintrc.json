@@ -19,5 +19,5 @@
       }
     }
   },
-  "ignorePatterns": ["declarations.d.ts"]
+  "ignorePatterns": ["*.config.js", "manifest.js"]
 }

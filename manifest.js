@@ -1,8 +1,9 @@
+/* eslint-disable */
 module.exports = {
-  name: 'Evestian Web Time Tracker',
-  short_name: '__MSG_short_name__',
-  description: '__MSG_description__',
-  author: 'Ewelina Suska, Sebastian Tokarski',
+  name: '__MSG_extension_full_name__',
+  short_name: '__MSG_extension_short_name__',
+  description: '__MSG_extension_description__',
+  author: 'Sebastian Tokarski',
   default_locale: 'en',
   offline_enabled: true,
   manifest_version: 2,
@@ -29,7 +30,7 @@ module.exports = {
       48: 'assets/icon48.png',
       128: 'assets/icon128.png',
     },
-    default_title: 'Evestian Web Time Tracker',
+    default_title: 'Evest Web Time Tracker',
     default_popup: 'popup/index.html',
   },
 };
