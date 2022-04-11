@@ -1,9 +1,9 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { FAVICON_URL_KEY, STORAGE_DATA_KEY, HTML_ID_PREFIX, FAVICON_COLOR_KEY } from 'js/config';
-import { debugLog } from 'js/utils';
 import MessageHandler from 'js/MessageHandler';
 import settings from 'js/settings';
+import { debugLog } from 'js/utils';
 
 /**
  * @todo Saving image in extension directory.

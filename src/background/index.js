@@ -2,8 +2,8 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { INTERVAL_UPDATE_S, INTERVAL_UPDATE_MIN, ALL_TIME_KEY, FIRST_STARTUP_KEY } from 'js/config';
 import { debugLog, getActiveTab, getFromUrl, isWindowActive, isSoundFromTab } from 'js/utils';
-import settings from '../js/settings';
 import DataManagement from '../js/DataManagement';
+import settings from '../js/settings';
 
 class Background {
   /**

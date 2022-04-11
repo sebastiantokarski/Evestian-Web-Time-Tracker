@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Switch } from 'popup/components';
 import settings from 'js/settings';
+import { Switch } from 'popup/components';
 
 export default function Settings() {
   const [extensionSettings, setExtensionSettings] = useState();

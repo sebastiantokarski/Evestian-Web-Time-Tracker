@@ -1,6 +1,6 @@
 import React from 'react';
-import { SettingsProvider } from 'popup/contexts/SettingsContext';
 import { Header, MiniInfo, Footer } from 'popup/components';
+import { SettingsProvider } from 'popup/contexts/SettingsContext';
 import MainTabs from './components/MainTabs';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../scss/popup.scss';

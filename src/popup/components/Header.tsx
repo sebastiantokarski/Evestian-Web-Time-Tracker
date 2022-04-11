@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Settings } from 'popup/components';
-import settings from 'js/settings';
 import { Modal } from 'react-bootstrap';
+import settings from 'js/settings';
+import { Settings } from 'popup/components';
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

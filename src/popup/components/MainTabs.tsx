@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import { Table, ChartDoughnut, ChartLine } from 'popup/components';
+import Tabs from 'react-bootstrap/Tabs';
 import { STORAGE_DATA_KEY } from 'js/config';
 import DataProcessing from 'js/DataProcessing';
+import { Table, ChartDoughnut, ChartLine } from 'popup/components';
 
 export default function MainTabs() {
   const dataProcess = new DataProcessing(STORAGE_DATA_KEY);

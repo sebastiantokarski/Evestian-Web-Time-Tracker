@@ -19,5 +19,20 @@
       }
     }
   },
+  "rules": {
+    "import/namespace": 0,
+    "import/first": "error",
+    "import/newline-after-import": "warn",
+    "import/no-named-as-default": 0,
+    "import/order": [
+      "warn",
+      {
+        "groups": [["builtin", "external"], "internal", "sibling", "parent", "index"],
+        "pathGroupsExcludedImportTypes": ["react"],
+        "pathGroups": [{ "pattern": "react", "group": "external", "position": "before" }],
+        "alphabetize": { "order": "asc", "caseInsensitive": true }
+      }
+    ]
+  },
   "ignorePatterns": ["*.config.js", "manifest.js"]
 }

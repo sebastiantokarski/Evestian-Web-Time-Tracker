@@ -10,7 +10,9 @@
   "license": "ISC",
   "scripts": {
     "dev": "webpack --env=dev",
-    "build": "webpack"
+    "build": "webpack",
+    "lint": "eslint src",
+    "lint:fix": "eslint --fix ./src"
   },
   "dependencies": {
     "bootstrap": "^5.1.3",

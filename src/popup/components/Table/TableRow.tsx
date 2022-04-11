@@ -1,6 +1,6 @@
 import React from 'react';
-import DataProcessing from '../../../js/DataProcessing';
 import TableFaviconCell from './TableFaviconCell';
+import DataProcessing from '../../../js/DataProcessing';
 
 export interface TableRowData {
   name: string;
