@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import { Table, ChartDoughnut, ChartLine } from 'popup/components';
-import config from 'js/config';
+import { STORAGE_DATA_KEY } from 'js/config';
 import DataProcessing from 'js/DataProcessing';
 
 export default function MainTabs() {
-  const dataProcess = new DataProcessing(config.EXTENSION_DATA_NAME);
+  const dataProcess = new DataProcessing(STORAGE_DATA_KEY);
 
   const pagesVisitedToday = dataProcess.processPagesVisitedToday();
   const pagesVisitedYesterday = dataProcess.processPagesVisitedYesterday();

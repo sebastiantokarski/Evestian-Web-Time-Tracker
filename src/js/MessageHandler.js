@@ -1,4 +1,4 @@
-import config from 'js/config';
+import { HTML_ID_PREFIX } from 'js/config';
 import { debugLog } from 'js/utils';
 
 class MessageHandler {
@@ -12,7 +12,7 @@ class MessageHandler {
 
   addHTMLElement() {
     this.#htmlHandler = document.createElement('div');
-    this.#htmlHandler.id = `${config.ID_PREFIX}message-handler`;
+    this.#htmlHandler.id = `${HTML_ID_PREFIX}message-handler`;
 
     document.body.appendChild(this.#htmlHandler);
   }

@@ -1,5 +1,13 @@
 import thenChrome from 'then-chrome';
-import config from 'js/config';
+import {
+  ALL_TIME_KEY,
+  WEEK_DETAILS_KEY,
+  STORAGE_DATA_KEY,
+  DEVELOPMENT_MODE,
+  LAST_VISIT_KEY,
+  FIRST_VISIT_KEY,
+  FAVICON_URL_KEY,
+} from 'js/config';
 import {
   debugLog,
   increment,
@@ -9,14 +17,14 @@ import {
   getCurrentDayOfTheMonth,
   getYesterdayDay,
   getCurrentWeekDetails,
-  getDateString,
+  getISODate,
   getCurrentWeekOfTheYear,
   getCurrentMinute,
 } from 'js/utils';
 
 /** Class DataManagement. */
 export default class DataManagement {
-  #dataName = config.EXTENSION_DATA_NAME;
+  #dataName = STORAGE_DATA_KEY;
 
   /**
    * @return {string}
@@ -95,7 +103,7 @@ export default class DataManagement {
           self.createEmptyDataObject();
           debugLog(`Item not found in storage - ${self.dataName}`, self.data);
         }
-        if (config.DEVELOPMENT_MODE) {
+        if (DEVELOPMENT_MODE) {
           window.data = this;
         }
         resolve(self.data);
@@ -164,7 +172,7 @@ export default class DataManagement {
   getWeekDetailsData(hostname, weekDetails = getCurrentWeekDetails()) {
     const yearData = this.getYearData(hostname);
 
-    return yearData ? yearData[config.WEEK_DETAILS][weekDetails] : null;
+    return yearData ? yearData[WEEK_DETAILS_KEY][weekDetails] : null;
   }
 
   /**
@@ -192,8 +200,8 @@ export default class DataManagement {
    */
   createEmptyDataObject() {
     this.data = {};
-    this.data[config.ALL_TIME] = 0;
-    this.data[config.FIRST_VISIT] = getDateString();
+    this.data[ALL_TIME_KEY] = 0;
+    this.data[FIRST_VISIT_KEY] = getISODate();
   }
 
   /**
@@ -205,10 +213,10 @@ export default class DataManagement {
   createEmptyHostnameDataObject(hostname, dataObj) {
     this.data[hostname] = {
       [dataObj.currentYear]: dataObj.yearObj,
-      [config.ALL_TIME]: 0,
+      [ALL_TIME_KEY]: 0,
     };
-    this.data[hostname][config.FAVICON_URL] = null;
-    this.data[hostname][config.FIRST_VISIT] = getDateString();
+    this.data[hostname][FAVICON_URL_KEY] = null;
+    this.data[hostname][FIRST_VISIT_KEY] = getISODate();
   }
 
   /**
@@ -248,23 +256,23 @@ export default class DataManagement {
     };
 
     dataObj.minuteObj = {
-      [config.ALL_TIME]: 0,
+      [ALL_TIME_KEY]: 0,
       [dataObj.currentMinute]: 0,
     };
     dataObj.dayOfTheMonthObj = {
-      [config.ALL_TIME]: 0,
+      [ALL_TIME_KEY]: 0,
       [dataObj.currentHour]: dataObj.minuteObj,
     };
     dataObj.weekDetailsObj = {
       [dataObj.currentWeekDetails]: 0,
     };
     dataObj.monthObj = {
-      [config.ALL_TIME]: 0,
+      [ALL_TIME_KEY]: 0,
       [dataObj.currentDayOfTheMonth]: dataObj.dayOfTheMonthObj,
     };
     dataObj.yearObj = {
-      [config.ALL_TIME]: 0,
-      [config.WEEK_DETAILS]: dataObj.weekDetailsObj,
+      [ALL_TIME_KEY]: 0,
+      [WEEK_DETAILS_KEY]: dataObj.weekDetailsObj,
       [dataObj.currentMonth]: dataObj.monthObj,
     };
 
@@ -292,7 +300,7 @@ export default class DataManagement {
     } else if (!this.getMonthData(hostname, dataObj.currentMonth)) {
       this.data[hostname][dataObj.currentYear][dataObj.currentMonth] = dataObj.monthObj;
     } else if (!this.getWeekDetailsData(hostname, dataObj.currentWeekDetails)) {
-      this.data[hostname][dataObj.currentYear][config.WEEK_DETAILS][dataObj.currentWeekDetails] = 0;
+      this.data[hostname][dataObj.currentYear][WEEK_DETAILS_KEY][dataObj.currentWeekDetails] = 0;
     }
     if (!this.getDayOfTheMonthData(hostname, dataObj.currentDayOfTheMonth)) {
       this.data[hostname][dataObj.currentYear][dataObj.currentMonth][dataObj.currentDayOfTheMonth] =
@@ -304,30 +312,30 @@ export default class DataManagement {
     }
 
     // Increment global data
-    increment(this.data, config.ALL_TIME);
+    increment(this.data, ALL_TIME_KEY);
 
     // Increment hostname data
-    increment(this.data[hostname], config.ALL_TIME);
+    increment(this.data[hostname], ALL_TIME_KEY);
 
-    increment(this.getYearData(hostname, dataObj.currentYear), config.ALL_TIME);
-    increment(this.getMonthData(hostname, dataObj.currentMonth), config.ALL_TIME);
-    increment(this.getDayOfTheMonthData(hostname, dataObj.currentDayOfTheMonth), config.ALL_TIME);
+    increment(this.getYearData(hostname, dataObj.currentYear), ALL_TIME_KEY);
+    increment(this.getMonthData(hostname, dataObj.currentMonth), ALL_TIME_KEY);
+    increment(this.getDayOfTheMonthData(hostname, dataObj.currentDayOfTheMonth), ALL_TIME_KEY);
     increment(
-      this.getYearData(hostname, dataObj.currentYear)[config.WEEK_DETAILS],
+      this.getYearData(hostname, dataObj.currentYear)[WEEK_DETAILS_KEY],
       dataObj.currentWeekDetails
     );
-    increment(this.getHourData(hostname, dataObj.currentHour), config.ALL_TIME);
+    increment(this.getHourData(hostname, dataObj.currentHour), ALL_TIME_KEY);
     increment(this.getHourData(hostname, dataObj.currentHour), dataObj.currentMinute);
 
     // Update other data
     if (tab.favIconUrl) {
-      this.data[hostname][config.FAVICON_URL] = tab.favIconUrl;
+      this.data[hostname][FAVICON_URL_KEY] = tab.favIconUrl;
     }
-    this.data[hostname][config.LAST_VISIT] = getDateString();
+    this.data[hostname][LAST_VISIT_KEY] = getISODate();
 
     return {
-      todayInSec: this.getTodayData(hostname)[config.ALL_TIME],
-      allTimeInSec: this.data[hostname][config.ALL_TIME],
+      todayInSec: this.getTodayData(hostname)[ALL_TIME_KEY],
+      allTimeInSec: this.data[hostname][ALL_TIME_KEY],
     };
   }
   /* eslint-enable max-len */

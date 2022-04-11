@@ -1,6 +1,6 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import config from 'js/config';
+import { INTERVAL_UPDATE_S, INTERVAL_UPDATE_MIN, ALL_TIME_KEY, FIRST_STARTUP_KEY } from 'js/config';
 import { debugLog, getActiveTab, getFromUrl, isWindowActive, isSoundFromTab } from 'js/utils';
 import settings from '../js/settings';
 import DataManagement from '../js/DataManagement';
@@ -56,7 +56,7 @@ class Background {
    * @param {string} hostname
    */
   updateBadge(tab, hostname) {
-    const timeInSeconds = this.dataManagement.getDayOfTheMonthData(hostname)[config.ALL_TIME];
+    const timeInSeconds = this.dataManagement.getDayOfTheMonthData(hostname)[ALL_TIME_KEY];
     let tabTime = 0;
 
     if (timeInSeconds < 60) {
@@ -92,7 +92,7 @@ class Background {
       case 'saveFaviconColorAfterSave':
         setTimeout(() => {
           this.dataManagement.data[request.hostname][request.key] = request.value;
-        }, config.INTERVAL_UPDATE_S);
+        }, INTERVAL_UPDATE_S);
         return true;
 
       // first save custom property, then go to case 'save'
@@ -146,7 +146,8 @@ class Background {
 
     // Disable badge in tabs activated in future
     chrome.tabs.onActivated.addListener((activeInfo) => {
-      if (!config.ENABLED) {
+      // @TODO isEnabled from settings
+      if (true) {
         chrome.browserAction.setBadgeText({
           tabId: activeInfo.id,
           text: '',
@@ -251,7 +252,8 @@ class Background {
             window
           );
 
-          if (config.DISPLAY_BADGE) {
+          // @TODO shouldDisplayBadge from settings
+          if (true) {
             this.updateBadge(tab, hostname);
           }
         }
@@ -267,20 +269,17 @@ class Background {
    * Execute all extension intervals.
    */
   executeIntervals() {
-    this.updateDataInterval = setInterval(
-      this.updateDataCallback.bind(this),
-      config.INTERVAL_UPDATE_S
-    );
+    this.updateDataInterval = setInterval(this.updateDataCallback.bind(this), INTERVAL_UPDATE_S);
     this.updateStorageInterval = setInterval(
       this.updateStorageCallback.bind(this),
-      config.INTERVAL_UPDATE_MIN
+      INTERVAL_UPDATE_MIN
     );
   }
 
   // eslint-disable-next-line class-methods-use-this
   onFirstStartup() {
-    if (!localStorage.getItem(config.FIRST_STARTUP)) {
-      localStorage.setItem(config.FIRST_STARTUP, true);
+    if (!localStorage.getItem(FIRST_STARTUP_KEY)) {
+      localStorage.setItem(FIRST_STARTUP_KEY, true);
       settings.save();
     }
   }

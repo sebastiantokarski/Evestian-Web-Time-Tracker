@@ -1,6 +1,6 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import config from 'js/config';
+import { FAVICON_URL_KEY, STORAGE_DATA_KEY, HTML_ID_PREFIX, FAVICON_COLOR_KEY } from 'js/config';
 import { debugLog } from 'js/utils';
 import MessageHandler from 'js/MessageHandler';
 import settings from 'js/settings';
@@ -13,15 +13,15 @@ import settings from 'js/settings';
 
 MessageHandler.init();
 
-chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
+chrome.storage.local.get(STORAGE_DATA_KEY, (data) => {
   const currHostname = window.location.hostname;
-  const spentTimeData = data[config.EXTENSION_DATA_NAME];
+  const spentTimeData = data[STORAGE_DATA_KEY];
   const currHostnameData = spentTimeData ? spentTimeData[currHostname] : null;
   const image = document.createElement('img');
   const script = document.createElement('script');
 
   let hostnameDataExists = true;
-  let faviconUrl = currHostnameData ? currHostnameData[config.FAVICON_URL] : null;
+  let faviconUrl = currHostnameData ? currHostnameData[FAVICON_URL_KEY] : null;
 
   settings.init();
 
@@ -41,7 +41,7 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
     }
   }
 
-  if (currHostnameData && currHostnameData[config.FAVICON_COLOR] === null) {
+  if (currHostnameData && currHostnameData[FAVICON_COLOR_KEY] === null) {
     debugLog('Favicon color is not available', currHostnameData);
     return;
   }
@@ -51,8 +51,8 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
     return;
   }
 
-  if (currHostnameData && currHostnameData[config.FAVICON_COLOR]) {
-    const faviconColor = currHostnameData[config.FAVICON_COLOR];
+  if (currHostnameData && currHostnameData[FAVICON_COLOR_KEY]) {
+    const faviconColor = currHostnameData[FAVICON_COLOR_KEY];
 
     debugLog(
       `%c  %c Favicon color ${faviconColor}`,
@@ -64,11 +64,11 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
 
   debugLog('Favicon url:', faviconUrl);
 
-  image.id = `${config.ID_PREFIX}img`;
+  image.id = `${HTML_ID_PREFIX}img`;
   image.src = faviconUrl;
   image.setAttribute('style', 'visibility: hidden; position: absolute;');
   image.onload = () => {
-    script.id = `${config.ID_PREFIX}script`;
+    script.id = `${HTML_ID_PREFIX}script`;
     /* eslint-disable max-len */
     script.textContent = `
       (function() {
@@ -734,20 +734,18 @@ chrome.storage.local.get(config.EXTENSION_DATA_NAME, (data) => {
 
         try {
           const colorThief = new ColorThief();
-          const image = document.getElementById('${config.ID_PREFIX}img');
+          const image = document.getElementById('${HTML_ID_PREFIX}img');
 
           rgbColor = colorThief.getColor(image);
         } catch (ex) {
           console.warn('Cannot get color from image', ex);
         }
 
-        document.getElementById('${
-          config.ID_PREFIX
-        }message-handler').dataset.message = JSON.stringify({
+        document.getElementById('${HTML_ID_PREFIX}message-handler').dataset.message = JSON.stringify({
           action: '${hostnameDataExists ? 'saveFaviconColor' : 'saveFaviconColorAfterSave'}',
-          dataName: '${config.EXTENSION_DATA_NAME}',
+          dataName: '${STORAGE_DATA_KEY}',
           hostname: '${currHostname}',
-          key: '${config.FAVICON_COLOR}',
+          key: '${FAVICON_COLOR_KEY}',
           value: rgbColor ? 'rgb(' + rgbColor[0] + ', ' + rgbColor[1] + ', ' + rgbColor[2] + ')' : null
         });
 

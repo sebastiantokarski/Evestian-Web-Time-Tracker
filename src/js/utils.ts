@@ -1,18 +1,6 @@
-import config from './config';
+import { DEVELOPMENT_MODE } from './config';
 
-/**
- * Get date with format dd-mm-yyyy.
- *
- * @param  {Date} [date=new Date()]
- * @return {string}
- */
-export const getDateString = (date = new Date()) => {
-  const year = date.getFullYear();
-  const month = `0${date.getMonth() + 1}`.slice(-2);
-  const day = `0${date.getDate()}`.slice(-2);
-
-  return `${day}-${month}-${year}`;
-};
+export const getISODate = (date = new Date()) => date.toISOString();
 
 /**
  * Get current year.
@@ -230,7 +218,7 @@ export const isSoundFromTab = (tab) => {
  * @return {undefined}
  */
 export const debugLog = (...args) => {
-  if (config.DEVELOPMENT_MODE) {
+  if (DEVELOPMENT_MODE) {
     const fnArguments = [].slice.call(args);
 
     if (typeof fnArguments[0] === 'string' && fnArguments[0].indexOf('%c') === -1) {

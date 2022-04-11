@@ -1,4 +1,11 @@
-import config from 'js/config';
+import { getYear, parseISO } from 'date-fns';
+import {
+  WEEK_DETAILS_KEY,
+  ALL_TIME_KEY,
+  FAVICON_URL_KEY,
+  FIRST_VISIT_KEY,
+  FAVICON_COLOR_KEY,
+} from 'js/config';
 import { debugLog, getCurrentYear, getCurrentWeekOfTheYear, isObject } from 'js/utils';
 import Color from './Color';
 import DataManagement from './DataManagement';
@@ -174,7 +181,7 @@ export default class DataProcessing extends DataManagement {
 
     for (let i = 0; i < allYears.length; i += 1) {
       try {
-        const weekDetails = allYears[i][1][config.WEEK_DETAILS];
+        const weekDetails = allYears[i][1][WEEK_DETAILS_KEY];
 
         if (isObject(weekDetails)) {
           Object.keys(weekDetails).forEach((key) => {
@@ -230,7 +237,7 @@ export default class DataProcessing extends DataManagement {
       const unit = parentUnit[i][1];
 
       Object.keys(unit).forEach((key) => {
-        if (key !== config.ALL_TIME) {
+        if (key !== ALL_TIME_KEY) {
           all.push([key, unit[key]]);
         }
       });
@@ -258,8 +265,8 @@ export default class DataProcessing extends DataManagement {
       if (this.isThisHostnameData(key) && this[methodName](key, period)) {
         pagesData.push({
           name: key,
-          time: this[methodName](key, period)[config.ALL_TIME],
-          faviconUrl: this.data[key][config.FAVICON_URL],
+          time: this[methodName](key, period)[ALL_TIME_KEY],
+          faviconUrl: this.data[key][FAVICON_URL_KEY],
         });
       }
     });
@@ -269,13 +276,13 @@ export default class DataProcessing extends DataManagement {
 
   /**
    * Checks is this hostname data by checking if it is data property,
-   * and has all_time property.
+   * and has ALL_TIME_KEY property.
    *
    * @param  {string} hostname
    * @return {boolean}
    */
   isThisHostnameData(hostname) {
-    return typeof this.data[hostname] === 'object' && !!this.data[hostname][config.ALL_TIME];
+    return typeof this.data[hostname] === 'object' && !!this.data[hostname][ALL_TIME_KEY];
   }
 
   /**
@@ -290,8 +297,8 @@ export default class DataProcessing extends DataManagement {
 
         if (today) {
           Object.keys(today).forEach((hour) => {
-            if (hour !== config.ALL_TIME) {
-              hoursMap[hour] += today[hour][config.ALL_TIME];
+            if (hour !== ALL_TIME_KEY) {
+              hoursMap[hour] += today[hour][ALL_TIME_KEY];
             }
           });
         }
@@ -311,9 +318,9 @@ export default class DataProcessing extends DataManagement {
       const today = this.getTodayData(hostname);
 
       Object.keys(today).forEach((hour) => {
-        if (hour !== config.ALL_TIME) {
+        if (hour !== ALL_TIME_KEY) {
           Object.keys(today[hour]).forEach((minute) => {
-            if (minute !== config.ALL_TIME) {
+            if (minute !== ALL_TIME_KEY) {
               minutesMap[minute] += today[hour][minute];
             }
           });
@@ -335,7 +342,7 @@ export default class DataProcessing extends DataManagement {
       const hours = this.getAllHours(hostname);
 
       Object.keys(hours).forEach((minute) => {
-        if (minute !== config.ALL_TIME) {
+        if (minute !== ALL_TIME_KEY) {
           minutesMap[minute] += hours[minute];
         }
       });
@@ -362,11 +369,11 @@ export default class DataProcessing extends DataManagement {
     };
 
     Object.keys(this.data).forEach((hostname) => {
-      const getFirstVisitYear = Number(this.data[config.FIRST_VISIT].match(/-(\d{4})$/)[1]);
+      const getFirstVisitYear = getYear(parseISO(this.data[FIRST_VISIT_KEY]));
       const currentYear = Number(getCurrentYear());
 
       for (let i = getFirstVisitYear; i < currentYear; i += 1) {
-        const weekDetails = this.getYearData(hostname)[config.WEEK_DETAILS];
+        const weekDetails = this.getYearData(hostname)[WEEK_DETAILS_KEY];
 
         Object.keys(weekDetails).forEach(getWeekTime.bind(weekDetails));
       }
@@ -436,8 +443,8 @@ export default class DataProcessing extends DataManagement {
         return staticColors[label];
       }
 
-      if (this.data[label]?.[config.FAVICON_COLOR]) {
-        return this.data[label]?.[config.FAVICON_COLOR];
+      if (this.data[label]?.[FAVICON_COLOR_KEY]) {
+        return this.data[label]?.[FAVICON_COLOR_KEY];
       }
 
       if (label === 'Other') {
@@ -480,10 +487,17 @@ export default class DataProcessing extends DataManagement {
     return chartData;
   }
 
-  /* eslint-disable max-len */
+  getTotalTime() {
+    return this.data[ALL_TIME_KEY];
+  }
+
+  getFirstVisitDate() {
+    return this.data[FIRST_VISIT_KEY];
+  }
+
   processGeneralData() {
-    this.totalTime = this.constructor.parseSecondsIntoTime(this.data[config.ALL_TIME]);
-    this.firstVisit = this.data[config.FIRST_VISIT];
+    this.totalTime = this.constructor.parseSecondsIntoTime(this.data[ALL_TIME_KEY]);
+    this.firstVisit = this.data[FIRST_VISIT_KEY];
     // @todo this -2 is so mysterious
     this.totalDomains = Object.keys(this.data).length - 2;
   }
@@ -544,7 +558,7 @@ export default class DataProcessing extends DataManagement {
     const timeMap = this.constructor.createSimpleMap(24, 0);
 
     timeSpentInHoursTotalDataArray.forEach((time) => {
-      timeMap[time[0]] += time[1][config.ALL_TIME];
+      timeMap[time[0]] += time[1][ALL_TIME_KEY];
     });
     timeSpentInHoursTotalDataArray = this.constructor.convertSimpleObjectToArray(timeMap);
     this.timeSpentInHoursTotal = {
